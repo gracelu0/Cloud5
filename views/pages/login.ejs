@@ -1,16 +1,5 @@
 <!DOCTYPE html>
 
-<html>
-<head>
-  <% include ../partials/header.ejs %>
-</head>
-
-<body>
-
-  <% include ../partials/nav.ejs %>
-
-</body>
-
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
@@ -18,11 +7,11 @@
   </head>
   <body>
     <h1>LOGIN</h1>
-    <form class="" action="/login" method="get">
+    <form class="" action="/login" method="post">
       <table>
         <tr>
-          <td>Email: </td>
-          <td><input type="email" name="mail" value=""></td>
+          <td>Username: </td>
+          <td><input type="text" name="username" value=""></td>
         </tr>
         <tr>
           <td>Password: </td>

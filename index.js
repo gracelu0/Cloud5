@@ -3,10 +3,13 @@ const path = require('path');
 const PORT = process.env.PORT || 5000
 var app = express();
 
-
-
 const { Pool } = require('pg');
-
+var pool = new Pool({
+    user: 'postgres',
+    password: 'mantiS7326510#',
+    host: 'localhost',
+    database: 'cloud5'
+});
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
@@ -40,22 +43,27 @@ app.post('/postgame', (req,res) => {
     res.render('pages/postgame');
 });
 
-app.get('/login', (req, res) => {
-    var userID=req.body.uname;
+app.post('/login', (req, res) => {
+    var userID = req.body.username;
+    var userpwd = req.body.pwd;
     var loginQuery = `SELECT * FROM logindb WHERE username='${userID}'`;
     pool.query(loginQuery, (error, result) => {
+
         if (error)
             res.end(error);
-        
-        var userIDs={'rows': result.rows};
 
-        if (!Array.isArray(userIDs['rows']) || !userIDs['rows'].length)
-            res.end("User is not in db!");
+        if(result.rows.length === 0)
+            console.log("not a regular user");
 
         else
-            res.render('pages/home');        
-    })
-
+            if(result.rows[0].password == userpwd) {
+                console.log("Successful login");
+                res.render('pages/home');
+            }
+            else {
+                res.send("Password and username do not match");
+            }
+    });
 });
 
 
@@ -79,7 +87,7 @@ app.post('/signUpForm', (req,res) => {
         }
         res.render('pages/login');
     });
-})
+});
 
 app.listen(PORT, () => console.log(`Listening on ${ PORT }`));
 
