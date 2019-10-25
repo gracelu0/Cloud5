@@ -5,14 +5,13 @@ var app = express();
 
 // const { Pool } = require('pg');
 // const pool = new Pool({
-//   connectionString: "postgres://postgres:shimarov6929@localhost/assignment2"
-// });
-//
+
 const { Pool } = require('pg');
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: true
-});
+})
+
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
@@ -21,6 +20,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.get('/', (req, res) => {res.render('pages/index')});
 
+
 app.post('/home', (req,res) => {
     res.render('pages/home');
 });
@@ -28,6 +28,7 @@ app.post('/home', (req,res) => {
 app.post('/signUp', (req,res) => {
     res.render('pages/signUp');
 });
+
 
 app.post('/signUpForm', (req,res) => {
     var insertUsername = req.body.username;
