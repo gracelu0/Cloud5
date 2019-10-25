@@ -1,11 +1,29 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <% include ../partials/header.ejs %>
-</head>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Hidden Traps</title>
+  </head>
+  <body>
+    <h1>LOGIN</h1>
+    <form class="" action="/home" method="post">
+      <table>
+        <tr>
+          <td>Email: </td>
+          <td><input type="email" name="mail" value=""></td>
+        </tr>
+        <tr>
+          <td>Password: </td>
+          <td><input type="text" name="pwd" value="">
+        </tr>
+      </table>
 
-<body>
-<h1>Login</h1>
+      <button type="submit" name="signInBtn">Sign in</button>
+    </form>
 
-</body>
+    <form class="" action="/signUp" method="post">
+      <button type="submit" name="signUpBtn">Sign up</button>
+    </form>
+
+  </body>
 </html>
