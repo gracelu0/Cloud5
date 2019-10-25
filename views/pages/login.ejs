@@ -2,24 +2,32 @@
 
 <html lang="en" dir="ltr">
   <head>
-    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="utf-8">
     <title>Hidden Traps</title>
+    <link rel="stylesheet" href="/stylesheets/forms.css">
+    <link href="https://fonts.googleapis.com/css?family=Press+Start+2P&display=swap" rel="stylesheet">
   </head>
   <body>
-    <h1>LOGIN</h1>
-    <form class="" action="/login" method="post">
-      <table>
-        <tr>
-          <td>Username: </td>
-          <td><input type="text" name="username" value=""></td>
-        </tr>
-        <tr>
-          <td>Password: </td>
-          <td><input type="text" name="pwd" value="">
-        </tr>
-      </table>
-      <button type="submit" name="signInBtn">Sign in</button>
+    <h1 align="center">HIDDEN TRAPS</h1>
+    <button onclick="document.getElementById('mod').style.display='block'">Login</button>
+    <!--The modal-->
+    <div id="mod" class="modal">
+      <span onclick="document.getElementById('mod').style.display='none'" class="close" title="Close">&times;</span>
+
+
+    <!--modal content-->
+    <form class="modal-content animate" action="/login" method="post">
+      <div class="container">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" placeholder="Enter username" required>
+        
+        <label for="pwd">Password</label>
+        <input type="text" id="pwd" name="pwd" placeholder="Enter password" required>
+        
+        <button type="submit" name="signInBtn">Login</button>
+      </div>
     </form>
+  </div>
     <form class="" action="/signUp" method="post">
       <button type="submit" name="signUpBtn">Sign up</button>
     </form>
