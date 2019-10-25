@@ -3,17 +3,6 @@ const path = require('path');
 const PORT = process.env.PORT || 5000
 var app = express();
 
-// const { Pool } = require('pg');
-// const pool = new Pool({
-//   connectionString: "postgres://postgres:shimarov6929@localhost/assignment2"
-// });
-//
-// const { Pool } = require('pg');
-// const pool = new Pool({
-//   connectionString: process.env.DATABASE_URL,
-//   ssl: true
-// });
-
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -29,15 +18,20 @@ app.post('/signUp', (req,res) => {
     res.render('pages/signUp');
 });
 
-// app.post('/dreamTeam', (req,res) => {
-//   pool.query(`SELECT * FROM Tokemon ORDER BY total DESC LIMIT 3;`, (err, result)=> {
-//     console.log(req);
-//     if (err)
-//       res.end(err);
-//     console.log("The champion is showed");
-//     var results = {'rows': result.rows };
-//     res.render('pages/dreamTeam', results);
-//     });
-//   });
+app.post('/rules', (req,res) => {
+    res.render('pages/rules');
+});
+
+app.post('/pregame', (req,res) => {
+    res.render('pages/pregame');
+});
+
+app.post('/game', (req,res) => {
+    res.render('pages/game');
+});
+
+app.post('/postgame', (req,res) => {
+    res.render('pages/postgame');
+});
 
 app.listen(PORT, () => console.log(`Listening on ${ PORT }`));
