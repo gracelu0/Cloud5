@@ -5,19 +5,14 @@
   "engines": {
     "node": "10.x"
   },
-  "main": "login.js",
+  "main": "index.js",
   "scripts": {
-    "start": "nodemon login.js",
+    "start": "node index.js",
     "test": "node test.js"
   },
   "dependencies": {
     "ejs": "^2.5.6",
-<<<<<<< HEAD
-    "express": "^4.17.1"
-=======
-    "express": "^4.15.2",
-    "pg": "^7.12.1"
->>>>>>> master
+    "express": "^4.15.2"
   },
   "devDependencies": {
     "request": "^2.81.0",
