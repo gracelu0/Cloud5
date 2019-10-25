@@ -5,10 +5,6 @@ var app = express();
 
 
 const { Pool } = require('pg');
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true
-})
 
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -49,19 +45,18 @@ app.post('/signUpForm', (req,res) => {
     var insertPassword = req.body.password;
     var confirm = req.body.confirmPassword;
     var insertEmail = req.body.email;
+    console.log(req.body);
 
-    if(insertPassword === confirm){
-        continue;
-    }
-    else{
-        alert('Passwords are not equal');
-        res.redirect('back');
+    if(insertPassword !== confirm){
+        res.send("Passwords do not match");
+        return res.render('pages/signUp');
     }
 
-    var insertquery = `INSERT INTO logindb(username, password, email) VALUES ('${insertUsername}', '${insertPassword}', '${insertEmail}') WHERE NOT EXISTS(SELECT username FROM logindb WHERE username = '${insertUsername}');`
+    var insertquery = `INSERT INTO logindb(username, password, email) VALUES ('${insertUsername}', '${insertPassword}', '${insertEmail}');`
     pool.query(insertquery, (error, result) => {
         if(error){
-            res.end(error);
+            res.send("Username is taken!");
+            return res.render('pages/signUp');
         }
         res.render('pages/login');
     });

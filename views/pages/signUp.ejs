@@ -6,26 +6,26 @@
   </head>
   <body>
     <h1>SIGN UP PAGE</h1>
-    <form id="signupform" action="/signUpForm">
+    <form id="signupform" action="/signUpForm" method="POST">
     <table>
       <tr>
         <td>Username: </td>
-        <td><input id="username" type="text" maxlength="30" value="Username"></td>
+        <td><input name="username" type="text" maxlength="30" value="Username"></td>
       </tr>
       <tr>
         <td>Password: </td>
-        <td><input id="password" type="text" maxlength="30" value="Password"></td>
+        <td><input name="password" type="text" maxlength="30" value="Password"></td>
       </tr>
       <tr>
         <td>Confirm password: </td>
-        <td><input id="confirmPassword" type="text" maxlength="30" value="Confirm password"></td>
+        <td><input name="confirmPassword" type="text" maxlength="30" value="Confirm password"></td>
       </tr>
       <tr>
         <td>Email: </td>
-        <td><input id="email" type="email" value="optional"></td>
+        <td><input name="email" type="text" value="optional"></td>
       </tr>
     </table>
-    </form>
     <button type="submit" >Sign Up!</button>
+    </form>
   </body>
 </html>
