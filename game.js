@@ -58,7 +58,7 @@ app.post('/login', (req, res) => {
         else
             if(result.rows[0].password == userpwd) {
                 console.log("Successful login");
-                res.render('pages/home', {data: JSON.stringify("Login Successful")});
+                // res.render('pages/home', {data: JSON.stringify("Login Successful")});
             }
             else {
                 res.send("Password and username do not match");
