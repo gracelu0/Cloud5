@@ -8,11 +8,11 @@ var app = express();
 //   connectionString: "postgres://postgres:shimarov6929@localhost/assignment2"
 // });
 //
-// const { Pool } = require('pg');
-// const pool = new Pool({
-//   connectionString: process.env.DATABASE_URL,
-//   ssl: true
-// });
+const { Pool } = require('pg');
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: true
+});
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
@@ -29,15 +29,27 @@ app.post('/signUp', (req,res) => {
     res.render('pages/signUp');
 });
 
-// app.post('/dreamTeam', (req,res) => {
-//   pool.query(`SELECT * FROM Tokemon ORDER BY total DESC LIMIT 3;`, (err, result)=> {
-//     console.log(req);
-//     if (err)
-//       res.end(err);
-//     console.log("The champion is showed");
-//     var results = {'rows': result.rows };
-//     res.render('pages/dreamTeam', results);
-//     });
-//   });
+app.post('/signUpForm', (req,res) => {
+    var insertUsername = req.body.username;
+    var insertPassword = req.body.password;
+    var confirm = req.body.confirmPassword;
+    var insertEmail = req.body.email;
+
+    if(insertPassword === confirm){
+        continue;
+    }
+    else{
+        alert('Passwords are not equal');
+        res.redirect('back');
+    }
+
+    var insertquery = `INSERT INTO logindb(username, password, email) VALUES ('${insertUsername}', '${insertPassword}', '${insertEmail}') WHERE NOT EXISTS(SELECT username FROM logindb WHERE username = '${insertUsername}');`
+    pool.query(insertquery, (error, result) => {
+        if(error){
+            res.end(error);
+        }
+        res.render('pages/login');
+    });
+})
 
 app.listen(PORT, () => console.log(`Listening on ${ PORT }`));
