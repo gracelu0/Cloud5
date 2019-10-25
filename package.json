@@ -5,9 +5,9 @@
   "engines": {
     "node": "10.x"
   },
-  "main": "index.js",
+  "main": "game.js",
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "nodemon game.js",
     "test": "node test.js"
   },
   "dependencies": {
