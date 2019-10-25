@@ -3,12 +3,12 @@ const path = require('path');
 const PORT = process.env.PORT || 5000
 var app = express();
 
+const flash = require('connect-flash');
+app.use(flash());
+
 const { Pool } = require('pg');
 var pool = new Pool({
-    user: 'postgres',
-    password: 'mantiS7326510#',
-    host: 'localhost',
-    database: 'cloud5'
+    connectionString: process.env.DATABASE_URL
 });
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -47,6 +47,11 @@ app.post('/login', (req, res) => {
     var userID = req.body.username;
     var userpwd = req.body.pwd;
     var loginQuery = `SELECT * FROM logindb WHERE username='${userID}'`;
+
+    // function flashrequest(res) {
+    //     res.flash('success', "Login Successful!");
+    // }
+
     pool.query(loginQuery, (error, result) => {
 
         if (error)
@@ -59,6 +64,7 @@ app.post('/login', (req, res) => {
             if(result.rows[0].password == userpwd) {
                 console.log("Successful login");
                 res.render('pages/home');
+                // res.render('pages/home', {message: flashrequest(res)});
             }
             else {
                 res.send("Password and username do not match");
