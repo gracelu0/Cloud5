@@ -40,6 +40,24 @@ app.post('/postgame', (req,res) => {
     res.render('pages/postgame');
 });
 
+app.get('/login', (req, res) => {
+    var userID=req.body.uname;
+    var loginQuery = `SELECT * FROM logindb WHERE username='${userID}'`;
+    pool.query(loginQuery, (error, result) => {
+        if (error)
+            res.end(error);
+        
+        var userIDs={'rows': result.rows};
+
+        if (!Array.isArray(userIDs['rows']) || !userIDs['rows'].length)
+            res.end("User is not in db!");
+
+        else
+            res.render('pages/home');        
+    })
+
+});
+
 
 app.post('/signUpForm', (req,res) => {
     var insertUsername = req.body.username;
