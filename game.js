@@ -58,8 +58,14 @@ app.post('/login', (req, res) => {
 
         else
             if(result.rows[0].password == userpwd) {
-                console.log("Successful login");
-                res.render('pages/home');
+                console.log("Login successful");
+                if (result.row[0].usertype == 'User'){
+                    res.render('pages/home');
+                }
+                else {
+                    res.render('pages/admin');
+                } // result.row[0].usertype == 'Admin'
+
             }
             else {
                 res.send("Password and username do not match");
