@@ -59,7 +59,7 @@ app.post('/login', (req, res) => {
         if(result.rows.length === 0)
             res.render("pages/errors/wrongUser");
 
-        else {
+        else{
             if(await bcrypt.compare(userpwd, result.rows[0].password)) {
                 console.log("Login successful");
                 if (result.rows[0].usertype == 'User'){
@@ -73,7 +73,8 @@ app.post('/login', (req, res) => {
             else {
                 res.render("pages/errors/wrongPwd");
             }
-          }
+          
+        }
     });
 });
 
