@@ -92,7 +92,7 @@ app.post('/signUpForm', async (req,res) => {
             res.send("Username is taken!");
             return res.render('pages/signUp');
         }
-        res.render('pages/login');
+        return res.render('pages/login');
     });
 });
 
