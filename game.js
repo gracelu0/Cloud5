@@ -7,14 +7,9 @@ const bcrypt = require('bcrypt');
 
 var app = express();
 
-// const { Pool } = require('pg');
-// var pool = new Pool({
-//     connectionString: process.env.DATABASE_URL
-// });
-
 const { Pool } = require('pg');
-const pool = new Pool({
-  connectionString: "postgres://postgres:shimarov6929@localhost/cloud5"
+var pool = new Pool({
+  connectionString: process.env.DATABASE_URL
 });
 
 app.use(express.static(path.join(__dirname, 'public')));
