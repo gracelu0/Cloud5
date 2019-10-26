@@ -7,9 +7,14 @@ const bcrypt = require('bcrypt');
 
 var app = express();
 
+// const { Pool } = require('pg');
+// var pool = new Pool({
+//     connectionString: process.env.DATABASE_URL
+// });
+
 const { Pool } = require('pg');
-var pool = new Pool({
-    connectionString: process.env.DATABASE_URL
+const pool = new Pool({
+  connectionString: "postgres://postgres:shimarov6929@localhost/cloud5"
 });
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -57,10 +62,10 @@ app.post('/login', (req, res) => {
             res.end(error);
 
         if(result.rows.length === 0)
-            console.log("not a regular user");
+            res.render("pages/errors/wrongUser");
 
-        else
-            if(await bcrypt.compare(userpwd, result.rows[0].password) {
+        else {
+            if(await bcrypt.compare(userpwd, result.rows[0].password)) {
                 console.log("Login successful");
                 if (result.row[0].usertype == 'User'){
                     res.render('pages/home');
@@ -71,8 +76,9 @@ app.post('/login', (req, res) => {
 
             }
             else {
-                res.send("Password and username do not match");
+                res.render("pages/errors/wrongPwd");
             }
+          }
     });
 });
 
@@ -85,10 +91,9 @@ app.post('/signUpForm', async (req,res) => {
     var insertEmail = req.body.email;
 
     if(insertPassword !== confirm){
-        res.send("Passwords do not match");
-        return res.render('pages/signUp');
+        res.render("pages/errors/pwdSignUp");
     }
-
+    else{
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
     console.log(salt);
@@ -102,7 +107,7 @@ app.post('/signUpForm', async (req,res) => {
         }
         return res.render('pages/login');
     });
+  }
 });
 
 app.listen(PORT, () => console.log(`Listening on ${ PORT }`));
-
