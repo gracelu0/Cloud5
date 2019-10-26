@@ -62,7 +62,7 @@ app.post('/login', (req, res) => {
         else {
             if(await bcrypt.compare(userpwd, result.rows[0].password)) {
                 console.log("Login successful");
-                if (result.row[0].usertype == 'User'){
+                if (result.rows[0].usertype == 'User'){
                     res.render('pages/home');
                 }
                 else {
