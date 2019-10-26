@@ -53,7 +53,7 @@ function drawplayer(){
     }
 
     var playerSprite = new Image();
-    playerSprite.src = "testBlue.png";
+    playerSprite.src = "pages/testBlue.png";
     ctx.drawImage(playerSprite, player_x, player_y, player_w, player_h);
 }
 
@@ -62,16 +62,16 @@ function drawbullet(){
         for(var i = 0; i < bullets.length; i++){
             var bulletSprite = new Image();
             if(bullets[i].speedX < 0){
-                bulletSprite.src = "testBulletLeft.png";
+                bulletSprite.src = "pages/testBulletLeft.png";
             }
             if(bullets[i].speedX > 0){
-                bulletSprite.src = "testBulletRight.png";
+                bulletSprite.src = "pages/testBulletRight.png";
             }
             if(bullets[i].speedY < 0){
-                bulletSprite.src = "testBulletUp.png";
+                bulletSprite.src = "pages/testBulletUp.png";
             }
             if(bullets[i].speedY > 0){
-                bulletSprite.src = "testBulletDown.png";
+                bulletSprite.src = "pages/testBulletDown.png";
             }
             ctx.drawImage(bulletSprite, bullets[i].x, bullets[i].y, bullets[i].width, bullets[i].height);
         }
