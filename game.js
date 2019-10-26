@@ -48,16 +48,7 @@ app.post('/login', (req, res) => {
     var userID = req.body.username;
     var userpwd = req.body.pwd;
     var loginQuery = `SELECT * FROM logindb WHERE username='${userID}'`;
-<<<<<<< HEAD:index.js
     pool.query(loginQuery, async (error, result) => {
-=======
-
-    // function flashrequest(res) {
-    //     res.flash('success', "Login Successful!");
-    // }
-
-    pool.query(loginQuery, (error, result) => {
->>>>>>> 2e9efeda74d68a96a08a0e4a2b70dbb738cb5f92:game.js
 
         if (error)
             res.end(error);
@@ -101,7 +92,7 @@ app.post('/signUpForm', async (req,res) => {
             res.send("Username is taken!");
             return res.render('pages/signUp');
         }
-        res.render('pages/login');
+        return res.render('pages/login');
     });
 });
 
