@@ -60,7 +60,7 @@ app.post('/login', (req, res) => {
             console.log("not a regular user");
 
         else
-            if(await bcrypt.compare(userpwd, result.rows[0].password) {
+            if(await bcrypt.compare(userpwd, result.rows[0].password)) {
                 console.log("Login successful");
                 if (result.row[0].usertype == 'User'){
                     res.render('pages/home');
