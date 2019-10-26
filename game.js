@@ -1,10 +1,12 @@
 const express = require('express');
 const path = require('path');
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const flash = require('express-flash');
 const PORT = process.env.PORT || 5000
-var app = express();
 
-const flash = require('connect-flash');
-app.use(flash());
+var app = express();
+var sessionStore = new session.MemoryStore;
 
 const { Pool } = require('pg');
 var pool = new Pool({
@@ -14,13 +16,34 @@ var pool = new Pool({
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+app.use(cookieParser('secret'));
+app.use(session({
+    cookie: { maxAge: 60000 },
+    store: sessionStore,
+    saveUninitialized: true,
+    resave: 'true',
+    secret: 'secret'
+}));
+app.use(flash());
+
+
+app.use(function(req, res, next){
+    res.locals.sessionFlash = req.session.sessionFlash;
+    delete req.session.sessionFlash;
+    next();
+});
+
+
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-app.get('/', (req, res) => {res.render('pages/login')});
+app.get('/', (req, res) => {
+    res.render('pages/login')
+});
 
 
-app.post('/home', (req,res) => {
-    res.render('pages/home');
+app.get('/home', (req,res) => {
+    res.render('pages/home', {messages: req.flash('info')});
 });
 
 app.post('/signUp', (req,res) => {
@@ -48,10 +71,6 @@ app.post('/login', (req, res) => {
     var userpwd = req.body.pwd;
     var loginQuery = `SELECT * FROM logindb WHERE username='${userID}'`;
 
-    // function flashrequest(res) {
-    //     res.flash('success', "Login Successful!");
-    // }
-
     pool.query(loginQuery, (error, result) => {
 
         if (error)
@@ -63,8 +82,8 @@ app.post('/login', (req, res) => {
         else
             if(result.rows[0].password == userpwd) {
                 console.log("Successful login");
-                res.render('pages/home');
-                // res.render('pages/home', {message: flashrequest(res)});
+                req.flash('info', 'Login Successful');
+                res.redirect('/home');
             }
             else {
                 res.send("Password and username do not match");
