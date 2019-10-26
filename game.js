@@ -1,12 +1,11 @@
 const express = require('express');
 const path = require('path');
 const PORT = process.env.PORT || 5000
+
 var app = express();
 const bcrypt = require('bcrypt');
-//hello
 
-const flash = require('connect-flash');
-app.use(flash());
+var app = express();
 
 const { Pool } = require('pg');
 var pool = new Pool({
@@ -18,7 +17,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-app.get('/', (req, res) => {res.render('pages/login')});
+app.get('/', (req, res) => {
+    res.render('pages/login')
+});
 
 
 app.post('/home', (req,res) => {
@@ -49,6 +50,7 @@ app.post('/login', (req, res) => {
     var userID = req.body.username;
     var userpwd = req.body.pwd;
     var loginQuery = `SELECT * FROM logindb WHERE username='${userID}'`;
+
     pool.query(loginQuery, async (error, result) => {
 
         if (error)
@@ -58,10 +60,15 @@ app.post('/login', (req, res) => {
             console.log("not a regular user");
 
         else
-            if(await bcrypt.compare(userpwd, result.rows[0].password)) {
-                console.log("Successful login");
-                res.render('pages/home');
-                // res.render('pages/home', {message: flashrequest(res)});
+            if(await bcrypt.compare(userpwd, result.rows[0].password) {
+                console.log("Login successful");
+                if (result.row[0].usertype == 'User'){
+                    res.render('pages/home');
+                }
+                else {
+                    res.render('pages/admin');
+                } // result.row[0].usertype == 'Admin'
+
             }
             else {
                 res.send("Password and username do not match");
