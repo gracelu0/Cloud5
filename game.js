@@ -4,12 +4,12 @@ const PORT = process.env.PORT || 5000
 var app = express();
 const bcrypt = require('bcrypt');
 
+const flash = require('connect-flash');
+app.use(flash());
+
 const { Pool } = require('pg');
 var pool = new Pool({
-    user: 'postgres',
-    password: 'mantiS7326510#',
-    host: 'localhost',
-    database: 'cloud5'
+    connectionString: process.env.DATABASE_URL
 });
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -48,7 +48,16 @@ app.post('/login', (req, res) => {
     var userID = req.body.username;
     var userpwd = req.body.pwd;
     var loginQuery = `SELECT * FROM logindb WHERE username='${userID}'`;
+<<<<<<< HEAD:index.js
     pool.query(loginQuery, async (error, result) => {
+=======
+
+    // function flashrequest(res) {
+    //     res.flash('success', "Login Successful!");
+    // }
+
+    pool.query(loginQuery, (error, result) => {
+>>>>>>> 2e9efeda74d68a96a08a0e4a2b70dbb738cb5f92:game.js
 
         if (error)
             res.end(error);
@@ -60,6 +69,7 @@ app.post('/login', (req, res) => {
             if(await bcrypt.compare(userpwd, result.rows[0].password)) {
                 console.log("Successful login");
                 res.render('pages/home');
+                // res.render('pages/home', {message: flashrequest(res)});
             }
             else {
                 res.send("Password and username do not match");
