@@ -9,7 +9,7 @@ var app = express();
 
 const { Pool } = require('pg');
 var pool = new Pool({
-  connectionString: process.env.DATABASE_URL
+  connectionString: 'postgres://postgres:1234@localhost/logindb'
 });
 
 app.use(express.static(path.join(__dirname, 'public')));

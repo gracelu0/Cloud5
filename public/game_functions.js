@@ -53,7 +53,7 @@ function drawplayer(){
     }
 
     var playerSprite = new Image();
-    playerSprite.src = "pages/testBlue.png";
+    playerSprite.src = "sprites/testBlue.png";
     ctx.drawImage(playerSprite, player_x, player_y, player_w, player_h);
 }
 
@@ -62,16 +62,16 @@ function drawbullet(){
         for(var i = 0; i < bullets.length; i++){
             var bulletSprite = new Image();
             if(bullets[i].speedX < 0){
-                bulletSprite.src = "pages/testBulletLeft.png";
+                bulletSprite.src = "sprites/testBulletLeft.png";
             }
             if(bullets[i].speedX > 0){
-                bulletSprite.src = "pages/testBulletRight.png";
+                bulletSprite.src = "sprites/testBulletRight.png";
             }
             if(bullets[i].speedY < 0){
-                bulletSprite.src = "pages/testBulletUp.png";
+                bulletSprite.src = "sprites/testBulletUp.png";
             }
             if(bullets[i].speedY > 0){
-                bulletSprite.src = "pages/testBulletDown.png";
+                bulletSprite.src = "sprites/testBulletDown.png";
             }
             ctx.drawImage(bulletSprite, bullets[i].x, bullets[i].y, bullets[i].width, bullets[i].height);
         }
@@ -93,7 +93,6 @@ function movebullet(){
 }
 
 function keyDown(evt){
-    console.log(evt.keyCode);
     if(evt.keyCode == 39) {right = true;}
     else if(evt.keyCode == 37) {left = true;}
     if(evt.keyCode == 38) {up = true;}
@@ -112,19 +111,19 @@ function keyDown(evt){
         };
         
         if(up){
-            b.speedY -= 2;
+            b.speedY -= 20;
             b.width = 10;
         }
         else if(down){
-            b.speedY += 2;
+            b.speedY += 20;
             b.width = 10;
         }
         else if(left) {
-            b.speedX -= 2;
+            b.speedX -= 20;
             b.height = 10;
         }
         else if(right || (b.speedX === 0 && b.speedY === 0)){
-            b.speedX += 2;
+            b.speedX += 20;
             b.height = 10;
         }
         bullets.push(b);
