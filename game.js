@@ -3,6 +3,9 @@ const path = require('path');
 const PORT = process.env.PORT || 5000
 
 var app = express();
+const bcrypt = require('bcrypt');
+
+var app = express();
 
 const { Pool } = require('pg');
 var pool = new Pool({
@@ -48,7 +51,7 @@ app.post('/login', (req, res) => {
     var userpwd = req.body.pwd;
     var loginQuery = `SELECT * FROM logindb WHERE username='${userID}'`;
 
-    pool.query(loginQuery, (error, result) => {
+    pool.query(loginQuery, async (error, result) => {
 
         if (error)
             res.end(error);
@@ -57,7 +60,7 @@ app.post('/login', (req, res) => {
             console.log("not a regular user");
 
         else
-            if(result.rows[0].password == userpwd) {
+            if(await bcrypt.compare(userpwd, result.rows[0].password) {
                 console.log("Login successful");
                 if (result.row[0].usertype == 'User'){
                     res.render('pages/home');
@@ -74,25 +77,30 @@ app.post('/login', (req, res) => {
 });
 
 
-app.post('/signUpForm', (req,res) => {
+app.post('/signUpForm', async (req,res) => {
+
     var insertUsername = req.body.username;
     var insertPassword = req.body.password;
     var confirm = req.body.confirmPassword;
     var insertEmail = req.body.email;
-    console.log(req.body);
 
     if(insertPassword !== confirm){
         res.send("Passwords do not match");
         return res.render('pages/signUp');
     }
 
-    var insertquery = `INSERT INTO logindb(username, password, email) VALUES ('${insertUsername}', '${insertPassword}', '${insertEmail}');`
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(req.body.password, salt);
+    console.log(salt);
+    console.log(hashedPassword);
+
+    var insertquery = `INSERT INTO logindb(username, password, email) VALUES ('${insertUsername}', '${hashedPassword}', '${insertEmail}');`
     pool.query(insertquery, (error, result) => {
         if(error){
             res.send("Username is taken!");
             return res.render('pages/signUp');
         }
-        res.render('pages/login');
+        return res.render('pages/login');
     });
 });
 
