@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const PORT = process.env.PORT || 5000
 var app = express();
+const bcrypt = require('bcrypt');
 
 const flash = require('connect-flash');
 app.use(flash());
@@ -47,12 +48,16 @@ app.post('/login', (req, res) => {
     var userID = req.body.username;
     var userpwd = req.body.pwd;
     var loginQuery = `SELECT * FROM logindb WHERE username='${userID}'`;
+<<<<<<< HEAD:index.js
+    pool.query(loginQuery, async (error, result) => {
+=======
 
     // function flashrequest(res) {
     //     res.flash('success', "Login Successful!");
     // }
 
     pool.query(loginQuery, (error, result) => {
+>>>>>>> 2e9efeda74d68a96a08a0e4a2b70dbb738cb5f92:game.js
 
         if (error)
             res.end(error);
@@ -61,7 +66,7 @@ app.post('/login', (req, res) => {
             console.log("not a regular user");
 
         else
-            if(result.rows[0].password == userpwd) {
+            if(await bcrypt.compare(userpwd, result.rows[0].password)) {
                 console.log("Successful login");
                 res.render('pages/home');
                 // res.render('pages/home', {message: flashrequest(res)});
@@ -73,19 +78,24 @@ app.post('/login', (req, res) => {
 });
 
 
-app.post('/signUpForm', (req,res) => {
+app.post('/signUpForm', async (req,res) => {
+
     var insertUsername = req.body.username;
     var insertPassword = req.body.password;
     var confirm = req.body.confirmPassword;
     var insertEmail = req.body.email;
-    console.log(req.body);
 
     if(insertPassword !== confirm){
         res.send("Passwords do not match");
         return res.render('pages/signUp');
     }
 
-    var insertquery = `INSERT INTO logindb(username, password, email) VALUES ('${insertUsername}', '${insertPassword}', '${insertEmail}');`
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(req.body.password, salt);
+    console.log(salt);
+    console.log(hashedPassword);
+
+    var insertquery = `INSERT INTO logindb(username, password, email) VALUES ('${insertUsername}', '${hashedPassword}', '${insertEmail}');`
     pool.query(insertquery, (error, result) => {
         if(error){
             res.send("Username is taken!");
