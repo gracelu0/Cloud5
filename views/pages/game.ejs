@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" dir="ltr">
     <head>
         <style>
             body{
@@ -11,10 +11,15 @@
         </style>
         
     </head>
-
-    <canvas id="canvas" width="1910" height="920">
+    <body>
+      <canvas id="canvas" width="1910" height="920">
         <img src="testMap.png">
-    </canvas>
+      </canvas>
     
-    <script src="game_functions.js"></script>
+      <script src="game_functions.js"></script>
+
+      <form class="" action="/postgame" method="post">
+        <button type="submit" name="button">Go to postgame screen</button>
+      </form>
+    </body>
 </html>
