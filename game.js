@@ -1,4 +1,6 @@
 const express = require('express');
+const session = require('express-session');
+const flash = require('express-flash');
 const path = require('path');
 const PORT = process.env.PORT || 5000
 
@@ -14,6 +16,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
+app.use(session({
+	saveUninitialized: false,
+	resave: 'false',
+	secret: 'This is for our flash messages'
+}))
+app.use(flash());
+
 app.get('/', (req, res) => {
     res.render('pages/login')
 });
@@ -59,12 +69,11 @@ app.post('/login', (req, res) => {
         else
             if(result.rows[0].password == userpwd) {
                 console.log("Login successful");
-                if (result.row[0].usertype == 'User'){
+                if (result.row[0].usertype == 'User')
                     res.render('pages/home');
-                }
-                else {
+                else // result.row[0].usertype == 'Admin'
                     res.render('pages/admin');
-                } // result.row[0].usertype == 'Admin'
+
 
             }
             else {
