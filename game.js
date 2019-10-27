@@ -5,10 +5,14 @@ const path = require('path');
 const PORT = process.env.PORT || 5000
 
 var app = express();
+const bcrypt = require('bcrypt');
+
+var app = express();
 
 const { Pool } = require('pg');
 var pool = new Pool({
     connectionString: process.env.DATABASE_URL
+  //connectionString: 'postgres://postgres:1234@localhost/logindb'
 });
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -58,18 +62,18 @@ app.post('/login', (req, res) => {
     var userpwd = req.body.pwd;
     var loginQuery = `SELECT * FROM logindb WHERE username='${userID}'`;
 
-    pool.query(loginQuery, (error, result) => {
+    pool.query(loginQuery, async (error, result) => {
 
         if (error)
             res.end(error);
 
         if(result.rows.length === 0)
-            console.log("not a regular user");
+            res.render("pages/errors/wrongUser");
 
-        else
-            if(result.rows[0].password == userpwd) {
+        else{
+            if(await bcrypt.compare(userpwd, result.rows[0].password)) {
                 console.log("Login successful");
-                if (result.row[0].usertype == 'User')
+                if (result.rows[0].usertype == 'User'){
                     res.render('pages/home');
                 else // result.row[0].usertype == 'Admin'
                     res.render('pages/admin');
@@ -77,33 +81,39 @@ app.post('/login', (req, res) => {
 
             }
             else {
-                res.send("Password and username do not match");
+                res.render("pages/errors/wrongPwd");
             }
+          
+        }
     });
 });
 
 
-app.post('/signUpForm', (req,res) => {
+app.post('/signUpForm', async (req,res) => {
+
     var insertUsername = req.body.username;
     var insertPassword = req.body.password;
     var confirm = req.body.confirmPassword;
     var insertEmail = req.body.email;
-    console.log(req.body);
 
     if(insertPassword !== confirm){
-        res.send("Passwords do not match");
-        return res.render('pages/signUp');
+        res.render("pages/errors/pwdSignUp");
     }
+    else{
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(req.body.password, salt);
+    console.log(salt);
+    console.log(hashedPassword);
 
-    var insertquery = `INSERT INTO logindb(username, password, email) VALUES ('${insertUsername}', '${insertPassword}', '${insertEmail}');`
+    var insertquery = `INSERT INTO logindb(username, password, email) VALUES ('${insertUsername}', '${hashedPassword}', '${insertEmail}');`
     pool.query(insertquery, (error, result) => {
         if(error){
             res.send("Username is taken!");
             return res.render('pages/signUp');
         }
-        res.render('pages/login');
+        return res.render('pages/login');
     });
+  }
 });
 
 app.listen(PORT, () => console.log(`Listening on ${ PORT }`));
-

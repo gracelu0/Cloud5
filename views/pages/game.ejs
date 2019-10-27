@@ -1,13 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title>Game</title>
-  </head>
-  <body>
-    <h1>GAME SCREEN</h1>
-    <form class="" action="/postgame" method="post">
-      <button type="submit" name="button">Go to postgame screen</button>
-    </form>
-  </body>
+    <head>
+        <style>
+            body{
+                background: url("sprites/testMap.png") 0 0;
+                background-repeat: no-repeat;
+                position: relative;
+                background-size: cover;
+            }
+        </style>
+        
+    </head>
+    <body>
+      <canvas id="canvas" width="1880" height="890">
+      </canvas>
+    
+      <script src="game_functions.js"></script>
+
+      <form class="" action="/postgame" method="post">
+        <button type="submit" name="button">Go to postgame screen</button>
+      </form>
+    </body>
 </html>
