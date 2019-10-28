@@ -6,6 +6,11 @@
   </head>
   <body>
     <h1>HOME PAGE</h1>
+
+    <% if ( typeof message != 'undefined' && message.length > 0) { %>
+    <b class="successMessage"><%= message %></b>
+    <% } %>
+    
     <h2>Objective of the game</h2>
     <h3> ADMIN VIEW</h3>
     <form class="" action="/pregame" method="post">
