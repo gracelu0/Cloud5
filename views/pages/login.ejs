@@ -10,6 +10,10 @@
 
     <h1 align="center">HIDDEN TRAPS</h1>
 
+    <% if ( typeof signupMessage != 'undefined' && signupMessage.length > 0) { %>
+    <p class="successMessage"><%= signupMessage %></p>
+    <% } %>
+
     <!--modal content-->
     <form class="" action="/login" method="post">
       <div class="container">
@@ -17,15 +21,18 @@
         <input type="text" id="username" name="username" placeholder="Enter username" required>
 
         <label for="pwd">Password</label>
-        <input type="text" id="pwd" name="pwd" placeholder="Enter password" required>
+        <input type="password" id="pwd" name="pwd" placeholder="Enter password" required>
+
+        <% if ( typeof loginMessage != 'undefined' && loginMessage.length > 0) { %>
+        <p class="errorMessage"><%= loginMessage %></p>
+        <% } %>
 
         <button type="submit" name="signInBtn">Login</button>
-
-
     </form>
     <form class="" action="/signUp" method="post">
       <button type="submit" name="signUpBtn">Sign up</button>
     </form>
+
   </body>
 
 </html>

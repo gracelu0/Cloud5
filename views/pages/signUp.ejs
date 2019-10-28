@@ -8,16 +8,21 @@
   </head>
   <body>
     <h1 align="center">SIGN UP</h1>
+
+    <% if ( typeof message != 'undefined' && message.length > 0) { %>
+    <p class="errorMessage"><%= message %></p>
+    <% } %>
+
     <form id="signupform" action="/signUpForm" method="POST">
       <div class="container">
           <label for="uname">Username</label>
           <input id="uname" name="username" type="text" maxlength="30" placeholder="Username" required>
           
           <label for="pswd">Password</label>
-          <input id="pswd" name="password" type="text" maxlength="30" placeholder="Password" required>
+          <input id="pswd" name="password" type="password" maxlength="30" placeholder="Password" required>
 
           <label for="confirmpswd">Confirm password</label>
-          <input id="confirmpswd" name="confirmPassword" type="text" maxlength="30" placeholder="Confirm password">
+          <input id="confirmpswd" name="confirmPassword" type="password" maxlength="30" placeholder="Confirm password">
 
           <label for="mail">Email (optional)</label>
           <input id="mail" name="email" type="email" placeholder="optional">

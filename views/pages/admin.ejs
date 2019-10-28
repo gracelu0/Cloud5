@@ -6,8 +6,34 @@
   </head>
   <body>
     <h1>HOME PAGE</h1>
-    <h2>Objective of the game</h2>
+
+    <% if ( typeof message != 'undefined' && message.length > 0) { %>
+    <p class="successMessage"><%= message %></p>
+    <% } %>
+
     <h3> ADMIN VIEW</h3>
+    <table>
+			<caption>Hidden Traps Game Users</caption>
+			<thead>
+				<tr>
+					<th>&nbsp;&nbsp;&nbsp;&nbsp;Username</th>
+					<th>&nbsp;&nbsp;&nbsp;&nbsp;Email</th>
+					<th>&nbsp;&nbsp;&nbsp;&nbsp;Type of User</th>
+				</tr>
+			</thead>
+			<tbody>
+				<% rows.forEach((r) => { %>
+				<tr>
+          <form action="/removeUser/<%= r.userid %>" method="get">
+						<td><%= r.username %></td>
+						<td><%= r.email %></td>
+						<td><%= r.usertype %></td>
+						<td><button type="submit" id="deleteUser">Remove user from users list!</button></td>
+					</form>
+				</tr>
+        <% }); %>
+      </tbody>
+    </table>
     <form class="" action="/pregame" method="post">
       <button type="submit" name="button">Start</button>
     </form>
