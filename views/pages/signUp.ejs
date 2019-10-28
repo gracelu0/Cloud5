@@ -10,7 +10,7 @@
     <h1 align="center">SIGN UP</h1>
 
     <% if ( typeof message != 'undefined' && message.length > 0) { %>
-    <b class="errorMessage"><%= message %></b>
+    <p class="errorMessage"><%= message %></p>
     <% } %>
 
     <form id="signupform" action="/signUpForm" method="POST">

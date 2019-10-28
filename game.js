@@ -62,8 +62,17 @@ app.post('/login', (req, res) => {
             if(await bcrypt.compare(userpwd, result.rows[0].password)){
                 if (result.rows[0].usertype == 'User')
                     res.render('pages/home', {message: 'Successfully logged in!'});
-                else // result.row[0].usertype == 'Admin'
-                    res.render('pages/admin', {message: 'Successfully logged in as an admin!'});
+                else{ // result.row[0].usertype == 'Admin'
+
+                    var usersQuery=`SELECT userid, username, email, usertype FROM logindb`;
+                    pool.query(usersQuery, (error, result) =>{
+                        if (error)
+                            res.end(error);
+                    
+                        var allUsers = {'rows': result.rows};
+                        res.render('pages/admin', allUsers);
+                    });
+                }
             }
             else 
                 res.render('pages/login', {loginMessage: 'Password entered is incorrect! Please try again.'});
@@ -88,12 +97,31 @@ app.post('/signUpForm', async (req,res) => {
 
     var insertquery = `INSERT INTO logindb(username, password, email) VALUES ('${insertUsername}', '${hashedPassword}', '${insertEmail}');`
     pool.query(insertquery, (error, result) => {
-        if(error){
+        if(error)
             return res.render('pages/signUp', {message: 'Username already taken!'});
-        }
         return res.render('pages/login', {signupMessage: 'New user created!'});
     });
   }
+});
+  
+app.get('/removeUser/:userID', (req,res) => {
+
+    var deleteUserQuery=`DELETE FROM logindb WHERE userid = ${req.params.userID}`;
+
+    pool.query(deleteUserQuery, (error, result) => {
+        if (error)
+            res.end(error);
+
+        var usersQuery=`SELECT userid, username, email, usertype FROM logindb`;
+
+        pool.query(usersQuery, (error, result) =>{
+            if (error)
+                res.end(error);
+
+            var allUsers = {'rows': result.rows};
+            res.render('pages/admin', allUsers);
+        });
+    });
 });
 
 app.listen(PORT, () => console.log(`Listening on ${ PORT }`));
