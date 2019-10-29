@@ -6,9 +6,16 @@ var app = express();
 const bcrypt = require('bcrypt');
 
 const { Pool } = require('pg');
+// var pool = new Pool({
+//     connectionString: process.env.DATABASE_URL
+//   //connectionString: 'postgres://postgres:1234@localhost/logindb'
+// });
+
 var pool = new Pool({
-    connectionString: process.env.DATABASE_URL
-  //connectionString: 'postgres://postgres:1234@localhost/logindb'
+  user: 'graceluo',
+  password: 'tokicorgi',
+  host: 'localhost',
+  database: 'cloud5'
 });
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -68,13 +75,13 @@ app.post('/login', (req, res) => {
                     pool.query(usersQuery, (error, result) =>{
                         if (error)
                             res.end(error);
-                    
+
                         var allUsers = {'rows': result.rows};
                         res.render('pages/admin', allUsers);
                     });
                 }
             }
-            else 
+            else
                 res.render('pages/login', {loginMessage: 'Password entered is incorrect! Please try again.'});
         }
     });
@@ -103,7 +110,7 @@ app.post('/signUpForm', async (req,res) => {
     });
   }
 });
-  
+
 app.get('/removeUser/:userID', (req,res) => {
 
     var deleteUserQuery=`DELETE FROM logindb WHERE userid = ${req.params.userID}`;
