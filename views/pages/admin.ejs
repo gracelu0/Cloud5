@@ -24,7 +24,7 @@
 			<tbody>
 				<% rows.forEach((r) => { %>
 				<tr>
-          <form action="/removeUser/<%= r.userid %>" method="get">
+          <form action="/removeUser/<%= r.userid %>" method="get" onsubmit="return confirm('Are you sure you want to remove <%= r.username %> from users list?')">
 						<td><%= r.username %></td>
 						<td><%= r.email %></td>
 						<td><%= r.usertype %></td>

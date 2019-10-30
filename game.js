@@ -105,7 +105,6 @@ app.post('/signUpForm', async (req,res) => {
 });
   
 app.get('/removeUser/:userID', (req,res) => {
-
     var deleteUserQuery=`DELETE FROM logindb WHERE userid = ${req.params.userID}`;
 
     pool.query(deleteUserQuery, (error, result) => {
@@ -114,7 +113,7 @@ app.get('/removeUser/:userID', (req,res) => {
 
         var usersQuery=`SELECT userid, username, email, usertype FROM logindb`;
 
-        pool.query(usersQuery, (error, result) =>{
+        pool.query(usersQuery, (error, result) => {
             if (error)
                 res.end(error);
 
