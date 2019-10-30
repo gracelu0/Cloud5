@@ -31,7 +31,11 @@
 						<td><%= r.username %></td>
 						<td><%= r.email %></td>
 						<td><%= r.usertype %></td>
-						<td><button type="submit" id="deleteUser">DELETE USER ACCOUNT</button></td>
+						<td>
+              
+              <%if( r.usertype == 'user'){%><button type="submit" id="deleteUser">DELETE USER ACCOUNT</button><%}%>
+            
+            </td>
 					</form>
 				</tr>
         <% }); %>
