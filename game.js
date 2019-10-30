@@ -9,8 +9,8 @@ const bcrypt = require('bcrypt');
 
 const { Pool } = require('pg');
 var pool = new Pool({
-    // connectionString: process.env.DATABASE_URL
-  connectionString: 'postgres://postgres:shimarov6929@localhost/cloud5'
+  connectionString: process.env.DATABASE_URL
+  //connectionString: 'postgres://postgres:shimarov6929@localhost/cloud5'
 });
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -85,12 +85,10 @@ app.post('/login', (req, res) => {
 
 
 app.post('/signUpForm', async (req,res) => {
-
     var insertUsername = req.body.username;
     var insertPassword = req.body.password;
     var confirm = req.body.confirmPassword;
     var insertEmail = req.body.email;
-
     if(insertPassword !== confirm){
         res.render('pages/signUp', {message: 'Passwords do not match!'});
     }
@@ -131,8 +129,6 @@ app.post('/signUpForm', async (req,res) => {
    });
   }
 });
-
-
 
 app.post('/mailCodeForm', (req,res) => {
   var mailCode = req.body.par;
