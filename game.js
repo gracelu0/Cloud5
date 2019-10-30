@@ -1,5 +1,7 @@
 const express = require('express');
 const path = require('path');
+const nodemailer = require('nodemailer');
+const randomstring = require('randomstring');
 const PORT = process.env.PORT || 5000
 
 var app = express();
@@ -7,9 +9,10 @@ const bcrypt = require('bcrypt');
 
 const { Pool } = require('pg');
 var pool = new Pool({
-    connectionString: process.env.DATABASE_URL
-  //connectionString: 'postgres://postgres:1234@localhost/logindb'
+  connectionString: process.env.DATABASE_URL
+  //connectionString: 'postgres://postgres:shimarov6929@localhost/cloud5'
 });
+
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
@@ -60,21 +63,22 @@ app.post('/login', (req, res) => {
 
         else{
             if(await bcrypt.compare(userpwd, result.rows[0].password)){
-                if (result.rows[0].usertype == 'User')
+                if ((result.rows[0].usertype == 'User') && (result.rows[0].confirmation_status === 1))
                     res.render('pages/home', {message: 'Successfully logged in!'});
+                else if (result.rows[0].confirmation_status !== 1)
+                    res.send('Error: mail is not confirmed');
                 else{ // result.row[0].usertype == 'Admin'
-
                     var usersQuery=`SELECT userid, username, email, usertype FROM logindb`;
                     pool.query(usersQuery, (error, result) =>{
                         if (error)
                             res.end(error);
-                    
+
                         var allUsers = {'rows': result.rows};
                         res.render('pages/admin', allUsers);
                     });
                 }
             }
-            else 
+            else
                 res.render('pages/login', {loginMessage: 'Password entered is incorrect! Please try again.'});
         }
     });
@@ -82,28 +86,68 @@ app.post('/login', (req, res) => {
 
 
 app.post('/signUpForm', async (req,res) => {
-
     var insertUsername = req.body.username;
     var insertPassword = req.body.password;
     var confirm = req.body.confirmPassword;
     var insertEmail = req.body.email;
-
     if(insertPassword !== confirm){
         res.render('pages/signUp', {message: 'Passwords do not match!'});
     }
     else{
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
-
-    var insertquery = `INSERT INTO logindb(username, password, email) VALUES ('${insertUsername}', '${hashedPassword}', '${insertEmail}');`
+    const mailCode = randomstring.generate(20);
+    console.log(mailCode);
+    var insertquery = `INSERT INTO logindb(username, password, email, confirmation_code) VALUES ('${insertUsername}', '${hashedPassword}', '${insertEmail}', '${mailCode}');`;
     pool.query(insertquery, (error, result) => {
         if(error)
-            return res.render('pages/signUp', {message: 'Username already taken!'});
-        return res.render('pages/login', {signupMessage: 'New user created!'});
-    });
+          return res.render('pages/signUp', {message: 'Username already taken!'});
+    res.render('pages/mailConfirm', {mailCode});
+        //return res.render('pages/mailConfirm');
+        let transporter  = nodemailer.createTransport({
+          host: 'smtp.gmail.com',
+          port: 465,
+          secure: true,
+          auth: {
+            user: 'cloud5sfu@gmail.com',
+            pass: 'cmpt276cloud5'
+          }
+        });
+        let mailOptions = {
+          from: '"Cloud5" cloud5sfu@gmail.com',
+          to: insertEmail,
+          subject: "Email confirmation",
+          text: "Please, confirm the email. The confirmation code is: " + mailCode
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error){
+            return console.log(error);
+          }
+          console.log('Message %s sent: %s', info.messageId, info.response);
+        });
+        return res.render('pages/mailConfirm');
+   });
   }
 });
-  
+
+app.post('/mailCodeForm', (req,res) => {
+  var mailCode = req.body.par;
+  var codeInput = req.body.mailCodeInput;
+  if(codeInput === mailCode){
+    res.render('pages/login.ejs')
+    var  updateConfirmationStatus = `UPDATE logindb SET confirmation_status = 1 WHERE confirmation_code = '${mailCode}'`;
+    pool.query(updateConfirmationStatus, (error, result) => {
+        if (error)
+            res.end(error);
+    });
+  }
+  else{
+    res.send("Error: Wrong confirmation code");
+  }
+  console.log(mailCode);
+});
+
 app.get('/removeUser/:userID', (req,res) => {
     var deleteUserQuery=`DELETE FROM logindb WHERE userid = ${req.params.userID}`;
 
