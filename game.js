@@ -11,6 +11,7 @@ var pool = new Pool({
   //connectionString: 'postgres://postgres:1234@localhost/logindb'
 });
 
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -68,13 +69,13 @@ app.post('/login', (req, res) => {
                     pool.query(usersQuery, (error, result) =>{
                         if (error)
                             res.end(error);
-                    
+
                         var allUsers = {'rows': result.rows};
                         res.render('pages/admin', allUsers);
                     });
                 }
             }
-            else 
+            else
                 res.render('pages/login', {loginMessage: 'Password entered is incorrect! Please try again.'});
         }
     });
@@ -103,7 +104,7 @@ app.post('/signUpForm', async (req,res) => {
     });
   }
 });
-  
+
 app.get('/removeUser/:userID', (req,res) => {
 
     var deleteUserQuery=`DELETE FROM logindb WHERE userid = ${req.params.userID}`;
