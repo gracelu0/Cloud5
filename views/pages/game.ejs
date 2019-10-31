@@ -1,21 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
     <head>
-        <style>
-            body{
-                background: url("sprites/testMap.png") 0 0;
-                background-repeat: no-repeat;
-                position: relative;
-                background-size: cover;
-            }
-        </style>
         
     </head>
     <body>
-      <canvas id="canvas" width="1880" height="890">
-      </canvas>
-    
-      <script src="game_functions.js"></script>
+      <script src="//cdn.jsdelivr.net/npm/phaser@3.3.0/dist/phaser.min.js"></script>
+      <script src="js/gameScript.js"></script>
 
       <form class="" action="/postgame" method="post">
         <button type="submit" name="button">Go to postgame screen</button>
