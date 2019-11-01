@@ -1,11 +1,12 @@
 h1, label{
-    font-family:'Press Start 2P', cursive ;
+    font-family: 'Sniglet', cursive;
+    font-size: 40pt;
 }
 
-
-form{
-    border: 3px solid#f1f1f1;
+label{
+    font-size: 25pt;
 }
+
 
 input[type=text],input[type=email],input[type=password]{
     width: 100%;
@@ -25,6 +26,8 @@ button{
     cursor: pointer;
     width: 100%;
     opacity: 0.8;
+    font-family: 'Sniglet', cursive;
+    font-size: 20pt;
 }
 
 button:hover{
@@ -32,7 +35,16 @@ button:hover{
 }
 
 .container{
-    padding: 16px;
+    margin: auto;
+    align-content: center;
+    padding: 20px;
+    width: 300px;
+    border: 3px solid turquoise;
+    border-radius: 20px;
+}
+
+#signupcontainer{
+    width: 400px;
 }
 
 .modal{
