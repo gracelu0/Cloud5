@@ -27,23 +27,16 @@
 			<tbody>
 				<% rows.forEach((r) => { %>
 				<tr>
-          <form action="/removeUser/<%= r.userid %>" method="get" onsubmit="return confirmDelete(document.getElementById('<%= r.usertype %>').innerHTML, 
-          document.getElementById('<%= r.username %>').innerHTML);">
-						<td id="<%= r.username %>"><%= r.username %></td>
-						<td id="<%= r.email %>"><%= r.email %></td>
-						<td id="<%= r.usertype %>"><%= r.usertype %></td>
-            <td><button type="submit" id="deleteUser">DELETE USER ACCOUNT!</button></td>
-          </form>
-          <script>
-            function confirmDelete(usertype, username) {
-              if (usertype.toString()=='Admin') {
-                alert('Admins cannot be removed from users list!');
-                return false;
-               }
-              else
-                return confirm("Are you sure you want to remove " + username.toString() + " from users list?");
-            }
-          </script>
+          <form action="/removeUser/<%= r.userid %>" method="get" onsubmit="return confirm('Are you sure you want to remove <%= r.username %> from users list?')">
+						<td><%= r.username %></td>
+						<td><%= r.email %></td>
+						<td><%= r.usertype %></td>
+						<td>
+              
+              <%if( r.usertype == 'User'){%><button type="submit" id="deleteUser">DELETE USER ACCOUNT</button><%}%>
+            
+            </td>
+					</form>
 				</tr>
         <% }); %>
       </tbody>
