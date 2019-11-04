@@ -8,12 +8,17 @@ var app = express();
 const bcrypt = require('bcrypt');
 
 const { Pool } = require('pg');
+// var pool = new Pool({
+//   connectionString: process.env.DATABASE_URL
+//   //connectionString: 'postgres://postgres:shimarov6929@localhost/cloud5'
+// });
+
 var pool = new Pool({
-  connectionString: process.env.DATABASE_URL
-  //connectionString: 'postgres://postgres:shimarov6929@localhost/cloud5'
-});
-
-
+    user: 'graceluo',
+    password: 'tokicorgi',
+    host: 'localhost',
+    database: 'cloud5'
+  });
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
@@ -118,7 +123,7 @@ app.post('/signUpForm', async (req,res) => {
           from: '"Cloud5" cloud5sfu@gmail.com',
           to: insertEmail,
           subject: "Email confirmation",
-          text: "Please, confirm the email. The confirmation code is: " + mailCode
+          text: "Please confirm your email to finish creating your account. Your confirmation code is: " + mailCode
         };
 
         transporter.sendMail(mailOptions, (error, info) => {
@@ -136,7 +141,7 @@ app.post('/mailCodeForm', (req,res) => {
   var mailCode = req.body.par;
   var codeInput = req.body.mailCodeInput;
   if(codeInput === mailCode){
-    res.render('pages/login.ejs')
+    res.render('pages/login.ejs',{signupMessage: 'Account created!'})
     var  updateConfirmationStatus = `UPDATE logindb SET confirmation_status = 1 WHERE confirmation_code = '${mailCode}'`;
     pool.query(updateConfirmationStatus, (error, result) => {
         if (error)

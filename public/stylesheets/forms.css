@@ -10,12 +10,12 @@ body, html{
     padding: 0 ;
 }
 
-h1, label{
+h1, label,h2{
     font-family: 'Sniglet', cursive;
     font-size: 40pt;
 }
 
-label{
+label,h2{
     font-size: 25pt;
 }
 
@@ -27,6 +27,8 @@ input[type=text],input[type=email],input[type=password]{
     display: inline-block;
     border: 1px solid #cccccc;
     box-sizing: border-box;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14pt;
 }
 
 button{
@@ -58,9 +60,11 @@ button:hover{
     border-radius: 20px;
 }
 
-#signupcontainer{
+#signupcontainer,#confirmcontainer{
     width: 400px;
 }
+
+
 
 .modal{
     display: none;
@@ -118,6 +122,7 @@ button:hover{
 }
 
 .successMessage{
-    color: lightseagreen;
+    font-family:'Nunito', sans-serif ;
+    color: green;
     font-size: 1.5em;
 }
