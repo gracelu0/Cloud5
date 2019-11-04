@@ -1,5 +1,12 @@
-h1, h3, caption, th, p{
-  font-family:'Press Start 2P', cursive ;
+h1, h2, caption, th, p{
+  font-family: 'Sniglet', cursive;
+}
+h1{
+  font-size: 40pt;
+}
+
+h2, caption, th, p{
+  font-size: 20pt;
 }
 
 table{

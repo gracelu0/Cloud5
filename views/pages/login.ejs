@@ -2,16 +2,19 @@
 <html lang="en" dir="ltr">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="utf-8">
-    <title>Hidden Traps</title>
+    <title>Battle Blobs</title>
     <link rel="stylesheet" href="/stylesheets/forms.css">
-    <link href="https://fonts.googleapis.com/css?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Sniglet:800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Neucha&display=swap" rel="stylesheet">
   </head>
   <body>
 
-    <h1 align="center">HIDDEN TRAPS</h1>
+
+    <h1 align="center">BATTLE BLOBS</h1>
 
     <% if ( typeof signupMessage != 'undefined' && signupMessage.length > 0) { %>
-    <p class="successMessage"><%= signupMessage %></p>
+    <p align="center" class="successMessage"><%= signupMessage %></p>
     <% } %>
 
     <!--modal content-->
@@ -24,7 +27,7 @@
         <input type="password" id="pwd" name="pwd" placeholder="Enter password" required>
 
         <% if ( typeof loginMessage != 'undefined' && loginMessage.length > 0) { %>
-        <p class="errorMessage"><%= loginMessage %></p>
+        <p align="center" class="errorMessage"><%= loginMessage %></p>
         <% } %>
 
         <button type="submit" name="signInBtn">Login</button>
@@ -32,6 +35,7 @@
     <form class="" action="/signUp" method="post">
       <button type="submit" name="signUpBtn">Sign up</button>
     </form>
+  </div>
 
   </body>
 
