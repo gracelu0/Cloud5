@@ -13,7 +13,7 @@ var pool = new Pool({
 });
 
 
-  
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -64,10 +64,8 @@ app.post('/login', (req, res) => {
             res.render('pages/login', {loginMessage: 'Username entered does not match any accounts! Please sign up for a new account below.'});
         else{
             if(await bcrypt.compare(userpwd, result.rows[0].password)){
-                if ((result.rows[0].usertype == 'User') && (result.rows[0].confirmation_status === 1))
+                if ((result.rows[0].usertype == 'User'))
                     res.render('pages/home', {message: 'Successfully logged in!'});
-                else if (result.rows[0].confirmation_status !== 1)
-                  res.render('pages/login', {mailError: 'Email is not confirmed'});
                 else{ // result.row[0].usertype == 'Admin'
                     var usersQuery=`SELECT userid, username, email, usertype FROM logindb`;
                     pool.query(usersQuery, (error, result) =>{
