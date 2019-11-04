@@ -117,7 +117,8 @@ button:hover{
 }
 
 .errorMessage{
-    color: crimson;
+    font-family:'Nunito', sans-serif ;
+    color: tomato;
     font-size: 1.5em;
 }
 

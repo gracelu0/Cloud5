@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="utf-8">
-    <title>Hidden Traps</title>
+    <title>Battle Blobs</title>
     <link rel="stylesheet" href="/stylesheets/forms.css">
     <link href="https://fonts.googleapis.com/css?family=Sniglet:800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Nunito&display=swap" rel="stylesheet">
@@ -26,7 +26,7 @@
         <input type="password" id="pwd" name="pwd" placeholder="Enter password" required>
 
         <% if ( typeof loginMessage != 'undefined' && loginMessage.length > 0) { %>
-        <p class="errorMessage"><%= loginMessage %></p>
+        <p align="center" class="errorMessage"><%= loginMessage %></p>
         <% } %>
 
         <button type="submit" name="signInBtn">Login</button>

@@ -10,9 +10,6 @@
   <body>
     <h1 align="center">SIGN UP</h1>
 
-    <% if ( typeof message != 'undefined' && message.length > 0) { %>
-    <p align = "center" class="errorMessage"><%= message %></p>
-    <% } %>
 
     <form id="signupform" action="/signUpForm" method="POST">
       <div id="signupcontainer" class="container">
@@ -28,6 +25,10 @@
           <label for="mail">Email</label>
           <input id="mail" name="email" type="email" placeholder="Email" required>
           
+          <% if ( typeof message != 'undefined' && message.length > 0) { %>
+            <p align = "center" class="errorMessage"><%= message %></p>
+          <% } %>
+
           <button type="submit">Sign Up!</button>
         </div>
     
