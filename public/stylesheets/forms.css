@@ -1,5 +1,5 @@
 body, html{
-    background-image: url('/assets/green-grass.jpg');
+    background-image: url('/assets/forestbg.png');
     height: 100%;
 
     background-position: center;
@@ -10,15 +10,19 @@ body, html{
     padding: 0 ;
 }
 
-h1, label,h2{
-    font-family: 'Sniglet', cursive;
+h1,label,h2{
+    font-family: 'Neucha', cursive;
     font-size: 40pt;
+    color: darkgreen;
+}
+
+h1{
+    font-size: 60px;
 }
 
 label,h2{
     font-size: 25pt;
 }
-
 
 input[type=text],input[type=email],input[type=password]{
     width: 100%;
@@ -32,14 +36,14 @@ input[type=text],input[type=email],input[type=password]{
 }
 
 button{
-    background-color: lawngreen;
-    color: #0c3609;
+    background-color: darkgreen;
+    color: white;
     padding: 14px 20px;
     margin: 8px 0;
     border: none;
     cursor: pointer;
     width: 100%;
-    font-family: 'Sniglet', cursive;
+    font-family: 'Neucha', cursive;
     font-size: 20pt;
 
     -webkit-transition-duration: 0.4s;
@@ -56,7 +60,7 @@ button:hover{
     align-content: center;
     padding: 20px;
     width: 300px;
-    border: 3px solid lime;
+    border: 5px solid darkgreen;
     border-radius: 20px;
 }
 
@@ -117,13 +121,14 @@ button:hover{
 }
 
 .errorMessage{
-    font-family:'Nunito', sans-serif ;
-    color: tomato;
+    font-family: 'Neucha', cursive;
+    color: darkgreen;
     font-size: 1.5em;
+    font-weight: bold;
 }
 
 .successMessage{
-    font-family:'Nunito', sans-serif ;
+    font-family: 'Neucha', cursive;
     color: green;
     font-size: 1.5em;
 }
