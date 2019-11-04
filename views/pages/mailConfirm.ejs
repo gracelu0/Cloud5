@@ -2,12 +2,15 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title></title>
+    <title>Confirmation Page</title>
+    <link rel="stylesheet" href="/stylesheets/forms.css">
+    <link href="https://fonts.googleapis.com/css?family=Sniglet:800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Neucha&display=swap" rel="stylesheet">
   </head>
   <body>
-
+    <div id="confirmcontainer" class="container">
     <h1>Confirm your password:</h1>
-
     <form class="" action="/mailCodeForm" method="post">
       <input type="hidden" name="name" value="<%= insertUsername %>">
       <input type="hidden" name="pwd" value="<%= insertPassword %>">
@@ -20,5 +23,6 @@
       <button type="submit" name="button">Confirm</button>
 
     </form>
+    </div>
   </body>
 </html>

@@ -1,13 +1,31 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
+    <style>
+      #movementimg {
+        display: block;
+        margin: auto;
+        height: 300px;
+        width: 450px;
+      }
+      #movement {
+        font-size: 30px;
+        margin-left: 900px;
+      }
+    </style>
     <meta charset="utf-8">
     <title>Pregame</title>
   </head>
   <body>
     <h1>PREGAME SCREEN</h1>
+    <h2>Objective: just win lol</h2>
+    <div>
+      <img src="/assets/wasd.png" id="movementimg">
+      <p id="movement">Movement</p>
+    </div> 
     <form class="" action="/game" method="post">
       <button type="submit" name="button">Select the character</button>
     </form>
+    
   </body>
 </html>

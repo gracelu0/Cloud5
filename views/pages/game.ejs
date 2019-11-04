@@ -1,22 +1,15 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
     <head>
-        <style>
-            body{
-                background: url("sprites/testMap.png") 0 0;
-                background-repeat: no-repeat;
-                position: relative;
-                background-size: cover;
-            }
-        </style>
-        
+      <title>BATTLE BLOBS</title>
+      <link rel="stylesheet" href="/stylesheets/game.css">
+      <link href="https://fonts.googleapis.com/css?family=Sniglet:800&display=swap" rel="stylesheet">
     </head>
     <body>
-      <canvas id="canvas" width="1880" height="890">
-      </canvas>
-    
-      <script src="game_functions.js"></script>
-
+      <script src="//cdn.jsdelivr.net/npm/phaser@3.3.0/dist/phaser.min.js"></script>
+      <script src="js/gameScript.js"></script>
+      <h1 align="center">BATTLE BLOBS</h1>
+      <div align="center" id="phaser"></div>
       <form class="" action="/postgame" method="post">
         <button type="submit" name="button">Go to postgame screen</button>
       </form>

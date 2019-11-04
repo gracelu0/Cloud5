@@ -1,0 +1,31 @@
+h1, h2, caption, th, p{
+  font-family: 'Sniglet', cursive;
+}
+h1{
+  font-size: 40pt;
+}
+
+h2, caption, th, p{
+  font-size: 20pt;
+}
+
+table{
+  border-collapse: collapse;
+  border: 1px solid grey;
+}
+
+td,th{
+  padding: 12px;
+  text-align: center;
+}
+
+#deleteUser{
+  background-color: red;
+  opacity: 0.7;
+  font-size: 11pt;
+}
+
+#deleteUser:hover{
+  opacity: 1;
+  cursor: pointer;
+}

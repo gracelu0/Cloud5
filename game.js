@@ -13,6 +13,8 @@ var pool = new Pool({
   //connectionString: 'postgres://postgres:shimarov6929@localhost/cloud5'
 });
 
+
+  
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -107,7 +109,7 @@ app.post('/signUpForm', async (req,res) => {
           from: '"Cloud5" cloud5sfu@gmail.com',
           to: insertEmail,
           subject: "Email confirmation",
-          text: "Please, confirm the email. The confirmation code is: " + mailCode
+          text: "Please confirm your email to finish creating your account. Your confirmation code is: " + mailCode
         };
 
         transporter.sendMail(mailOptions, (error, info) => {
@@ -133,7 +135,7 @@ app.post('/mailCodeForm', async(req,res) => {
     pool.query(insertquery, (error, result) => {
         if(error)
           res.end(error);
-    res.render('pages/login');
+    res.render('pages/login',{signupMessage: 'Account created!'});
     });
   }
   else{
@@ -194,7 +196,6 @@ app.post('/mailCodeForm', async(req,res) => {
 
 
 app.get('/removeUser/:userID', (req,res) => {
-
     var deleteUserQuery=`DELETE FROM logindb WHERE userid = ${req.params.userID}`;
 
     pool.query(deleteUserQuery, (error, result) => {
@@ -203,7 +204,7 @@ app.get('/removeUser/:userID', (req,res) => {
 
         var usersQuery=`SELECT userid, username, email, usertype FROM logindb`;
 
-        pool.query(usersQuery, (error, result) =>{
+        pool.query(usersQuery, (error, result) => {
             if (error)
                 res.end(error);
 
