@@ -5,7 +5,7 @@ var config = {
     parent: 'phaser',
     physics: {
         default: 'arcade'
-    }
+    },
 
     scene: {
         key: 'main',
