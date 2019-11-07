@@ -8,11 +8,16 @@ var app = express();
 const bcrypt = require('bcrypt');
 
 const { Pool } = require('pg');
+// var pool = new Pool({
+//   connectionString: process.env.DATABASE_URL
+// });
+
 var pool = new Pool({
-  connectionString: process.env.DATABASE_URL
-});
-
-
+    user: 'graceluo',
+    password: 'tokicorgi',
+    host: 'localhost',
+    database: 'cloud5'
+  });
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
