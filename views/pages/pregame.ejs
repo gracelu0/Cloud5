@@ -1,34 +1,23 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
-    <link rel="stylesheet" href="/stylesheets/pregame.css">
-    <link href="https://fonts.googleapis.com/css?family=Neucha&display=swap" rel="stylesheet">
-    <style>
-      /* #movementimg {
-        display: block;
-        margin: auto;
-        height: 200px;
-        width: 300px;
-      }
-      #movement {
-        font-size: 30px;
-        margin-left: 900px;
-      } */
-    </style>
+      <link rel="stylesheet" href="/stylesheets/pregame.css">
+      <link href="https://fonts.googleapis.com/css?family=Neucha&display=swap" rel="stylesheet">
     <meta charset="utf-8">
     <title>Pregame</title>
   </head>
   <body>
-    <h1 align="center">PREGAME SCREEN</h1>
-    <h2 align="center">Objective: just win lol</h2>
-    <div class="controlkeys">
-      <h3>Controls</h3>
-      <img src="/assets/wasd.png" id="movementimg">
-      <p id="movement">Movement</p>
-    </div> 
-    <form class="" action="/game" method="post">
-      <button type="submit" name="button">Select the character</button>
-    </form>
+    <h1 align= "center">PREGAME PAGE</h1>
     
+    <% if ( typeof message != 'undefined' && message.length > 0) { %>
+    <p class="successMessage"><%= message %></p>
+    <% } %>
+
+    <h2 align="center">Select your character:</h2>
+
+    <form align="center" class="" action="/game" method="post">
+      <input id="pink" type="image" src="assets/alienPink.png"/>
+      <button type="submit" name="button">Join game!</button>
+    </form>
   </body>
 </html>

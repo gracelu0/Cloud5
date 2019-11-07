@@ -1,19 +1,34 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
+    <link rel="stylesheet" href="/stylesheets/home.css">
+    <link href="https://fonts.googleapis.com/css?family=Neucha&display=swap" rel="stylesheet">
+    <style>
+      /* #movementimg {
+        display: block;
+        margin: auto;
+        height: 200px;
+        width: 300px;
+      }
+      #movement {
+        font-size: 30px;
+        margin-left: 900px;
+      } */
+    </style>
     <meta charset="utf-8">
     <title>Home</title>
   </head>
   <body>
-    <h1>HOME PAGE</h1>
-    
-    <% if ( typeof message != 'undefined' && message.length > 0) { %>
-    <p class="successMessage"><%= message %></p>
-    <% } %>
-
-    <h2>Objective of the game</h2>
+    <h1 align="center">HOME SCREEN</h1>
+    <h2 align="center">Objective: just win lol</h2>
+    <div class="controlkeys">
+      <h3>Controls</h3>
+      <img src="/assets/wasd.png" id="movementimg">
+      <p id="movement">Movement</p>
+    </div> 
     <form class="" action="/pregame" method="post">
       <button type="submit" name="button">Start</button>
     </form>
+    
   </body>
 </html>
