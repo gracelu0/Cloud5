@@ -16,6 +16,9 @@
     <% if ( typeof signupMessage != 'undefined' && signupMessage.length > 0) { %>
     <p align="center" class="successMessage"><%= signupMessage %></p>
     <% } %>
+    <% if ( typeof forgotMessage != 'undefined' && forgotMessage.length > 0) { %>
+    <p align="center" class="successMessage"><%= forgotMessage %></p>
+    <% } %>
 
     <!--modal content-->
     <form class="" action="/login" method="post">
@@ -29,9 +32,7 @@
         <% if ( typeof loginMessage != 'undefined' && loginMessage.length > 0) { %>
         <p align="center" class="errorMessage"><%= loginMessage %></p>
         <% } %>
-        <% if ( typeof mailError != 'undefined' && mailError.length > 0) { %>
-        <p class="errorMessage"><%= mailError %></p>
-        <% } %>
+        <a href="/forgotPwd">Change Password</a>
         <button type="submit" name="signInBtn">Login</button>
     </form>
     <form class="" action="/signUp" method="post">
