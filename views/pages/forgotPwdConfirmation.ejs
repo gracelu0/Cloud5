@@ -2,17 +2,6 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title></title>
-  </head>
-  <body>
-
-  </body>
-</html>
-
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
     <title>Confirmation Page</title>
     <link rel="stylesheet" href="/stylesheets/forms.css">
     <link href="https://fonts.googleapis.com/css?family=Sniglet:800&display=swap" rel="stylesheet">
@@ -21,12 +10,12 @@
   </head>
   <body>
     <div id="confirmcontainer" class="container">
-    <h1>Confirm your password:</h1>
+    <h1>Please enter the confirmation code sent to your email</h1>
     <form class="" action="/forgotPwdConfirmationAction" method="post">
       <input type="hidden" name="name" value="<%= name %>">
       <input type="hidden" name="newPwd" value="<%= newPwd %>">
       <input type="hidden" name="forgotPwdCode" value="<%= forgotPwdCode %>">
-      Enter the confirmation code: <input type="text" name="forgotPwdCodeInput" value=""><br>
+      <input type="text" name="forgotPwdCodeInput" value=""><br>
       <% if ( typeof confirmationErr != 'undefined' && confirmationErr.length > 0) { %>
       <p class="errorMessage"><%= confirmationErr %></p>
       <% } %>

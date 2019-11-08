@@ -10,13 +10,15 @@
   </head>
   <body>
     <h1 align="center">Change password</h1>
-
     <form class="" action="/forgotPwdAction" method="post">
       <div id="signupcontainer" class="container">
           <label for="uname">Username</label>
           <input name="forgotPwdName" type="text" maxlength="30" placeholder="Username" required><br>
           <label for="newPswd">New Password</label>
           <input name="newPwd" type="text" maxlength="30" placeholder="New password" required><br>
+          <% if ( typeof loginMessage != 'undefined' && loginMessage.length > 0) { %>
+          <p align="center" class="errorMessage"><%= loginMessage %></p>
+          <% } %>
         <button type="Submit" name="button">Submit</button>
       </div>
     </form>

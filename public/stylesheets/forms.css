@@ -127,7 +127,7 @@ button:hover{
     font-weight: bold;
 }
 
-.successMessage{
+.successMessage, a{
     font-family: 'Neucha', cursive;
     color: green;
     font-size: 1.5em;

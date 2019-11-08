@@ -16,6 +16,9 @@
     <% if ( typeof signupMessage != 'undefined' && signupMessage.length > 0) { %>
     <p align="center" class="successMessage"><%= signupMessage %></p>
     <% } %>
+    <% if ( typeof forgotMessage != 'undefined' && forgotMessage.length > 0) { %>
+    <p align="center" class="successMessage"><%= forgotMessage %></p>
+    <% } %>
 
     <!--modal content-->
     <form class="" action="/login" method="post">
