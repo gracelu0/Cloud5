@@ -1,10 +1,18 @@
 var config = {
     type: Phaser.AUTO,
-    width: 1000,
-    height: 500,
+    width: 950,
+    height: 600,
     parent: 'phaser',
+    physics: {
+        default: 'arcade',
+        arcade: {
+            gravity: {y: 0},
+            debug: true
+        }
+    },
 
     scene: {
+        key: 'main',
         preload: preload,
         create: create,
         update: update
@@ -12,55 +20,73 @@ var config = {
 
 };
 
-var game = new Phaser.Game(config);
+const game = new Phaser.Game(config);
 
 function preload(){
-    this.load.image('map', 'assets/maptest.png');
+    
+    this.load.image('RPGpack', 'assets/RPGpack_sheet.png');
+    this.load.image('overworld', 'assets/overworld.png');
+    this.load.tilemapTiledJSON('map', 'assets/bbmap.json');
+
+    
     this.load.image('testingmap', 'assets/testSheet.png' );
     this.load.image('test2', 'assets/tileSheet1.png');
+    this.load.image('player','assets/alienPink.png');
 
 }
 
 function create(){
-    this.add.image(500,250,'map');
+    map = this.add.tilemap('map');
+    var groundTiles = map.addTilesetImage('RPGpack');
+    var bridgeTiles = map.addTilesetImage('overworld');
+    groundLayer = map.createStaticLayer('Below Player', groundTiles, 0, 0);
+    bridgeLayer = map.createStaticLayer('Below Player 2', bridgeTiles,0,0);
+    collideLayer = map.createStaticLayer('World', groundTiles, 0, 0);
 
-    //Load a map from a 2D array of tile indices
-    const level = [
-        [  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0 ],
-        [  0,   1,   2,   3,   0,   0,   0,   1,   2,   3,   0 ],
-        [  0,   5,   6,   7,   0,   0,   0,   5,   6,   7,   0 ],
-        [  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0 ],
-        [  0,   0,   0,  14,  13,  14,   0,   0,   0,   0,   0 ],
-        [  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0 ],
-        [  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0 ],
-        [  0,   0,  14,  14,  14,  14,  14,   0,   0,   0,  15 ],
-        [  0,   0,   0,   0,   0,   0,   0,   0,   0,  15,  15 ],
-        [ 35,  36,  37,   0,   0,   0,   0,   0,  15,  15,  15 ],
-        [ 39,  39,  39,  39,  39,  39,  39,  39,  39,  39,  39 ]
-      ];
+    //set boundaries of game world
+    this.physics.world.bounds.width = groundLayer.width;
+    this.physics.world.bounds.height = groundLayer.height;
 
-    const level1 = [
-        [  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0 ],
-        [  0,   1,   2,   3,   0,   0,   0,   1,   2,   3,   0 ],
-        [  0,   5,   6,   7,   0,   0,   0,   5,   6,   7,   0 ],
-        [  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0 ],
-        [  0,   0,   0,  14,  13,  14,   0,   0,   0,   0,   0 ],
-        [  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0 ],
-        [  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0 ],
-        [  0,   0,  14,  14,  14,  14,  14,   0,   0,   0,  15 ],
-    ];
 
-    const map = this.make.tilemap({data: level1, tileWidth:64, tileHeight:64});
-    const tiles = map.addTilesetImage("test2");
-    const layer = map.createStaticLayer(0,tiles,0,0);
+    player = this.physics.add.sprite(200,400,'player');
+    player.setBounce(0.2);
+    player.setCollideWorldBounds(true);
+    collideLayer.setCollisionBetween(200,240);
 
-    
+    //collideLayer.setCollisionByProperty({collides:true});
+    this.physics.add.collider(collideLayer,player);
+
+    const debugGraphics = this.add.graphics().setAlpha(0.75);
+    collideLayer.renderDebug(debugGraphics, {
+        tileColor: null, // Color of non-colliding tiles
+        collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
+        faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
+    });
+
+    cursors = this.input.keyboard.createCursorKeys();
+    //set bounds for camera (game world)
+    this.cameras.main.setBounds(0,0,map.widthInPixels, map.heightInPixels);
+    //make camera follow player
+    this.cameras.main.startFollow(player);
 
     
 
 }
 
 function update(){
+
+    if (cursors.up.isDown){
+        player.y -=4;
+    }
+    if (cursors.down.isDown){
+        player.y +=4;
+    }
+    if (cursors.left.isDown){
+        player.x -=4;
+    }
+    if (cursors.right.isDown){
+        player.x +=4;
+    }
 
 
 }
