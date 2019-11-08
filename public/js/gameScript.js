@@ -1,3 +1,4 @@
+import weather from 'weather.js';
 var config = {
     type: Phaser.AUTO,
     width: 950,
@@ -35,7 +36,7 @@ function preload(){
 
 }
 
-function create(){
+async function create(){
     map = this.add.tilemap('map');
     var groundTiles = map.addTilesetImage('RPGpack');
     var bridgeTiles = map.addTilesetImage('overworld');
@@ -65,11 +66,34 @@ function create(){
 
     cursors = this.input.keyboard.createCursorKeys();
     //set bounds for camera (game world)
-    this.cameras.main.setBounds(0,0,map.widthInPixels, map.heightInPixels);
+    this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
     //make camera follow player
     this.cameras.main.startFollow(player);
 
-    
+    if(navigator.onLine){
+        // let ipRequest = new XMLHttpRequest();
+        // var externalIP;
+        // ipRequest.open('GET', 'https://json.geoiplookup.io/');
+        // ipRequest.send();
+        // ipRequest.onload = function(){
+        //     externalIP=ipRequest.response;
+        // }
+        const ipRequest = await fetch('https://json.geoiplookup.io/');
+        const ipResponse = await ipRequest.json();
+        console.log(ipResponse.city + ', ' + ipResponse.country_code);
+
+        // const weatherRequest = await fetch('http://api.openweathermap.org/data/2.5/weather?q=' 
+        //                                     + ipResponse.city + ',' + ipResponse.country_code + '&appid=fa452ec635e9759a07cab7433d42104f');
+        // const weatherResponse = await weatherRequest.json();
+        // console.log(weatherResponse.weather.main);
+
+        this.weather = new weather(this.game);
+        this.weather.addRain();
+
+        if(weatherResponse.weather.main == "Drizzle" || weatherResponse.weather.main == "Rain"){
+        }
+
+    }
 
 }
 
@@ -87,6 +111,4 @@ function update(){
     if (cursors.right.isDown){
         player.x +=4;
     }
-
-
 }
