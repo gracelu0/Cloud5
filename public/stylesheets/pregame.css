@@ -10,6 +10,7 @@ body, html{
     padding: 0 ;
 }
 
+
 h2,p,h3{
     font-family: 'Neucha', cursive;
 }
@@ -23,17 +24,23 @@ p{
     font-size: 25pt;
 }
 
-
-.controlkeys{
-    text-align: center;
+[type=radio]{
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
 }
 
-#movementimg{
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    height: 200px;
-    width: 300px;
+[type=radio] + img{
+    cursor: pointer;
+}
+
+[type=radio]:checked + img{
+    outline: 2px solid darkgreen;
+}
+
+[type=radio]:hover + img{
+    opacity: 0.8;
 }
 
 button{
@@ -55,3 +62,4 @@ button:hover{
     box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
 
 }
+
