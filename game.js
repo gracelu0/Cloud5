@@ -23,8 +23,8 @@ app.get('/', (req, res) => {
     res.render('pages/login');
 });
 
-app.get("/changePwd", function (req, res) {
-  res.render("pages/changePwd");
+app.get("/forgotPwd", function (req, res) {
+  res.render("pages/forgotPwd");
 });
 
 
@@ -139,56 +139,73 @@ app.post('/mailCodeForm', async(req,res) => {
     }
 });
 
-// app.post('/changePwdAction', (req,res) => {
-//   var codeInput = req.body.changePwdCodeInput;
-//   var name = req.body.changePwdName;
-//   var newPwd = req.body.newPwd;
-//   const changePwdCode = randomstring.generate(20);
-//   var getMailQuery=`SELECT * FROM logindb WHERE username = '${name}'`;
-//   pool.query(getMailQuery, (error, result) => {
-//       if (error)
-//           res.end(error);
-//         console.log(result.rows[0].email);
-//         let transporter  = nodemailer.createTransport({
-//           host: 'smtp.gmail.com',
-//           port: 465,
-//           secure: true,
-//           auth: {
-//             user: 'cloud5sfu@gmail.com',
-//             pass: 'cmpt276cloud5'
-//           }
-//         });
-//
-//         let mailOptions = {
-//           from: '"Cloud5" cloud5sfu@gmail.com',
-//           to: result.rows[0].email,
-//           subject: "Change password",
-//           text: "Your confirmation code for changing your password: " + changePwdCode
-//         };
-//
-//         transporter.sendMail(mailOptions, (error, info) => {
-//           if (error){
-//             return console.log(error);
-//           }
-//           console.log('Message %s sent: %s', info.messageId, info.response);
-//         });
-//         res.render("pages/changePwdConfirmation", {changePwdCode});
-//         // if (changePwdCode === codeInput){
-//         //   var changePwd = `UPDATE logindb SET password = '${newPwd}' WHERE username = ${asd}`
-//         //   pool.query(deleteUserQuery, (error, result) => {
-//         // }
-//
-//         // pool.query(getMailQuery, (error, result) => {
-//         //     if (error)
-//         //         res.end(error);
-//
-//   });
-// });
+app.post('/forgotPwdAction', (req,res) => {
+  var codeInput = req.body.forgotPwdCodeInput;
+  var name = req.body.forgotPwdName;
+  var newPwd = req.body.newPwd;
+  const forgotPwdCode = randomstring.generate(20);
+  var loginQuery = `SELECT * FROM logindb WHERE username='${name}'`;
+  pool.query(loginQuery, async (error, result) => {
+      if (error)
+          res.end(error);
+      if (result.rows.length === 0)
+          res.render('pages/forgotPwd', {loginMessage: 'Username entered does not match any accounts! Please try again.'});
+      else{
+        var getMailQuery=`SELECT email FROM logindb WHERE username = '${name}'`;
+        pool.query(getMailQuery, (error, result) => {
+            if (error)
+                res.end(error);
+              console.log(result.rows[0].email);
+              let transporter  = nodemailer.createTransport({
+                host: 'smtp.gmail.com',
+                port: 465,
+                secure: true,
+                auth: {
+                  user: 'cloud5sfu@gmail.com',
+                  pass: 'cmpt276cloud5'
+                }
+              });
+              console.log(result.rows[0].email);
+              console.log(name);
+              let mailOptions = {
+                from: '"Cloud5" cloud5sfu@gmail.com',
+                to: result.rows[0].email,
+                subject: "Change password",
+                text: "Your confirmation code for changing your password: " + forgotPwdCode
+              };
+
+              transporter.sendMail(mailOptions, (error, info) => {
+                if (error){
+                  return console.log(error);
+                }
+                console.log('Message %s sent: %s', info.messageId, info.response);
+              });
+              res.render("pages/forgotPwdConfirmation", {forgotPwdCode, name, newPwd});
+            });
+          }
+        });
+});
 
 
-// app.post('/changePwdConfirmationAction', (req,res) => {
-//   console.log(changePwdCode);
-// });
+app.post('/forgotPwdConfirmationAction', async (req,res) => {
+  var name = req.body.name;
+  var newPwd = req.body.newPwd;
+  var forgotPwdCode = req.body.forgotPwdCode;
+  var codeInput = req.body.forgotPwdCodeInput;
+  const salt = await bcrypt.genSalt();
+  const hashedNewPwd = await bcrypt.hash(newPwd, salt);
+  if (forgotPwdCode === codeInput){
+    var forgotPwd = `UPDATE logindb SET password = '${hashedNewPwd}' WHERE username = '${name}'`
+    pool.query(forgotPwd, (error, result) => {
+      if (error)
+       res.end(error);
+    res.render('pages/login',{forgotMessage: 'Password changed!'});
+  });
+}
+  else{
+    res.render('pages/forgotPwdConfirmation', {confirmationErr: 'Wrong confirmation code', name, newPwd, forgotPwdCode});
+  }
+});
 
 
 app.get('/removeUser/:userID', (req,res) => {
