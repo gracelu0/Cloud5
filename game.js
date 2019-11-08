@@ -2,7 +2,6 @@ const express = require('express');
 const path = require('path');
 const nodemailer = require('nodemailer');
 const randomstring = require('randomstring');
-const session = require('express-session');
 const PORT = process.env.PORT || 5000
 
 var app = express();
