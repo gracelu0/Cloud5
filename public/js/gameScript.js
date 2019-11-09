@@ -7,7 +7,7 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: {y: 0},
-            debug: false
+            debug: true
         }
     },
 
@@ -26,14 +26,13 @@ var collideLayer;
 var player;
 var groundLayer;
 var bridgeLayer;
-var cactiLayer;
 
 function preload(){
     
     this.load.image('RPGpack', 'assets/RPGpack_sheet.png');
     this.load.image('overworld', 'assets/overworld.png');
-    this.load.image('trees', 'assets/trees.png');
-    this.load.tilemapTiledJSON('map', 'assets/bbmap.json');
+    this.load.image('combinedTiles', 'assets/combinedTiles.png');
+    this.load.tilemapTiledJSON('map', 'assets/map.json');
 
     
     this.load.image('testingmap', 'assets/testSheet.png' );
@@ -46,22 +45,15 @@ function create(){
     map = this.make.tilemap({key:'map'});
     var groundTiles = map.addTilesetImage('RPGpack');
     var bridgeTiles = map.addTilesetImage('overworld');
-    var cactiTiles = map.addTilesetImage('trees');
-    groundLayer = map.createStaticLayer('Below Player', groundTiles, 0, 0);
-    bridgeLayer = map.createStaticLayer('Below Player 2', bridgeTiles,0,0);
-    collideLayer = map.createDynamicLayer('World', groundTiles, 0, 0);
-    cactiLayer = map.createDynamicLayer('Cacti', cactiTiles, 0, 0);
+    var combinedTiles = map.addTilesetImage('combinedTiles');
+    groundLayer = map.createStaticLayer('Below Player', combinedTiles, 0, 0);
+    bridgeLayer = map.createStaticLayer('Overworld', bridgeTiles,0,0);
+    collideLayer = map.createStaticLayer('World', combinedTiles, 0, 0);
+
     //set boundaries of game world
     this.physics.world.bounds.width = groundLayer.width;
     this.physics.world.bounds.height = groundLayer.height;
 
-
-    player = this.physics.add.sprite(100,300,'player');
-    player.setBounce(0.2);
-    player.setCollideWorldBounds(true);
-
-    map.setCollisionBetween(1,999,true,collideLayer);
-    map.setCollisionBetween(1,999,true,cactiLayer);
 
     //collideLayer.setCollisionByProperty({collides:true});
     //this.physics.add.collider(player,collideLayer);
@@ -82,18 +74,22 @@ function create(){
     //this.physics.add.collider(player,collideLayer);
     //map.setCollisionByExclusion([],true,collideLayer);
 
-    const debugGraphics = this.add.graphics().setAlpha(0.75);
-    collideLayer.renderDebug(debugGraphics, {
-        tileColor: null, // Color of non-colliding tiles
-        collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
-        faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
-    });
+    // const debugGraphics = this.add.graphics().setAlpha(0.75);
+    // collideLayer.renderDebug(debugGraphics, {
+    //     tileColor: null, // Color of non-colliding tiles
+    //     collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
+    //     faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
+    // });
 
     cursors = this.input.keyboard.createCursorKeys();
+    
+    camera = this.cameras.main;
     //set bounds for camera (game world)
-    this.cameras.main.setBounds(0,0,map.widthInPixels, map.heightInPixels);
+    camera.setBounds(0,0,map.widthInPixels, map.heightInPixels);
+    //camera.setZoom(1.2);
     //make camera follow player
-    this.cameras.main.startFollow(player);
+    camera.startFollow(player);
+
 
     
 
