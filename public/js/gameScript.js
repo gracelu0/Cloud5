@@ -80,7 +80,7 @@ async function create(){
         const ipRequest = await fetch('https://json.geoiplookup.io/');
         const ipResponse = await ipRequest.json();
 
-        const weatherRequest = await fetch('http://api.openweathermap.org/data/2.5/weather?q=' 
+        const weatherRequest = await fetch('https://api.openweathermap.org/data/2.5/weather?q=' 
                                             + ipResponse.city + ',' + ipResponse.country_code + '&appid=fa452ec635e9759a07cab7433d42104f');
         const weatherResponse = await weatherRequest.json();
 
