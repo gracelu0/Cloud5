@@ -10,14 +10,12 @@ var config = {
             debug: true
         }
     },
-
     scene: {
         key: 'main',
         preload: preload,
         create: create,
         update: update
     }
-
 };
 
 const game = new Phaser.Game(config);
@@ -34,14 +32,15 @@ function preload(){
     this.load.tilemapTiledJSON('map', 'assets/bbmap.json');
 
     
-    this.load.image('testingmap', 'assets/testSheet.png' );
+    this.load.image('testingmap', 'assets/testSheet.png');
     this.load.image('test2', 'assets/tileSheet1.png');
     this.load.image('player','assets/alienPink.png');
 
+    this.load.image('rain', 'assets/rain.png');
 }
 
-function create(){
-    map = this.make.tilemap({key:'map'});
+async function create(){
+    map = this.add.tilemap('map');
     var groundTiles = map.addTilesetImage('RPGpack');
     var bridgeTiles = map.addTilesetImage('overworld');
     groundLayer = map.createStaticLayer('Below Player', groundTiles, 0, 0);
@@ -72,11 +71,37 @@ function create(){
 
     cursors = this.input.keyboard.createCursorKeys();
     //set bounds for camera (game world)
-    this.cameras.main.setBounds(0,0,map.widthInPixels, map.heightInPixels);
+    this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
     //make camera follow player
     this.cameras.main.startFollow(player);
 
-    
+    if(navigator.onLine){
+        
+        const ipRequest = await fetch('https://json.geoiplookup.io/');
+        const ipResponse = await ipRequest.json();
+
+        const weatherRequest = await fetch('http://api.openweathermap.org/data/2.5/weather?q=' 
+                                            + ipResponse.city + ',' + ipResponse.country_code + '&appid=fa452ec635e9759a07cab7433d42104f');
+        const weatherResponse = await weatherRequest.json();
+
+        // For debugging only
+        var particles = this.add.particles('rain');
+        particles.createEmitter({
+            x: { min: 0, max: map.widthInPixels },
+            y: { min: 0, max: map.heightInPixels },
+            z: { min: 0, max: 20 },
+            lifespan: 4000,
+            speedX: { min: -100, max: -50 },
+            speedY: { min: 300, max: 500 },
+            speedZ: { min: 200, max: 400 },
+            scale: { start: .8, end: 0 },
+            quantity: 10,
+            blendMode: 'NORMAL'
+        });
+
+        if(weatherResponse.weather[0].main == "Drizzle" || weatherResponse.weather[0].main == "Rain"){
+        }
+    }
 
 }
 
