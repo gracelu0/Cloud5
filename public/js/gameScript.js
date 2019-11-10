@@ -1,4 +1,3 @@
-import weather from 'weather.js';
 var config = {
     type: Phaser.AUTO,
     width: 950,
@@ -11,14 +10,12 @@ var config = {
             debug: true
         }
     },
-
     scene: {
         key: 'main',
         preload: preload,
         create: create,
         update: update
     }
-
 };
 
 const game = new Phaser.Game(config);
@@ -30,10 +27,11 @@ function preload(){
     this.load.tilemapTiledJSON('map', 'assets/bbmap.json');
 
     
-    this.load.image('testingmap', 'assets/testSheet.png' );
+    this.load.image('testingmap', 'assets/testSheet.png');
     this.load.image('test2', 'assets/tileSheet1.png');
     this.load.image('player','assets/alienPink.png');
 
+    this.load.image('rain', 'assets/rain.png');
 }
 
 async function create(){
@@ -71,28 +69,31 @@ async function create(){
     this.cameras.main.startFollow(player);
 
     if(navigator.onLine){
-        // let ipRequest = new XMLHttpRequest();
-        // var externalIP;
-        // ipRequest.open('GET', 'https://json.geoiplookup.io/');
-        // ipRequest.send();
-        // ipRequest.onload = function(){
-        //     externalIP=ipRequest.response;
-        // }
+        
         const ipRequest = await fetch('https://json.geoiplookup.io/');
         const ipResponse = await ipRequest.json();
-        console.log(ipResponse.city + ', ' + ipResponse.country_code);
 
-        // const weatherRequest = await fetch('http://api.openweathermap.org/data/2.5/weather?q=' 
-        //                                     + ipResponse.city + ',' + ipResponse.country_code + '&appid=fa452ec635e9759a07cab7433d42104f');
-        // const weatherResponse = await weatherRequest.json();
-        // console.log(weatherResponse.weather.main);
+        const weatherRequest = await fetch('http://api.openweathermap.org/data/2.5/weather?q=' 
+                                            + ipResponse.city + ',' + ipResponse.country_code + '&appid=fa452ec635e9759a07cab7433d42104f');
+        const weatherResponse = await weatherRequest.json();
 
-        this.weather = new weather(this.game);
-        this.weather.addRain();
+        // For debugging only
+        var particles = this.add.particles('rain');
+        particles.createEmitter({
+            x: { min: 0, max: map.widthInPixels },
+            y: { min: 0, max: map.heightInPixels },
+            z: { min: 0, max: 20 },
+            lifespan: 4000,
+            speedX: { min: -100, max: -50 },
+            speedY: { min: 300, max: 500 },
+            speedZ: { min: 200, max: 400 },
+            scale: { start: .8, end: 0 },
+            quantity: 10,
+            blendMode: 'NORMAL'
+        });
 
-        if(weatherResponse.weather.main == "Drizzle" || weatherResponse.weather.main == "Rain"){
+        if(weatherResponse.weather[0].main == "Drizzle" || weatherResponse.weather[0].main == "Rain"){
         }
-
     }
 
 }
