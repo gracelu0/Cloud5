@@ -19,6 +19,11 @@ var config = {
 };
 
 const game = new Phaser.Game(config);
+var map;
+var collideLayer;
+var player;
+var groundLayer;
+var bridgeLayer;
 
 function preload(){
     
@@ -40,20 +45,22 @@ async function create(){
     var bridgeTiles = map.addTilesetImage('overworld');
     groundLayer = map.createStaticLayer('Below Player', groundTiles, 0, 0);
     bridgeLayer = map.createStaticLayer('Below Player 2', bridgeTiles,0,0);
-    collideLayer = map.createStaticLayer('World', groundTiles, 0, 0);
+    collideLayer = map.createDynamicLayer('World', groundTiles, 0, 0);
 
     //set boundaries of game world
     this.physics.world.bounds.width = groundLayer.width;
     this.physics.world.bounds.height = groundLayer.height;
 
 
-    player = this.physics.add.sprite(200,400,'player');
+    player = this.physics.add.sprite(100,300,'player');
     player.setBounce(0.2);
     player.setCollideWorldBounds(true);
-    collideLayer.setCollisionBetween(200,240);
+
+    map.setCollisionBetween(1,999,true,collideLayer);
 
     //collideLayer.setCollisionByProperty({collides:true});
-    this.physics.add.collider(collideLayer,player);
+    //this.physics.add.collider(player,collideLayer);
+    //map.setCollisionByExclusion([],true,collideLayer);
 
     const debugGraphics = this.add.graphics().setAlpha(0.75);
     collideLayer.renderDebug(debugGraphics, {
@@ -101,15 +108,16 @@ async function create(){
 function update(){
 
     if (cursors.up.isDown){
-        player.y -=4;
+        player.body.position.y -=4;
     }
     if (cursors.down.isDown){
-        player.y +=4;
+        player.body.position.y +=4;
     }
     if (cursors.left.isDown){
-        player.x -=4;
+        player.body.position.x -=4;
     }
     if (cursors.right.isDown){
-        player.x +=4;
+        player.body.position.x +=4;
     }
+    this.physics.collide(player,collideLayer);
 }
