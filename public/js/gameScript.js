@@ -44,6 +44,10 @@ function preload(){
     this.load.image('test2', 'assets/tileSheet1.png');
     this.load.image('player','assets/alienPink.png');
     this.load.image('bulletImg','assets/testBullet.png');
+    
+    
+    this.load.image('rain', 'assets/rain.png');
+    this.load.image('snow', 'assets/snowflake-pixel.png')
 }
 
 class Bullet extends Phaser.Physics.Arcade.Sprite{
@@ -87,9 +91,6 @@ class Bullet extends Phaser.Physics.Arcade.Sprite{
             this.destroy();
         }
     }
-
-    this.load.image('rain', 'assets/rain.png');
-    this.load.image('snow', 'assets/snowflake-pixel.png')
 
 }
 
@@ -186,10 +187,6 @@ async function create(){
         }
     }
 
-
-    //set camera
-    this.cameras.main.setBounds(0,0,map.widthInPixels, map.heightInPixels);
-    this.cameras.main.startFollow(player);
 }
 
 function update(time, delta){
@@ -247,6 +244,5 @@ bulletCollision = function(bullets,hitPlayer){
     bullets.destroy();
     hitPlayer.destroy();
 }
-    this.physics.collide(player,collideLayer);
-}
+
 
