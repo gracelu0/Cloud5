@@ -143,6 +143,7 @@ async function create(){
     //set player movement input
     cursors = this.input.keyboard.createCursorKeys();
 
+
     camera = this.cameras.main;
     ammoCount = this.add.text(0,0,"Ammunition Count:" + ammunition +"/10");
 
