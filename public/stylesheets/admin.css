@@ -1,3 +1,15 @@
+body, html{
+  background-image: url('/assets/forestbg.png');
+  height: 100%;
+
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow-y: auto;
+  margin: 0 ;
+  padding: 0 ;
+}
+
 h1, h2, caption, th, p{
   font-family: 'Neucha', cursive;
 }
