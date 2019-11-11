@@ -66,7 +66,8 @@ app.post('/login', (req, res) => {
                 if ((result.rows[0].usertype == 'User'))
                     res.render('pages/home', {message: 'Successfully logged in!'});
                 else{ // result.row[0].usertype == 'Admin'
-                    var usersQuery=`SELECT userid, username, email, usertype FROM logindb`;
+
+                    var usersQuery=`SELECT userid, username, email, usertype FROM logindb ORDER BY usertype, username`;
                     pool.query(usersQuery, (error, result) =>{
                         if (error)
                             res.end(error);
@@ -215,7 +216,7 @@ app.get('/removeUser/:userID', (req,res) => {
         if (error)
             res.end(error);
 
-        var usersQuery=`SELECT userid, username, email, usertype FROM logindb`;
+        var usersQuery=`SELECT userid, username, email, usertype FROM logindb ORDER BY usertype, username`;
 
         pool.query(usersQuery, (error, result) => {
             if (error)

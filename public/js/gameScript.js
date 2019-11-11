@@ -10,14 +10,12 @@ var config = {
             debug: true
         }
     },
-
     scene: {
         key: 'main',
         preload: preload,
         create: create,
         update: update
     }
-
 };
 
 var game = new Phaser.Game(config);
@@ -40,7 +38,7 @@ function preload(){
     this.load.image('overworld', 'assets/overworld.png');
     this.load.tilemapTiledJSON('map', 'assets/bbmap.json');
     
-    this.load.image('testingmap', 'assets/testSheet.png' );
+    this.load.image('testingmap', 'assets/testSheet.png');
     this.load.image('test2', 'assets/tileSheet1.png');
     this.load.image('player','assets/alienPink.png');
     this.load.image('bulletImg','assets/testBullet.png');
@@ -82,14 +80,19 @@ class Bullet extends Phaser.Physics.Arcade.Sprite{
             this.setPosition(this.x, this.y);
         }
 
+
         if(this.x > this.bulletInitX + 500 || this.x < this.bulletInitX - 500 || this.y > this.bulletInitY + 500 || this.y < this.bulletInitY - 500){
             this.destroy();
         }
     }
+
+    this.load.image('rain', 'assets/rain.png');
+    this.load.image('snow', 'assets/snowflake-pixel.png')
+
 }
 
-function create(){
-    map = this.make.tilemap({key:'map'});
+async function create(){
+    map = this.add.tilemap('map');
     var groundTiles = map.addTilesetImage('RPGpack');
     var bridgeTiles = map.addTilesetImage('overworld');
     groundLayer = map.createStaticLayer('Below Player', groundTiles, 0, 0);
@@ -129,7 +132,44 @@ function create(){
     //set player movement input
     cursors = this.input.keyboard.createCursorKeys();
 
+
     ammoCount = this.add.text(0,0,"Ammunition Count:" + ammunition +"/10");
+
+    //set bounds for camera (game world)
+    this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+    //make camera follow player
+    this.cameras.main.startFollow(player);
+
+    if(navigator.onLine){
+        
+        const ipRequest = await fetch('https://json.geoiplookup.io/');
+        const ipResponse = await ipRequest.json();
+
+        const weatherRequest = await fetch('https://api.openweathermap.org/data/2.5/weather?q=' 
+                                            + ipResponse.city + ',' + ipResponse.country_code + '&appid=fa452ec635e9759a07cab7433d42104f');
+        const weatherResponse = await weatherRequest.json();
+
+        // For debugging only - will move inside if statement when it works!
+        var rainParticles = this.add.particles('rain');
+        // addRain(rainParticles, map.widthInPixels, map.heightInPixels);
+        // addDrizzle(rainParticles, map.widthInPixels, map.heightInPixels);
+
+        var snowParticles = this.add.particles('snow');
+        addSnow(snowParticles, map.widthInPixels, map.heightInPixels);
+
+        if(weatherResponse.weather[0].main == "Rain"){
+
+        }
+
+        else if(weatherResponse.weather[0].main == "Drizzle"){
+
+        }
+
+        else if(weatherResponse.weather[0].main == "Snow"){
+            
+        }
+    }
+
 
     //set camera
     this.cameras.main.setBounds(0,0,map.widthInPixels, map.heightInPixels);
@@ -175,6 +215,7 @@ function update(time, delta){
             ammoCount.setText("Ammunition Count:" + ammunition +"/10");
         }
     }
+
     
     this.physics.collide(player,collideLayer)
 
@@ -190,3 +231,6 @@ bulletCollision = function(bullets,hitPlayer){
     bullets.destroy();
     hitPlayer.destroy();
 }
+    this.physics.collide(player,collideLayer);
+}
+
