@@ -38,6 +38,7 @@ function preload(){
     this.load.image('player','assets/alienPink.png');
 
     this.load.image('rain', 'assets/rain.png');
+    this.load.image('snow', 'assets/snowflake-pixel.png')
 }
 
 async function create(){
@@ -99,22 +100,24 @@ async function create(){
                                             + ipResponse.city + ',' + ipResponse.country_code + '&appid=fa452ec635e9759a07cab7433d42104f');
         const weatherResponse = await weatherRequest.json();
 
-        // For debugging only
-        var particles = this.add.particles('rain');
-        particles.createEmitter({
-            x: { min: 0, max: map.widthInPixels },
-            y: { min: 0, max: map.heightInPixels },
-            z: { min: 0, max: 20 },
-            lifespan: 4000,
-            speedX: { min: -100, max: -50 },
-            speedY: { min: 300, max: 500 },
-            speedZ: { min: 200, max: 400 },
-            scale: { start: .8, end: 0 },
-            quantity: 10,
-            blendMode: 'NORMAL'
-        });
+        // For debugging only - will move inside if statement when it works!
+        var rainParticles = this.add.particles('rain');
+        // addRain(rainParticles, map.widthInPixels, map.heightInPixels);
+        // addDrizzle(rainParticles, map.widthInPixels, map.heightInPixels);
 
-        if(weatherResponse.weather[0].main == "Drizzle" || weatherResponse.weather[0].main == "Rain"){
+        var snowParticles = this.add.particles('snow');
+        addSnow(snowParticles, map.widthInPixels, map.heightInPixels);
+
+        if(weatherResponse.weather[0].main == "Rain"){
+
+        }
+
+        else if(weatherResponse.weather[0].main == "Drizzle"){
+
+        }
+
+        else if(weatherResponse.weather[0].main == "Snow"){
+            
         }
     }
 
