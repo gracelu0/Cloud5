@@ -19,6 +19,7 @@ var config = {
 };
 
 var game = new Phaser.Game(config);
+
 var map;
 var collideLayer;
 var groundLayer;
@@ -31,6 +32,10 @@ var shootButton;
 var lastFired = 0;
 var facing = 1;
 var ammunition = 10;
+
+function init(data){
+
+}
 
 function preload(){
     
@@ -201,10 +206,12 @@ function update(time, delta){
     if (cursors.left.isDown){
         player.body.position.x -=4;
         facing = 3;
+        player.flipX = true;
     }
     if (cursors.right.isDown){
         player.body.position.x +=4;
         facing = 4;
+        player.flipX = false;
     }
 
     if(player.body.position.x - 455 > 0 && player.body.position.x + 495 < groundLayer.width){
@@ -243,4 +250,5 @@ bulletCollision = function(bullets,hitPlayer){
     bullets.destroy();
     hitPlayer.destroy();
 }
+
 
