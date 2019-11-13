@@ -7,6 +7,11 @@
       <link href="https://fonts.googleapis.com/css?family=Neucha&display=swap" rel="stylesheet">
     </head>
     <body>
+        <div align="right" id="logoutDiv">
+            <form class="" action="/logout" method="post" onsubmit="return confirm('Are you sure you want to logout?')">
+              <button type="submit" id="logout">Logout</button>
+            </form>
+        </div>
       <script src="//cdn.jsdelivr.net/npm/phaser@3.3.0/dist/phaser.min.js"></script>
       <script src="js/gameScript.js"></script>
       <script src="js/weatherConfig.js" defer></script>
