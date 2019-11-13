@@ -12,6 +12,12 @@ var pool = new Pool({
   connectionString: process.env.DATABASE_URL
 });
 
+var pool = new Pool({
+  user: 'graceluo',
+  password: 'tokicorgi',
+  host: 'localhost',
+  database: 'cloud5'
+});
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
@@ -51,6 +57,10 @@ app.post('/game', (req,res) => {
 app.post('/postgame', (req,res) => {
     res.render('pages/postgame');
 });
+
+app.post('/logout', (req,res) =>{
+  res.render('pages/login');
+})
 
 app.post('/login', (req, res) => {
     var userID = req.body.username;

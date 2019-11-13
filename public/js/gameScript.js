@@ -38,21 +38,20 @@ function init(data){
 }
 
 function preload(){
+        //map tiles
+        this.load.image('overworld', 'assets/overworld.png');
+        this.load.image('combinedTiles', 'assets/combinedTiles.png');
+        //map in json format
+        this.load.tilemapTiledJSON('map', 'assets/map.json');
     
-    this.load.image('RPGpack', 'assets/RPGpack_sheet.png');
-    this.load.image('overworld', 'assets/overworld.png');
-    this.load.image('combinedTiles', 'assets/combinedTiles.png');
-    this.load.tilemapTiledJSON('map', 'assets/map.json');
-
-    
-    this.load.image('testingmap', 'assets/testSheet.png');
-    this.load.image('test2', 'assets/tileSheet1.png');
-    this.load.image('player','assets/alienPink.png');
-    this.load.image('bulletImg','assets/testBullet.png');
-    
-    
-    this.load.image('rain', 'assets/rain.png');
-    this.load.image('snow', 'assets/snowflake-pixel.png')
+        //sprites
+        this.load.image('player','assets/alienPink.png');
+        this.load.image('greenPlayer','assets/alienGreen.png');
+        this.load.image('bulletImg','assets/testBullet.png');
+        
+        
+        this.load.image('rain', 'assets/rain.png');
+        this.load.image('snow', 'assets/snowflake-pixel.png');
 }
 
 class Bullet extends Phaser.Physics.Arcade.Sprite{
@@ -100,8 +99,9 @@ class Bullet extends Phaser.Physics.Arcade.Sprite{
 }
 
 async function create(){
+    //add map
     map = this.add.tilemap('map');
-    var groundTiles = map.addTilesetImage('RPGpack');
+    
     var bridgeTiles = map.addTilesetImage('overworld');
     var combinedTiles = map.addTilesetImage('combinedTiles');
     groundLayer = map.createStaticLayer('Below Player', combinedTiles, 0, 0);
