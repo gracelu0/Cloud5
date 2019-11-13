@@ -44,6 +44,7 @@ function preload(){
     this.load.image('test2', 'assets/tileSheet1.png');
     this.load.image('player','assets/alienPink.png');
     this.load.image('bulletImg','assets/testBullet.png');
+    this.load.image('bomb','assets/bomb.png');
 }
 
 class Bullet extends Phaser.Physics.Arcade.Sprite{
@@ -94,7 +95,7 @@ function create(){
     var bridgeTiles = map.addTilesetImage('overworld');
     groundLayer = map.createStaticLayer('Below Player', groundTiles, 0, 0);
     bridgeLayer = map.createStaticLayer('Below Player 2', bridgeTiles,0,0);
-    collideLayer = map.createStaticLayer('World', groundTiles, 0, 0);
+    collideLayer = map.createDynamicLayer('World', groundTiles, 0, 0);
 
     //set boundaries of game world
     this.physics.world.bounds.width = groundLayer.width;
@@ -115,6 +116,10 @@ function create(){
     bullets.enable = true;
     bullets.physicsBodyType = Phaser.Physics.ARCADE;
 
+    traps = this.physics.add.group({
+        classType: Phaser.GameObjects.Sprite
+    })
+
     //set collisions between player and world
     player.setCollideWorldBounds(true);
     map.setCollisionBetween(1,999,true,collideLayer);
@@ -134,6 +139,8 @@ function create(){
     //set camera
     this.cameras.main.setBounds(0,0,map.widthInPixels, map.heightInPixels);
     this.cameras.main.startFollow(player);
+
+    this.bombButton = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
 }
 
 function update(time, delta){
@@ -175,18 +182,32 @@ function update(time, delta){
             ammoCount.setText("Ammunition Count:" + ammunition +"/10");
         }
     }
+
+    /*if(this.physics.collide(player, traps, trapCollision)){
+        console.log("boom");
+    }*/
+
+    if (this.bombButton.isDown){
+        console.log("gang");
+        var trap = traps.create(player.body.position.x, player.body.position.y, 'bomb');
+        trap.body.setImmovable();
+    }
     
-    this.physics.collide(player,collideLayer)
+    this.physics.collide(player,collideLayer);
 
     bullets.getChildren().forEach(child => {
         if(this.physics.collide(child, player2, bulletCollision)){
             console.log("3");
         }
     })
-
 }
 
 bulletCollision = function(bullets,hitPlayer){
     bullets.destroy();
     hitPlayer.destroy();
+}
+
+trapCollision = function(player,traps){
+    traps.destroy();
+    //player health - amount
 }
