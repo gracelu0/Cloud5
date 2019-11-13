@@ -112,22 +112,41 @@ async function create(){
     this.physics.world.bounds.width = groundLayer.width;
     this.physics.world.bounds.height = groundLayer.height;
 
+    var self = this;
+    this.socket = io();
+    this.otherPlayers = this.physics.add.group();
+    this.socket.on('currentPlayers', function (players) {
+      Object.keys(players).forEach(function (id) {
+        if (players[id].playerId === self.socket.id) {
+          addPlayer(self, players[id]);
+        } else {
+          addOtherPlayers(self, players[id]);
+        }
+      });
+    });
+    this.socket.on('newPlayer', function (playerInfo) {
+      addOtherPlayers(self, playerInfo);
+    });
+    this.socket.on('disconnect', function (playerId) {
+      self.otherPlayers.getChildren().forEach(function (otherPlayer) {
+        if (playerId === otherPlayer.playerId) {
+          otherPlayer.destroy();
+        }
+      });
+    });
+    this.socket.on('playerMoved', function (playerInfo) {
+      self.otherPlayers.getChildren().forEach(function (otherPlayer) {
+      if (playerInfo.playerId === otherPlayer.playerId) {
+        otherPlayer.setPosition(playerInfo.x, playerInfo.y);
+    }
+  });
+});
+    collideLayer.setCollisionBetween(200,240);
 
     //collideLayer.setCollisionByProperty({collides:true});
-    //this.physics.add.collider(player,collideLayer);
-    //map.setCollisionByExclusion([],true,collideLayer);
+    //this.physics.add.collider(collideLayer,player);
 
-    //set boundaries of game world
-    this.physics.world.bounds.width = groundLayer.width;
-    this.physics.world.bounds.height = groundLayer.height;
-
-    //add player
-    player = this.physics.add.sprite(100,300,'player');
-    player.setBounce(0.2);
-
-    player2 = this.physics.add.sprite(400,400,'player');
-    player2.setBounce(0.2);
-
+ 
     bullets = this.physics.add.group({
         classType: Bullet,
         maxSize: 5,
@@ -148,50 +167,67 @@ async function create(){
     // });
 
     //set player movement input
-    cursors = this.input.keyboard.createCursorKeys();
+    this.cursors = this.input.keyboard.createCursorKeys();
+    
+    
 
 
     camera = this.cameras.main;
     ammoCount = this.add.text(0,0,"Ammunition Count:" + ammunition +"/10");
-
     //set bounds for camera (game world)
     camera.setBounds(0,0,map.widthInPixels, map.heightInPixels);
     //camera.setZoom(1.2);
     //make camera follow player
-    camera.startFollow(player);
-
-
-    if(navigator.onLine){
-        
-        const ipRequest = await fetch('https://json.geoiplookup.io/');
-        const ipResponse = await ipRequest.json();
-
-        const weatherRequest = await fetch('https://api.openweathermap.org/data/2.5/weather?q=' 
-                                            + ipResponse.city + ',' + ipResponse.country_code + '&appid=fa452ec635e9759a07cab7433d42104f');
-        const weatherResponse = await weatherRequest.json();
-
-        // For debugging only - will move inside if statement when it works!
-        var rainParticles = this.add.particles('rain');
-        // addRain(rainParticles, map.widthInPixels, map.heightInPixels);
-        // addDrizzle(rainParticles, map.widthInPixels, map.heightInPixels);
-
-        var snowParticles = this.add.particles('snow');
-        addSnow(snowParticles, map.widthInPixels, map.heightInPixels);
-
-        if(weatherResponse.weather[0].main == "Rain"){
-
-        }
-
-        else if(weatherResponse.weather[0].main == "Drizzle"){
-
-        }
-
-        else if(weatherResponse.weather[0].main == "Snow"){
-            
-        }
-    }
-
+    //this.cameras.main.startFollow(self.player);
 }
+
+function update(){
+if(this.player){
+
+  if (this.cursors.up.isDown){
+      this.player.y -=4;
+  }
+  if (this.cursors.down.isDown){
+      this.player.y +=4;
+  }
+  if (this.cursors.left.isDown){
+      this.player.x -=4;
+  }
+  if (this.cursors.right.isDown){
+      this.player.x +=4;
+  }
+
+  var x = this.player.x;
+  var y = this.player.y;
+  if (this.player.oldPosition && (x !== this.player.oldPosition.x || y !== this.player.oldPosition.y)) {
+    this.socket.emit('playerMovement', { x: this.player.x, y: this.player.y});
+  }
+
+  this.player.oldPosition = {
+    x: this.player.x,
+    y: this.player.y,
+  };
+}
+}
+
+function addPlayer(self, playerInfo) {
+  self.player = self.physics.add.image(playerInfo.x, playerInfo.y, 'player').setOrigin(0.5, 0.5);
+  self.player.setDrag(100);
+  self.player.setAngularDrag(100);
+  self.player.setBounce(0.2);
+  self.player.setCollideWorldBounds(true);
+  collideLayer.setCollisionBetween(200,240);
+
+  // collideLayer.setCollisionByProperty({collides:true});
+  // this.physics.add.collider(collideLayer,self.player);
+}
+
+function addOtherPlayers(self, playerInfo) {
+  const otherPlayer = self.add.sprite(playerInfo.x, playerInfo.y, 'player').setOrigin(0.5, 0.5);
+  otherPlayer.playerId = playerInfo.playerId;
+  self.otherPlayers.add(otherPlayer);
+}   
+
 
 function update(time, delta){
 
