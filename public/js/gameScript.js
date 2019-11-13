@@ -98,7 +98,7 @@ class Bullet extends Phaser.Physics.Arcade.Sprite{
 
 }
 
-async function create(){
+function create(){
     //add map
     map = this.add.tilemap('map');
     
