@@ -19,6 +19,7 @@ var config = {
 };
 
 var game = new Phaser.Game(config);
+
 var map;
 var collideLayer;
 var groundLayer;
@@ -32,22 +33,25 @@ var lastFired = 0;
 var facing = 1;
 var ammunition = 10;
 
-function preload(){
-    
-    this.load.image('RPGpack', 'assets/RPGpack_sheet.png');
-    this.load.image('overworld', 'assets/overworld.png');
-    this.load.image('combinedTiles', 'assets/combinedTiles.png');
-    this.load.tilemapTiledJSON('map', 'assets/map.json');
+function init(data){
 
+}
+
+function preload(){
+        //map tiles
+        this.load.image('overworld', 'assets/overworld.png');
+        this.load.image('combinedTiles', 'assets/combinedTiles.png');
+        //map in json format
+        this.load.tilemapTiledJSON('map', 'assets/map.json');
     
-    this.load.image('testingmap', 'assets/testSheet.png');
-    this.load.image('test2', 'assets/tileSheet1.png');
-    this.load.image('player','assets/alienPink.png');
-    this.load.image('bulletImg','assets/testBullet.png');
-    
-    
-    this.load.image('rain', 'assets/rain.png');
-    this.load.image('snow', 'assets/snowflake-pixel.png')
+        //sprites
+        this.load.image('player','assets/alienPink.png');
+        this.load.image('greenPlayer','assets/alienGreen.png');
+        this.load.image('bulletImg','assets/testBullet.png');
+        
+        
+        this.load.image('rain', 'assets/rain.png');
+        this.load.image('snow', 'assets/snowflake-pixel.png');
 }
 
 class Bullet extends Phaser.Physics.Arcade.Sprite{
@@ -95,8 +99,9 @@ class Bullet extends Phaser.Physics.Arcade.Sprite{
 }
 
 async function create(){
+    //add map
     map = this.add.tilemap('map');
-    var groundTiles = map.addTilesetImage('RPGpack');
+    
     var bridgeTiles = map.addTilesetImage('overworld');
     var combinedTiles = map.addTilesetImage('combinedTiles');
     groundLayer = map.createStaticLayer('Below Player', combinedTiles, 0, 0);
@@ -144,10 +149,9 @@ async function create(){
 
     //set player movement input
     cursors = this.input.keyboard.createCursorKeys();
-    
+
+
     camera = this.cameras.main;
-
-
     ammoCount = this.add.text(0,0,"Ammunition Count:" + ammunition +"/10");
 
     //set bounds for camera (game world)
@@ -202,10 +206,12 @@ function update(time, delta){
     if (cursors.left.isDown){
         player.body.position.x -=4;
         facing = 3;
+        player.flipX = true;
     }
     if (cursors.right.isDown){
         player.body.position.x +=4;
         facing = 4;
+        player.flipX = false;
     }
 
     if(player.body.position.x - 455 > 0 && player.body.position.x + 495 < groundLayer.width){
