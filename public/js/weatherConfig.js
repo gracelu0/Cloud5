@@ -1,44 +1,63 @@
-function addRain(rainParticles, gameWidth, gameHeight){
+function addRain(rainParticles, gameWidth){
     rainParticles.createEmitter({
-        x: { min: -100, max: map.widthInPixels },
-        y: -100,
-        z: { min: 0, max: 20 },
-        lifespan: 20000,
+        x: { min: 0, max: gameWidth },
+        y: 0,
+        lifespan: 4500,
         speedX: { min: -50, max: 0 },
         speedY: { min: 300, max: 500 },
-        speedZ: { min: 200, max: 400 },
-        scale: { start: .8, end: 0 },
+        scale: 1,
         quantity: 10,
-        blendMode: 'NORMAL'
+        blendMode: 'NORMAL',
     });
 }
 
-function addRain(rainParticles, gameWidth, gameHeight){
+function addDrizzle(rainParticles, gameWidth){
     rainParticles.createEmitter({
-        x: { min: -100, max: map.widthInPixels },
-        y: -100,
-        z: { min: 0, max: 20 },
-        lifespan: 20000,
+        x: { min: 0, max: gameWidth },
+        y: 0,
+        lifespan: 2000,
         speedX: { min: -50, max: 0 },
         speedY: { min: 800, max: 1000 },
-        speedZ: { min: 200, max: 400 },
-        scale: { start: .4, end: 0 },
+        scale: .5,
         quantity: 20,
         blendMode: 'NORMAL'
     });
 }
 
-function addSnow(snowParticles){
+function addSnow(snowParticles, gameWidth){
     snowParticles.createEmitter({
-        x: { min: -100, max: map.widthInPixels },
-        y: -100,
-        z: { min: 0, max: 20 },
-        lifespan: 20000,
+        x: { min: 0, max: gameWidth },
+        y: 0,
+        lifespan: 7000,
         speedX: { min: -100, max: 5 },
         speedY: { min: 100, max: 300 },
-        speedZ: { min: 100, max: 200 },
-        scale: { start: .5, end: 0 },
+        scale: .5,
         quantity: 5,
         blendMode: 'NORMAL'
+    });
+}
+
+function changeAtmos(gameObj, fog, atmosMode){
+    if (atmosMode == "foggy")
+        alphaMax=.6;
+    if (atmosMode == "Misty")
+        alphaMax=.4;
+    if (atmosMode == "Hazy")
+        alphaMax=.2;
+    
+    gameObj.tweens.add({
+        targets: fog,
+        alpha: { value: alphaMax, duration: 5000, ease: 'Power1' },
+        repeat: 0,
+    });
+
+    gameObj.tweens.add({
+        targets: fog,
+        x: 1400,
+        ease: 'linear',
+        duration: 2000,
+        delay: 0,
+        repeat: Infinity,
+        yoyo: true
     });
 }

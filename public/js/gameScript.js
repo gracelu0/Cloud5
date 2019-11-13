@@ -47,7 +47,9 @@ function preload(){
     
     
     this.load.image('rain', 'assets/rain.png');
-    this.load.image('snow', 'assets/snowflake-pixel.png')
+    this.load.image('snow', 'assets/snowflake-pixel.png');
+
+    this.load.image('fog', 'assets/fog.png');
 }
 
 class Bullet extends Phaser.Physics.Arcade.Sprite{
@@ -151,7 +153,7 @@ async function create(){
     ammoCount = this.add.text(0,0,"Ammunition Count:" + ammunition +"/10");
 
     //set bounds for camera (game world)
-    camera.setBounds(0,0,map.widthInPixels, map.heightInPixels);
+    camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
     //camera.setZoom(1.2);
     //make camera follow player
     camera.startFollow(player);
@@ -168,11 +170,17 @@ async function create(){
 
         // For debugging only - will move inside if statement when it works!
         var rainParticles = this.add.particles('rain');
-        // addRain(rainParticles, map.widthInPixels, map.heightInPixels);
-        // addDrizzle(rainParticles, map.widthInPixels, map.heightInPixels);
+        // addRain(rainParticles, map.widthInPixels);
+        // addDrizzle(rainParticles, map.widthInPixels);
 
         var snowParticles = this.add.particles('snow');
-        addSnow(snowParticles, map.widthInPixels, map.heightInPixels);
+        // addSnow(snowParticles, map.widthInPixels);
+
+        var fog = this.add.image(1350, 1308, 'fog').setAlpha(0);
+        changeAtmos(this, fog, "foggy");
+        // changeAtmos(this, fog, "Misty");
+        // changeAtmos(this, fog, "Hazy");
+
 
         if(weatherResponse.weather[0].main == "Rain"){
 
@@ -184,6 +192,18 @@ async function create(){
 
         else if(weatherResponse.weather[0].main == "Snow"){
             
+        }
+
+        else if(weatherResponse.weather[0].main == "Mist"){
+
+        }
+
+        else if(weatherResponse.weather[0].main == "Haze"){
+
+        }
+        
+        else if(weatherResponse.weather[0].main == "Fog"){
+
         }
     }
 
@@ -237,7 +257,6 @@ function update(time, delta){
             console.log("3");
         }
     })
-
 }
 
 bulletCollision = function(bullets,hitPlayer){
