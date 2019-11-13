@@ -10,14 +10,12 @@ var config = {
             debug: true
         }
     },
-
     scene: {
         key: 'main',
         preload: preload,
         create: create,
         update: update
     }
-
 };
 
 var game = new Phaser.Game(config);
@@ -40,11 +38,13 @@ function preload(){
     this.load.image('overworld', 'assets/overworld.png');
     this.load.tilemapTiledJSON('map', 'assets/bbmap.json');
     
-    this.load.image('testingmap', 'assets/testSheet.png' );
+    this.load.image('testingmap', 'assets/testSheet.png');
     this.load.image('test2', 'assets/tileSheet1.png');
     this.load.image('player','assets/alienPink.png');
     this.load.image('bulletImg','assets/testBullet.png');
     this.load.image('bomb','assets/bomb.png');
+    this.load.image('rain', 'assets/rain.png');
+    this.load.image('snow', 'assets/snowflake-pixel.png')
 }
 
 class Bullet extends Phaser.Physics.Arcade.Sprite{
@@ -83,6 +83,7 @@ class Bullet extends Phaser.Physics.Arcade.Sprite{
             this.setPosition(this.x, this.y);
         }
 
+
         if(this.x > this.bulletInitX + 500 || this.x < this.bulletInitX - 500 || this.y > this.bulletInitY + 500 || this.y < this.bulletInitY - 500){
             this.destroy();
         }
@@ -90,7 +91,7 @@ class Bullet extends Phaser.Physics.Arcade.Sprite{
 }
 
 function create(){
-    map = this.make.tilemap({key:'map'});
+    map = this.add.tilemap('map');
     var groundTiles = map.addTilesetImage('RPGpack');
     var bridgeTiles = map.addTilesetImage('overworld');
     groundLayer = map.createStaticLayer('Below Player', groundTiles, 0, 0);
@@ -134,8 +135,13 @@ function create(){
     //set player movement input
     cursors = this.input.keyboard.createCursorKeys();
 
+
     ammoCount = this.add.text(0,0,"Ammunition Count:" + ammunition +"/10");
 
+    //set bounds for camera (game world)
+    this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+    //make camera follow player
+    this.cameras.main.startFollow(player);
     //set camera
     this.cameras.main.setBounds(0,0,map.widthInPixels, map.heightInPixels);
     this.cameras.main.startFollow(player);
