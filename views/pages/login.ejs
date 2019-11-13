@@ -24,14 +24,15 @@
     <form class="" action="/login" method="post">
       <div class="container">
         <label for="username">Username</label>
-        <input type="text" id="username" name="username" placeholder="Enter username" required>
+        <input type="text" id="username" name="username" placeholder="Enter username" maxlength="30" required>
 
         <label for="pwd">Password</label>
-        <input type="password" id="pwd" name="pwd" placeholder="Enter password" required><br>
+        <input type="password" id="pwd" name="pwd" placeholder="Enter password" maxlength="30" required>
+
         <% if ( typeof loginMessage != 'undefined' && loginMessage.length > 0) { %>
         <p align="center" class="errorMessage"><%= loginMessage %></p>
         <% } %>
-        <a href="/forgotPwd">Forgot Password?</a>
+        <a href="/forgotPwd">Change Password</a>
         <button type="submit" name="signInBtn">Login</button>
     </form>
     <form class="" action="/signUp" method="post">
