@@ -1,5 +1,5 @@
 var config = {
-    type: Phaser.WEBGL,
+    type: Phaser.AUTO,
     width: 950,
     height: 600,
     parent: 'phaser',
@@ -32,6 +32,16 @@ var lastFired = 0;
 var facing = 1;
 var ammunition = 10;
 
+async function fetchWeather(){
+    const ipRequest = await fetch('https://json.geoiplookup.io/');
+    const ipResponse = await ipRequest.json();
+
+    const weatherRequest = await fetch('https://api.openweathermap.org/data/2.5/weather?q=' 
+                                        + ipResponse.city + ',' + ipResponse.country_code + '&appid=fa452ec635e9759a07cab7433d42104f');
+    const weatherResponse = await weatherRequest.json();
+    return weatherResponse;
+}
+
 function preload(){
     
     this.load.image('RPGpack', 'assets/RPGpack_sheet.png');
@@ -48,7 +58,6 @@ function preload(){
     
     this.load.image('rain', 'assets/rain.png');
     this.load.image('snow', 'assets/snowflake-pixel.png');
-
     this.load.image('fog', 'assets/fog.png');
 }
 
@@ -93,10 +102,9 @@ class Bullet extends Phaser.Physics.Arcade.Sprite{
             this.destroy();
         }
     }
-
 }
 
-async function create(){
+function create(){
     map = this.add.tilemap('map');
     var groundTiles = map.addTilesetImage('RPGpack');
     var bridgeTiles = map.addTilesetImage('overworld');
@@ -135,7 +143,7 @@ async function create(){
 
     //set collisions between player and world
     player.setCollideWorldBounds(true);
-    map.setCollisionBetween(1,999,true,collideLayer);
+    map.setCollisionBetween(1, 999, true, collideLayer);
 
     // const debugGraphics = this.add.graphics().setAlpha(0.75);
     // collideLayer.renderDebug(debugGraphics, {
@@ -150,7 +158,7 @@ async function create(){
     camera = this.cameras.main;
 
 
-    ammoCount = this.add.text(0,0,"Ammunition Count:" + ammunition +"/10");
+    ammoCount = this.add.text(0,0,"Ammunition Count:" + ammunition + "/10");
 
     //set bounds for camera (game world)
     camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
@@ -158,54 +166,40 @@ async function create(){
     //make camera follow player
     camera.startFollow(player);
 
+    if(navigator.onLine)
+        fetchWeather()
+            .then(weatherResponse => {
+                console.log(weatherResponse.weather[0].main)
+                if(weatherResponse.weather[0].main == "Rain"){
+                    var rainParticles = this.add.particles('rain');
+                    addRain(rainParticles, map.widthInPixels, map.heightInPixels);
+                }
 
-    if(navigator.onLine){
-        
-        const ipRequest = await fetch('https://json.geoiplookup.io/');
-        const ipResponse = await ipRequest.json();
+                else if(weatherResponse.weather[0].main == "Drizzle"){
+                    var rainParticles = this.add.particles('rain');
+                    addDrizzle(rainParticles, map.widthInPixels, map.heightInPixels);
+                }
 
-        const weatherRequest = await fetch('https://api.openweathermap.org/data/2.5/weather?q=' 
-                                            + ipResponse.city + ',' + ipResponse.country_code + '&appid=fa452ec635e9759a07cab7433d42104f');
-        const weatherResponse = await weatherRequest.json();
+                else if(weatherResponse.weather[0].main == "Snow"){
+                    var snowParticles = this.add.particles('snow');
+                    addSnow(snowParticles, map.widthInPixels, map.heightInPixels);
+                }
 
-        // For debugging only - will move inside if statement when it works!
-        var rainParticles = this.add.particles('rain');
-        // addRain(rainParticles, map.widthInPixels);
-        // addDrizzle(rainParticles, map.widthInPixels);
+                else if(weatherResponse.weather[0].main == "Mist"){
+                    var fog = this.add.image(1350, 1308, 'fog').setAlpha(0);
+                    changeAtmos(this, fog, "Misty");
+                }
 
-        var snowParticles = this.add.particles('snow');
-        // addSnow(snowParticles, map.widthInPixels);
-
-        var fog = this.add.image(1350, 1308, 'fog').setAlpha(0);
-        changeAtmos(this, fog, "foggy");
-        // changeAtmos(this, fog, "Misty");
-        // changeAtmos(this, fog, "Hazy");
-
-
-        if(weatherResponse.weather[0].main == "Rain"){
-
-        }
-
-        else if(weatherResponse.weather[0].main == "Drizzle"){
-
-        }
-
-        else if(weatherResponse.weather[0].main == "Snow"){
-            
-        }
-
-        else if(weatherResponse.weather[0].main == "Mist"){
-
-        }
-
-        else if(weatherResponse.weather[0].main == "Haze"){
-
-        }
-        
-        else if(weatherResponse.weather[0].main == "Fog"){
-
-        }
-    }
+                else if(weatherResponse.weather[0].main == "Haze"){
+                    var fog = this.add.image(1350, 1308, 'fog').setAlpha(0);
+                    changeAtmos(this, fog, "Hazy");
+                }
+                
+                else if(weatherResponse.weather[0].main == "Fog"){
+                    var fog = this.add.image(1350, 1308, 'fog').setAlpha(0);
+                    changeAtmos(this, fog, "foggy");
+                }
+            });
 
 }
 

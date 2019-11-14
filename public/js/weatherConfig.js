@@ -1,36 +1,43 @@
-function addRain(rainParticles, gameWidth){
+function addRain(rainParticles, mapWidth, mapHeight){
+    var maxSpeedY = 500;
+    var maxLifeSpan = mapHeight/maxSpeedY * 1000; 
     rainParticles.createEmitter({
-        x: { min: 0, max: gameWidth },
+        x: { min: 0, max: mapWidth },
         y: 0,
-        lifespan: 4500,
+        lifespan: maxLifeSpan,
+        cycle: true,
         speedX: { min: -50, max: 0 },
-        speedY: { min: 300, max: 500 },
+        speedY: { min: 300, max: maxSpeedY },
         scale: 1,
-        quantity: 10,
+        quantity: 20,
         blendMode: 'NORMAL',
     });
 }
 
-function addDrizzle(rainParticles, gameWidth){
+function addDrizzle(rainParticles, mapWidth, mapHeight){
+    var maxSpeedY = 1000;
+    var maxLifeSpan = mapHeight/maxSpeedY * 1000;
     rainParticles.createEmitter({
-        x: { min: 0, max: gameWidth },
+        x: { min: 0, max: mapWidth },
         y: 0,
-        lifespan: 2000,
+        lifespan: maxLifeSpan,
         speedX: { min: -50, max: 0 },
-        speedY: { min: 800, max: 1000 },
+        speedY: { min: 800, max: mapHeight },
         scale: .5,
-        quantity: 20,
+        quantity: 30,
         blendMode: 'NORMAL'
     });
 }
 
-function addSnow(snowParticles, gameWidth){
+function addSnow(snowParticles, mapWidth, mapHeight){
+    var maxSpeedY = 300;
+    var maxLifeSpan = mapHeight/maxSpeedY * 1000;
     snowParticles.createEmitter({
-        x: { min: 0, max: gameWidth },
+        x: { min: 0, max: mapWidth },
         y: 0,
-        lifespan: 7000,
+        lifespan: maxLifeSpan,
         speedX: { min: -100, max: 5 },
-        speedY: { min: 100, max: 300 },
+        speedY: { min: 100, max: maxSpeedY },
         scale: .5,
         quantity: 5,
         blendMode: 'NORMAL'
@@ -38,13 +45,13 @@ function addSnow(snowParticles, gameWidth){
 }
 
 function changeAtmos(gameObj, fog, atmosMode){
+    var alphaMax;
     if (atmosMode == "foggy")
-        alphaMax=.6;
+        alphaMax=.5;
     if (atmosMode == "Misty")
         alphaMax=.4;
     if (atmosMode == "Hazy")
         alphaMax=.2;
-    
     gameObj.tweens.add({
         targets: fog,
         alpha: { value: alphaMax, duration: 5000, ease: 'Power1' },
