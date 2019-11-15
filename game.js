@@ -3,8 +3,12 @@ const path = require('path');
 const nodemailer = require('nodemailer');
 const randomstring = require('randomstring');
 const PORT = process.env.PORT || 5000
-
 var app = express();
+var server = require('http').Server(app);
+var io = require('socket.io').listen(server);
+
+var players = {};
+
 const bcrypt = require('bcrypt');
 
 const { Pool } = require('pg');
@@ -45,12 +49,19 @@ app.post('/pregame', (req,res) => {
 });
 
 app.post('/game', (req,res) => {
-    res.render('pages/game');
+    //console.log(req.body.character);
+    var selectedCharacter = req.body.character;
+    console.log(selectedCharacter);
+    res.render('pages/game', {character: selectedCharacter});
 });
 
 app.post('/postgame', (req,res) => {
     res.render('pages/postgame');
 });
+
+app.post('/logout', (req,res) =>{
+  res.render('pages/login');
+})
 
 app.post('/login', (req, res) => {
     var userID = req.body.username;
@@ -228,4 +239,33 @@ app.get('/removeUser/:userID', (req,res) => {
     });
 });
 
-app.listen(PORT, () => console.log(`Listening on ${ PORT }`));
+io.on('connection', function (socket) {
+  console.log('a user connected');
+  // create a new player and add it to our players object
+  players[socket.id] = {
+    x: Math.floor(Math.random() * 700) + 50,
+    y: Math.floor(Math.random() * 500) + 50,
+    playerId: socket.id,
+  }
+
+  //send players object to new player
+  socket.emit('currentPlayers', players);
+
+  //update all other players of new player
+  socket.broadcast.emit('newPlayer', players[socket.id]);
+
+  socket.on('disconnect', function () {
+    console.log('user disconnected');
+    delete players[socket.id];
+    io.emit('disconnect', socket.id);
+  });
+  socket.on('playerMovement', function (movementData) {
+    players[socket.id].x = movementData.x;
+    players[socket.id].y = movementData.y;
+    players[socket.id].rotation = movementData.rotation;
+    socket.broadcast.emit('playerMoved', players[socket.id]);
+});
+
+});
+
+server.listen(PORT, () => console.log(`Listening on ${ PORT }`));
