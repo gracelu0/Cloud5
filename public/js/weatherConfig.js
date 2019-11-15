@@ -33,7 +33,7 @@ function addDrizzle(rainParticles, mapWidth, mapHeight){
         speedX: { min: -50, max: 0 },
         speedY: { min: 1200, max: maxSpeedY },
         scale: .5,
-        quantity: 20,
+        quantity: 15,
         on: true,
         blendMode: 'NORMAL'
     });
@@ -53,7 +53,7 @@ function addSnow(snowParticles, mapWidth, mapHeight){
         speedX: { min: -100, max: 5 },
         speedY: { min: 200, max: maxSpeedY },
         scale: .75,
-        quantity: 5,
+        quantity: 4,
         on: true,
         blendMode: 'NORMAL'
     });
