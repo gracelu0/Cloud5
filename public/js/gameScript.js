@@ -20,6 +20,7 @@ var config = {
 
 var game = new Phaser.Game(config);
 
+
 var map;
 var collideLayer;
 var groundLayer;
@@ -45,8 +46,11 @@ function preload(){
         this.load.tilemapTiledJSON('map', 'assets/map.json');
     
         //sprites
-        this.load.image('player','assets/alienPink.png');
+        this.load.image('pinkPlayer','assets/alienPink.png');
         this.load.image('greenPlayer','assets/alienGreen.png');
+        this.load.image('yellowPlayer','assets/alienYellow.png');
+        this.load.image('bluePlayer','assets/alienBlue.png');
+
         this.load.image('bulletImg','assets/testBullet.png');
         
         
@@ -112,28 +116,43 @@ function create(){
     this.physics.world.bounds.width = groundLayer.width;
     this.physics.world.bounds.height = groundLayer.height;
 
+   // map.setCollisionBetween(1,999,true,collideLayer);
+   collideLayer.setCollisionByExclusion([-1]);
+
     var self = this;
     this.socket = io();
     this.otherPlayers = this.physics.add.group();
+
+    //this.physics.add.collider(collideLayer,this.players);
+
+    //character selection
+    var selected = document.getElementById('colour').innerHTML;
+    console.log(selected);
+    
+
     this.socket.on('currentPlayers', function (players) {
       Object.keys(players).forEach(function (id) {
         if (players[id].playerId === self.socket.id) {
           addPlayer(self, players[id]);
+          
         } else {
           addOtherPlayers(self, players[id]);
         }
       });
     });
+
     this.socket.on('newPlayer', function (playerInfo) {
       addOtherPlayers(self, playerInfo);
-    });
+    }.bind(this));
+
     this.socket.on('disconnect', function (playerId) {
       self.otherPlayers.getChildren().forEach(function (otherPlayer) {
         if (playerId === otherPlayer.playerId) {
           otherPlayer.destroy();
         }
-      });
-    });
+      }.bind(this));
+    }.bind(this));
+
     this.socket.on('playerMoved', function (playerInfo) {
       self.otherPlayers.getChildren().forEach(function (otherPlayer) {
       if (playerInfo.playerId === otherPlayer.playerId) {
@@ -143,7 +162,6 @@ function create(){
 });
     collideLayer.setCollisionBetween(200,240);
 
-    //collideLayer.setCollisionByProperty({collides:true});
     //this.physics.add.collider(collideLayer,player);
 
  
@@ -154,17 +172,14 @@ function create(){
     }); 
     bullets.enable = true;
     bullets.physicsBodyType = Phaser.Physics.ARCADE;
+    
 
-    //set collisions between player and world
-    player.setCollideWorldBounds(true);
-    map.setCollisionBetween(1,999,true,collideLayer);
-
-    // const debugGraphics = this.add.graphics().setAlpha(0.75);
-    // collideLayer.renderDebug(debugGraphics, {
-    //     tileColor: null, // Color of non-colliding tiles
-    //     collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
-    //     faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
-    // });
+    const debugGraphics = this.add.graphics().setAlpha(0.75);
+    collideLayer.renderDebug(debugGraphics, {
+        tileColor: null, // Color of non-colliding tiles
+        collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
+        faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
+    });
 
     //set player movement input
     this.cursors = this.input.keyboard.createCursorKeys();
@@ -176,9 +191,7 @@ function create(){
     ammoCount = this.add.text(0,0,"Ammunition Count:" + ammunition +"/10");
     //set bounds for camera (game world)
     camera.setBounds(0,0,map.widthInPixels, map.heightInPixels);
-    //camera.setZoom(1.2);
-    //make camera follow player
-    //this.cameras.main.startFollow(self.player);
+
 }
 
 function update(){
@@ -192,10 +205,14 @@ if(this.player){
   }
   if (this.cursors.left.isDown){
       this.player.x -=4;
+      this.player.flipX = true;
   }
   if (this.cursors.right.isDown){
       this.player.x +=4;
+      this.player.flipX = false;
   }
+
+//   this.physics.collide(this.player)
 
   var x = this.player.x;
   var y = this.player.y;
@@ -211,76 +228,104 @@ if(this.player){
 }
 
 function addPlayer(self, playerInfo) {
-  self.player = self.physics.add.image(playerInfo.x, playerInfo.y, 'player').setOrigin(0.5, 0.5);
-  self.player.setDrag(100);
-  self.player.setAngularDrag(100);
+  var selected = document.getElementById('colour').innerHTML;
+  playerInfo.colour = selected;
+  console.log("selected colour: ", playerInfo.colour);
+  self.player = self.physics.add.sprite(playerInfo.x, playerInfo.y, 'pinkPlayer').setOrigin(0.5, 0.5);
+  if (selected == 'pink'){
+    self.player.setTexture('pinkPlayer');
+  }
+  else if (selected == 'yellow'){
+    self.player.setTexture('yellowPlayer');
+    //self.player = self.physics.add.sprite(playerInfo.x, playerInfo.y, 'greenPlayer').setOrigin(0.5, 0.5);
+  }
+  else if (selected == 'green'){
+    self.player.setTexture('greenPlayer');
+    //self.player = self.physics.add.sprite(playerInfo.x, playerInfo.y, 'greenPlayer').setOrigin(0.5, 0.5);
+  }
+  else if (selected == 'blue'){
+    self.player.setTexture('bluePlayer');
+    //self.player = self.physics.add.sprite(playerInfo.x, playerInfo.y, 'greenPlayer').setOrigin(0.5, 0.5);
+  }
+  
   self.player.setBounce(0.2);
   self.player.setCollideWorldBounds(true);
-  collideLayer.setCollisionBetween(200,240);
+  self.cameras.main.startFollow(self.player, true,0.5,0.5,0.5,0.5);
+  self.physics.add.collider(self.player,collideLayer);
 
+  self.physics.add.collider(self.otherPlayers,self.player);
+  
+  //collideLayer.setCollisionBetween(200,240);
   // collideLayer.setCollisionByProperty({collides:true});
-  // this.physics.add.collider(collideLayer,self.player);
+  
 }
 
 function addOtherPlayers(self, playerInfo) {
-  const otherPlayer = self.add.sprite(playerInfo.x, playerInfo.y, 'player').setOrigin(0.5, 0.5);
+  const otherPlayer = self.add.sprite(playerInfo.x, playerInfo.y, 'pinkPlayer').setOrigin(0.5, 0.5);
+  if (playerInfo.colour == "pink"){
+     otherPlayer.setTexture('pinkPlayer'); 
+  }
+  else if (playerInfo.colour == "green"){
+    otherPlayer.setTexture('greenPlayer'); 
+  }
+  
   otherPlayer.playerId = playerInfo.playerId;
   self.otherPlayers.add(otherPlayer);
 }   
 
 
-function update(time, delta){
+// function update(time, delta){
 
-    if (cursors.up.isDown){
-        player.body.position.y -=4;
-        facing = 1;
-    }
-    if (cursors.down.isDown){
-        player.body.position.y +=4;
-        facing = 2;
-    }
-    if (cursors.left.isDown){
-        player.body.position.x -=4;
-        facing = 3;
-        player.flipX = true;
-    }
-    if (cursors.right.isDown){
-        player.body.position.x +=4;
-        facing = 4;
-        player.flipX = false;
-    }
+//     if (cursors.up.isDown){
+//         player.body.position.y -=4;
+//         facing = 1;
+//     }
+//     if (cursors.down.isDown){
+//         player.body.position.y +=4;
+//         facing = 2;
+//     }
+//     if (cursors.left.isDown){
+//         player.body.position.x -=4;
+//         facing = 3;
+//         player.flipX = true;
+//     }
+//     if (cursors.right.isDown){
+//         player.body.position.x +=4;
+//         facing = 4;
+//         player.flipX = false;
+//     }
 
-    if(player.body.position.x - 455 > 0 && player.body.position.x + 495 < groundLayer.width){
-        ammoCount.x = player.body.position.x - 455;
-    }
-    if(player.body.position.y - 265 > 0 && player.body.position.y + 335 < groundLayer.height){
-        ammoCount.y = player.body.position.y - 265;
-    }
+//     if(player.body.position.x - 455 > 0 && player.body.position.x + 495 < groundLayer.width){
+//         ammoCount.x = player.body.position.x - 455;
+//     }
+//     if(player.body.position.y - 265 > 0 && player.body.position.y + 335 < groundLayer.height){
+//         ammoCount.y = player.body.position.y - 265;
+//     }
 
-    if (cursors.space.isDown && time > lastFired && ammunition > 0){
-        var bullet = bullets.get();
+//     if (cursors.space.isDown && time > lastFired && ammunition > 0){
+//         var bullet = bullets.get();
 
-        if(bullet){
-            bullet.fire(player.body.position.x, player.body.position.y);
+//         if(bullet){
+//             bullet.fire(player.body.position.x, player.body.position.y);
 
-            lastFired = time + 200;
+//             lastFired = time + 200;
 
-            ammunition --;
+//             ammunition --;
 
-            ammoCount.setText("Ammunition Count:" + ammunition +"/10");
-        }
-    }
+//             ammoCount.setText("Ammunition Count:" + ammunition +"/10");
+//         }
+//     }
 
     
-    this.physics.collide(player,collideLayer)
+//     this.physics.collide(player,collideLayer)
 
-    bullets.getChildren().forEach(child => {
-        if(this.physics.collide(child, player2, bulletCollision)){
-            console.log("3");
-        }
-    })
+//     bullets.getChildren().forEach(child => {
+//         if(this.physics.collide(child, player2, bulletCollision)){
+//             console.log("3");
+//         }
+//     })
 
-}
+// }
 
 bulletCollision = function(bullets,hitPlayer){
     bullets.destroy();
