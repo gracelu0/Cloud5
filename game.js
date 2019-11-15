@@ -6,13 +6,22 @@ const PORT = process.env.PORT || 5000
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io').listen(server);
+
 var players = {};
+
 const bcrypt = require('bcrypt');
 
 const { Pool } = require('pg');
 var pool = new Pool({
   connectionString: process.env.DATABASE_URL
   //connectionString: "postgres://postgres:shimarov6929@localhost/cloud5"
+});
+
+var pool = new Pool({
+  user: 'graceluo',
+  password: 'tokicorgi',
+  host: 'localhost',
+  database: 'cloud5'
 });
 
 
@@ -48,7 +57,10 @@ app.post('/pregame', (req,res) => {
 });
 
 app.post('/game', (req,res) => {
-    res.render('pages/game');
+    //console.log(req.body.character);
+    var selectedCharacter = req.body.character;
+    console.log(selectedCharacter);
+    res.render('pages/game', {character: selectedCharacter});
 });
 
 app.post('/postgame', (req,res) => {
@@ -243,7 +255,11 @@ io.on('connection', function (socket) {
     y: Math.floor(Math.random() * 500) + 50,
     playerId: socket.id,
   }
+
+  //send players object to new player
   socket.emit('currentPlayers', players);
+  
+  //update all other players of new player
   socket.broadcast.emit('newPlayer', players[socket.id]);
 
   socket.on('disconnect', function () {
