@@ -227,20 +227,68 @@ class Bullet extends Phaser.Physics.Arcade.Sprite{
 }
 
 function create(){
-    map = this.add.tilemap('map');
+
     //camera.setZoom(1.2);
     //make camera follow player
-    var bridgeTiles = map.addTilesetImage('overworld');
-    var combinedTiles = map.addTilesetImage('combinedTiles');
-    groundLayer = map.createStaticLayer('Below Player', combinedTiles, 0, 0);
-    bridgeLayer = map.createStaticLayer('Overworld', bridgeTiles,0,0);
-    collideLayer = map.createStaticLayer('World', combinedTiles, 0, 0);
+
+    rainParticles = this.add.particles('rain');
+    snowParticles = this.add.particles('snow');
+    fog = this.add.image(1350, 1308, 'fog').setAlpha(0);
+
+    if(navigator.onLine)
+        fetchWeather()
+            .then(weatherResponse => {
+                console.log(weatherResponse.weather[0].main);
+                if(weatherResponse.weather[0].main == "Rain"){
+                    addRain(rainParticles, map.widthInPixels, map.heightInPixels);
+                    rainFlag = true; isRaining = true;
+                    document.querySelector("[id='toggleRain']").innerHTML = "RAIN OFF";
+                }
+
+                else if(weatherResponse.weather[0].main == "Drizzle"){
+                    addDrizzle(rainParticles, map.widthInPixels, map.heightInPixels);
+                    drizzleFlag = true; isDrizzling = true;
+                    document.querySelector("[id='toggleDrizzle']").innerHTML = "DRIZZLE OFF";
+                }
+
+                else if(weatherResponse.weather[0].main == "Snow"){
+                    addSnow(snowParticles, map.widthInPixels, map.heightInPixels);
+                    snowFlag = true; isSnowing = true;
+                    document.querySelector("[id='toggleSnow']").innerHTML = "SNOW OFF";
+                }
+
+                else if(weatherResponse.weather[0].main == "Mist"){
+                    changeAtmos(this, fog, "Misty");
+                    mistFlag = true; isMisty = true;
+                    document.querySelector("[id='toggleMist']").innerHTML = "MIST OFF";
+                }
+
+                else if(weatherResponse.weather[0].main == "Haze"){
+                    changeAtmos(this, fog, "Hazy");
+                    hazeFlag = true; isHazy = true;
+                    document.querySelector("[id='toggleHaze']").innerHTML = "HAZE OFF";
+
+                }
+                
+                else if(weatherResponse.weather[0].main == "Fog"){
+                    changeAtmos(this, fog, "foggy");
+                    fogFlag = true; isFoggy = true;
+                    document.querySelector("[id='toggleFog']").innerHTML = "FOG OFF";
+                }
+            });
+
+  var bridgeTiles = map.addTilesetImage('overworld');
+  var combinedTiles = map.addTilesetImage('combinedTiles');
+  groundLayer = map.createStaticLayer('Below Player', combinedTiles, 0, 0);
+  bridgeLayer = map.createStaticLayer('Overworld', bridgeTiles,0,0);
+  collideLayer = map.createStaticLayer('World', combinedTiles, 0, 0);
 
   //set boundaries of game world
   this.physics.world.bounds.width = groundLayer.width;
   this.physics.world.bounds.height = groundLayer.height;
 
   map.setCollisionBetween(1,999,true,collideLayer);
+
   var self = this;
   this.socket = io();
   this.otherPlayers = this.physics.add.group();
@@ -307,53 +355,6 @@ function create(){
   //set bounds for camera (game world)
   camera.setBounds(0,0,map.widthInPixels, map.heightInPixels);
   camera.startFollow(player);
-
-  rainParticles = this.add.particles('rain');
-    snowParticles = this.add.particles('snow');
-    fog = this.add.image(1350, 1308, 'fog').setAlpha(0);
-
-    if(navigator.onLine)
-        fetchWeather()
-            .then(weatherResponse => {
-                console.log(weatherResponse.weather[0].main);
-                if(weatherResponse.weather[0].main == "Rain"){
-                    addRain(rainParticles, map.widthInPixels, map.heightInPixels);
-                    rainFlag = true; isRaining = true;
-                    document.querySelector("[id='toggleRain']").innerHTML = "RAIN OFF";
-                }
-
-                else if(weatherResponse.weather[0].main == "Drizzle"){
-                    addDrizzle(rainParticles, map.widthInPixels, map.heightInPixels);
-                    drizzleFlag = true; isDrizzling = true;
-                    document.querySelector("[id='toggleDrizzle']").innerHTML = "DRIZZLE OFF";
-                }
-
-                else if(weatherResponse.weather[0].main == "Snow"){
-                    addSnow(snowParticles, map.widthInPixels, map.heightInPixels);
-                    snowFlag = true; isSnowing = true;
-                    document.querySelector("[id='toggleSnow']").innerHTML = "SNOW OFF";
-                }
-
-                else if(weatherResponse.weather[0].main == "Mist"){
-                    changeAtmos(this, fog, "Misty");
-                    mistFlag = true; isMisty = true;
-                    document.querySelector("[id='toggleMist']").innerHTML = "MIST OFF";
-                }
-
-                else if(weatherResponse.weather[0].main == "Haze"){
-                    changeAtmos(this, fog, "Hazy");
-                    hazeFlag = true; isHazy = true;
-                    document.querySelector("[id='toggleHaze']").innerHTML = "HAZE OFF";
-
-                }
-                
-                else if(weatherResponse.weather[0].main == "Fog"){
-                    changeAtmos(this, fog, "foggy");
-                    fogFlag = true; isFoggy = true;
-                    document.querySelector("[id='toggleFog']").innerHTML = "FOG OFF";
-                }
-            });
-
 }
 
 function update(){
