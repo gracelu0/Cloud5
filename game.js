@@ -9,7 +9,11 @@ const bcrypt = require('bcrypt');
 
 const { Pool } = require('pg');
 var pool = new Pool({
-  connectionString: process.env.DATABASE_URL
+  // connectionString: process.env.DATABASE_URL
+  host: 'localhost',
+  user: 'postgres',
+  password: 'mantiS7326510#',
+  database: 'cloud5'
 });
 
 
@@ -67,7 +71,7 @@ app.post('/login', (req, res) => {
                     res.render('pages/home', {message: 'Successfully logged in!'});
                 else{ // result.row[0].usertype == 'Admin'
 
-                    var usersQuery=`SELECT userid, username, email, usertype FROM logindb ORDER BY usertype, username`;
+                    var usersQuery=`SELECT username, email, usertype FROM logindb ORDER BY usertype, username`;
                     pool.query(usersQuery, (error, result) =>{
                         if (error)
                             res.end(error);
