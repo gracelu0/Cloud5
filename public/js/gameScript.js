@@ -276,7 +276,8 @@ function create(){
                     document.querySelector("[id='toggleFog']").innerHTML = "FOG OFF";
                 }
             });
-
+  //add map
+  map = this.add.tilemap('map');
   var bridgeTiles = map.addTilesetImage('overworld');
   var combinedTiles = map.addTilesetImage('combinedTiles');
   groundLayer = map.createStaticLayer('Below Player', combinedTiles, 0, 0);
