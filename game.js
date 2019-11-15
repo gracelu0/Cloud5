@@ -17,12 +17,6 @@ var pool = new Pool({
   //connectionString: "postgres://postgres:shimarov6929@localhost/cloud5"
 });
 
-var pool = new Pool({
-  user: 'graceluo',
-  password: 'tokicorgi',
-  host: 'localhost',
-  database: 'cloud5'
-});
 
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -258,7 +252,7 @@ io.on('connection', function (socket) {
 
   //send players object to new player
   socket.emit('currentPlayers', players);
-  
+
   //update all other players of new player
   socket.broadcast.emit('newPlayer', players[socket.id]);
 
