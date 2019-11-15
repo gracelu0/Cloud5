@@ -33,6 +33,7 @@ p{
 
 [type=radio] + img{
     cursor: pointer;
+    margin: 0 10px 0 10px;
 }
 
 [type=radio]:checked + img{
@@ -44,15 +45,19 @@ p{
 }
 
 button{
+    display: block;
     background-color: darkgreen;
     color: white;
     padding: 14px 20px;
-    margin: 8px 0;
     border: none;
     cursor: pointer;
-    width: 100%;
+    width: 40%;
     font-family: 'Neucha', cursive;
     font-size: 20pt;
+    position: absolute;
+    bottom: 30px;
+    margin-left: 30%;
+
 
     -webkit-transition-duration: 0.4s;
     transition-duration: 0.4s;
@@ -63,3 +68,7 @@ button:hover{
 
 }
 
+#characterDiv{
+    height: 30%;
+    margin: 0 auto;
+}

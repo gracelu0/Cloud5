@@ -50,6 +50,7 @@ function preload(){
         this.load.image('greenPlayer','assets/alienGreen.png');
         this.load.image('yellowPlayer','assets/alienYellow.png');
         this.load.image('bluePlayer','assets/alienBlue.png');
+        this.load.image('beigePlayer','assets/alienBeige.png')
 
         this.load.image('bulletImg','assets/testBullet.png');
         
@@ -134,16 +135,25 @@ function create(){
       Object.keys(players).forEach(function (id) {
         if (players[id].playerId === self.socket.id) {
           addPlayer(self, players[id]);
-          
         } else {
           addOtherPlayers(self, players[id]);
         }
       });
     });
 
+
     this.socket.on('newPlayer', function (playerInfo) {
       addOtherPlayers(self, playerInfo);
     }.bind(this));
+
+    this.socket.on('updateSprite', function (playerInfo) {
+        self.otherPlayers.getChildren().forEach(function (otherPlayer) {
+            if (playerInfo.playerId === otherPlayer.playerId) {
+            otherPlayer.colour = playerInfo.colour;
+            }
+        });
+    });
+
 
     this.socket.on('disconnect', function (playerId) {
       self.otherPlayers.getChildren().forEach(function (otherPlayer) {
@@ -155,11 +165,11 @@ function create(){
 
     this.socket.on('playerMoved', function (playerInfo) {
       self.otherPlayers.getChildren().forEach(function (otherPlayer) {
-      if (playerInfo.playerId === otherPlayer.playerId) {
-        otherPlayer.setPosition(playerInfo.x, playerInfo.y);
-    }
-  });
-});
+            if (playerInfo.playerId === otherPlayer.playerId) {
+                otherPlayer.setPosition(playerInfo.x, playerInfo.y);
+            }   
+      });
+    });
     collideLayer.setCollisionBetween(200,240);
 
     //this.physics.add.collider(collideLayer,player);
@@ -195,6 +205,7 @@ function create(){
 }
 
 function update(){
+
 if(this.player){
 
   if (this.cursors.up.isDown){
@@ -231,21 +242,24 @@ function addPlayer(self, playerInfo) {
   var selected = document.getElementById('colour').innerHTML;
   playerInfo.colour = selected;
   console.log("selected colour: ", playerInfo.colour);
+  self.socket.emit('updateColour', { colour: playerInfo.colour});
+
+
   self.player = self.physics.add.sprite(playerInfo.x, playerInfo.y, 'pinkPlayer').setOrigin(0.5, 0.5);
   if (selected == 'pink'){
     self.player.setTexture('pinkPlayer');
   }
   else if (selected == 'yellow'){
     self.player.setTexture('yellowPlayer');
-    //self.player = self.physics.add.sprite(playerInfo.x, playerInfo.y, 'greenPlayer').setOrigin(0.5, 0.5);
   }
   else if (selected == 'green'){
     self.player.setTexture('greenPlayer');
-    //self.player = self.physics.add.sprite(playerInfo.x, playerInfo.y, 'greenPlayer').setOrigin(0.5, 0.5);
   }
   else if (selected == 'blue'){
     self.player.setTexture('bluePlayer');
-    //self.player = self.physics.add.sprite(playerInfo.x, playerInfo.y, 'greenPlayer').setOrigin(0.5, 0.5);
+  }
+  else if (selected == 'beige'){
+    self.player.setTexture('beigePlayer');
   }
   
   self.player.setBounce(0.2);
@@ -267,6 +281,15 @@ function addOtherPlayers(self, playerInfo) {
   }
   else if (playerInfo.colour == "green"){
     otherPlayer.setTexture('greenPlayer'); 
+  }
+  else if (playerInfo.colour == "blue"){
+    otherPlayer.setTexture('bluePlayer'); 
+  }
+  else if (playerInfo.colour == "yellow"){
+    otherPlayer.setTexture('yellowPlayer'); 
+  }
+  else if (playerInfo.colour== 'beige'){
+    otherPlayer.setTexture('beigePlayer');
   }
   
   otherPlayer.playerId = playerInfo.playerId;
