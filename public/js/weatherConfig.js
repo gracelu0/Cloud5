@@ -1,6 +1,6 @@
 function addRain(rainParticles, mapWidth, mapHeight){
-    var maxSpeedY = 500;
-    var maxLifeSpan = mapHeight/maxSpeedY * 1000; 
+    var maxSpeedY = 600;
+    var maxLifeSpan = mapHeight/maxSpeedY * 1000;
     rainParticles.createEmitter({
         x: { min: 0, max: mapWidth },
         y: 0,
@@ -8,37 +8,37 @@ function addRain(rainParticles, mapWidth, mapHeight){
         cycle: true,
         speedX: { min: -50, max: 0 },
         speedY: { min: 300, max: maxSpeedY },
-        scale: 1,
-        quantity: 20,
+        scale: 1.25,
+        quantity: 6,
         blendMode: 'NORMAL',
     });
 }
 
 function addDrizzle(rainParticles, mapWidth, mapHeight){
-    var maxSpeedY = 1000;
+    var maxSpeedY = 1800;
     var maxLifeSpan = mapHeight/maxSpeedY * 1000;
     rainParticles.createEmitter({
         x: { min: 0, max: mapWidth },
         y: 0,
         lifespan: maxLifeSpan,
         speedX: { min: -50, max: 0 },
-        speedY: { min: 800, max: mapHeight },
+        speedY: { min: 1200, max: maxSpeedY },
         scale: .5,
-        quantity: 30,
+        quantity: 20,
         blendMode: 'NORMAL'
     });
 }
 
 function addSnow(snowParticles, mapWidth, mapHeight){
-    var maxSpeedY = 300;
+    var maxSpeedY = 400;
     var maxLifeSpan = mapHeight/maxSpeedY * 1000;
     snowParticles.createEmitter({
         x: { min: 0, max: mapWidth },
         y: 0,
         lifespan: maxLifeSpan,
         speedX: { min: -100, max: 5 },
-        speedY: { min: 100, max: maxSpeedY },
-        scale: .5,
+        speedY: { min: 200, max: maxSpeedY },
+        scale: .75,
         quantity: 5,
         blendMode: 'NORMAL'
     });
