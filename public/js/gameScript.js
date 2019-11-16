@@ -164,6 +164,7 @@ function preload(){
 
   
   this.load.image('testingmap', 'assets/testSheet.png');
+//   this.load.image('test2', 'assets/tileSheet1.png');
   this.load.image('player','assets/alienPink.png');
   this.load.image('bulletImg','assets/testBullet.png');
   
