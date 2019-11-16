@@ -13,8 +13,8 @@ const bcrypt = require('bcrypt');
 
 const { Pool } = require('pg');
 var pool = new Pool({
-  connectionString: process.env.DATABASE_URL
-  //connectionString: "postgres://postgres:shimarov6929@localhost/cloud5"
+  //connectionString: process.env.DATABASE_URL
+  connectionString: "postgres://postgres:shimarov6929@localhost/cloud5"
 });
 
 
@@ -276,8 +276,16 @@ io.on('connection', function (socket) {
     players[socket.id].y = movementData.y;
     players[socket.id].rotation = movementData.rotation;
     socket.broadcast.emit('playerMoved', players[socket.id]);
-});
+  });
+  
+  socket.on('message', function(data){
+    console.log(data);
+    io.emit('message', data);
+  })
 
+  socket.on('disconnect', function () {
+    io.emit('disconnect');
+  });
 });
 
 server.listen(PORT, () => console.log(`Listening on ${ PORT }`));

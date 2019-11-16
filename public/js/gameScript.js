@@ -42,7 +42,7 @@ function preload(){
   this.load.image('combinedTiles', 'assets/combinedTiles.png');
   //map in json format
   this.load.tilemapTiledJSON('map', 'assets/map.json');
-    
+
   //sprites
   this.load.image('pinkPlayer','assets/alienPink.png');
   this.load.image('greenPlayer','assets/alienGreen.png');
@@ -54,7 +54,7 @@ function preload(){
 
   this.load.image('bulletImg','assets/testBullet.png');
   this.load.image('bomb','assets/bomb.png');
-        
+
   this.load.image('rain', 'assets/rain.png');
   this.load.image('snow', 'assets/snowflake-pixel.png');
 }
@@ -67,7 +67,7 @@ class Bullet extends Phaser.Physics.Arcade.Sprite{
     if(facing == 1){
       this.xSpeed = Phaser.Math.GetSpeed(0,1);
       this.ySpeed = Phaser.Math.GetSpeed(-400,1);
-    } 
+    }
     else if(facing == 2){
       this.xSpeed = Phaser.Math.GetSpeed(0,1);
       this.ySpeed = Phaser.Math.GetSpeed(400,1);
@@ -104,7 +104,7 @@ class Bullet extends Phaser.Physics.Arcade.Sprite{
 function create(){
   //add map
   map = this.add.tilemap('map');
-    
+
   var bridgeTiles = map.addTilesetImage('overworld');
   var combinedTiles = map.addTilesetImage('combinedTiles');
   groundLayer = map.createStaticLayer('Below Player', combinedTiles, 0, 0);
@@ -128,7 +128,7 @@ function create(){
   this.socket.on('currentPlayers', function (players) {
     Object.keys(players).forEach(function (id) {
       if (players[id].playerId === self.socket.id) {
-        addPlayer(self, players[id]);   
+        addPlayer(self, players[id]);
       } else {
         addOtherPlayers(self, players[id]);
       }
@@ -154,12 +154,12 @@ function create(){
     }
   });
 });
- 
+
   bullets = this.physics.add.group({
     classType: Bullet,
     maxSize: 5,
     runChildUpdate: true
-  }); 
+  });
   bullets.enable = true;
   bullets.physicsBodyType = Phaser.Physics.ARCADE;
 
@@ -217,7 +217,7 @@ function update(){
 
     if (this.cursors.space.isDown && ammunition > 0 && lastFired == 0){
       var bullet = bullets.get();
-    
+
       if(bullet){
         bullet.fire(this.player.body.position.x, this.player.body.position.y);
         lastFired = 10;
@@ -297,14 +297,14 @@ function addOtherPlayers(self, playerInfo) {
   const otherPlayer = self.add.sprite(playerInfo.x, playerInfo.y, 'pinkPlayer').setOrigin(0.5, 0.5);
   otherPlayer.health = 100;
   if (playerInfo.colour == "pink"){
-     otherPlayer.setTexture('pinkPlayer'); 
+     otherPlayer.setTexture('pinkPlayer');
   }
   else if (playerInfo.colour == "green"){
-    otherPlayer.setTexture('greenPlayer'); 
+    otherPlayer.setTexture('greenPlayer');
   }
   otherPlayer.playerId = playerInfo.playerId;
   self.otherPlayers.add(otherPlayer);
-}   
+}
 
 bulletCollision = function(bullets,hitPlayer){
   bullets.destroy();
@@ -316,3 +316,39 @@ playerDeath = function(deadPlayer){
   //healthbar_red.destroy();
   //healthbar_green.destroy();
 }
+
+
+
+
+var socket = io();
+
+// The user count. Can change when someone joins/leaves
+socket.on('count', function (data) {
+  $('.user-count').html(data);
+});
+
+// When we receive a message
+// it will be like { user: 'username', message: 'text' }
+socket.on('message', function (data) {
+  $('.chat').append('<p><strong>' + data.user + '</strong>: ' + data.message + '</p>');
+});
+
+// When the form is submitted
+  function send(e) {
+  // Avoid submitting it through HTTP
+  e.preventDefault();
+
+  // Retrieve the message from the user
+  var message = $(e.target).find('input').val();
+
+  // Send the message to the server
+  socket.emit('message', {
+    //user: cookie.get('user') || 'Anonymous',
+    user:"sdv",
+    message: message
+  });
+
+  // Clear the input and focus it for a new message
+  e.target.reset();
+  $(e.target).find('input').focus();
+});

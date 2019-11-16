@@ -20,7 +20,7 @@
       <p id="colour"><%= character %></p>
       <div align="center" id="phaser"></div>
 
-      
+
       <form class="" action="/postgame" method="post">
         <button type="submit" name="button">Go to postgame screen</button>
       </form>
@@ -34,5 +34,18 @@
           <td><button id="toggleHaze">HAZE ON</button></td>
         </tr>
       </table>
+      <main>
+            <header>
+              <div class="user-count fa fa-user">0</div>
+              <h1>Tokyo Chat</h1>
+            </header>
+
+            <section class="chat"></section>
+
+            <form onsubmit="send()">
+              <input type="text" placeholder="Say something nice" />
+              <button>Send</button>
+            </form>
+          </main>
     </body>
 </html>
