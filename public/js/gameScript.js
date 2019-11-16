@@ -37,107 +37,146 @@ var x;
 var y;
 
 // Parameters to control rain/drizzle
-var rainFlag = false; var isRaining = false;
-var drizzleFlag = false; var isDrizzling = false;
-var rainParticles;
+// var rainFlag = false; var isRaining = false;
+// var drizzleFlag = false; var isDrizzling = false;
+// var rainParticles;
 // Functions to control rain/drizzle parameters
-function updateRainFlag(){
-    rainFlag = !rainFlag;
-}
-function updateIsRaining(){
-    isRaining = !isRaining;
-}
-function updateDrizzleFlag(){
-    drizzleFlag = !drizzleFlag;
-}
-function updateIsDrizzling(){
-    isDrizzling = !isDrizzling;
-}
+// function updateRainFlag(){
+//     rainFlag = !rainFlag;
+// }
+// function updateIsRaining(){
+//     isRaining = !isRaining;
+// }
+// function updateDrizzleFlag(){
+//     drizzleFlag = !drizzleFlag;
+// }
+// function updateIsDrizzling(){
+//     isDrizzling = !isDrizzling;
+// }
 // Update Buttons in the game and rain/drizzle status
-document.querySelector("[id='toggleRain']").addEventListener('click', function(){
-    updateRainFlag();
-    if (document.querySelector("[id='toggleRain']").innerHTML == "RAIN ON")
-        document.querySelector("[id='toggleRain']").innerHTML = "RAIN OFF";
-    else
-        document.querySelector("[id='toggleRain']").innerHTML = "RAIN ON";
-});
-document.querySelector("[id='toggleDrizzle']").addEventListener('click', function(){
-    updateDrizzleFlag();
-    if (document.querySelector("[id='toggleDrizzle']").innerHTML == "DRIZZLE ON")
-        document.querySelector("[id='toggleDrizzle']").innerHTML = "DRIZZLE OFF";
-    else
-        document.querySelector("[id='toggleDrizzle']").innerHTML = "DRIZZLE ON";
-});
+// document.querySelector("[id='toggleRain']").addEventListener('click', function(){
+//     updateRainFlag();
+//     if (document.querySelector("[id='toggleRain']").innerHTML == "RAIN ON")
+//         document.querySelector("[id='toggleRain']").innerHTML = "RAIN OFF";
+//     else
+//         document.querySelector("[id='toggleRain']").innerHTML = "RAIN ON";
+// });
+// document.querySelector("[id='toggleDrizzle']").addEventListener('click', function(){
+//     updateDrizzleFlag();
+//     if (document.querySelector("[id='toggleDrizzle']").innerHTML == "DRIZZLE ON")
+//         document.querySelector("[id='toggleDrizzle']").innerHTML = "DRIZZLE OFF";
+//     else
+//         document.querySelector("[id='toggleDrizzle']").innerHTML = "DRIZZLE ON";
+// });
 // Parameters to control snow
-var snowFlag = false; var isSnowing = false;
-var snowParticles;
-// Functions to control snow parameters
-function updateSnowFlag(){
-    snowFlag = !snowFlag;
-}
-function updateIsSnowing(){
-    isSnowing = !isSnowing;
-}
-// Update Buttons in the game and snow status
-document.querySelector("[id='toggleSnow']").addEventListener('click', function(){
-    updateSnowFlag();
-    if (document.querySelector("[id='toggleSnow']").innerHTML == "SNOW ON")
-        document.querySelector("[id='toggleSnow']").innerHTML = "SNOW OFF";
-    else
-        document.querySelector("[id='toggleSnow']").innerHTML = "SNOW ON";
-});
+// var snowFlag = false; var isSnowing = false;
+// var snowParticles;
+// // Functions to control snow parameters
+// function updateSnowFlag(){
+//     snowFlag = !snowFlag;
+// }
+// function updateIsSnowing(){
+//     isSnowing = !isSnowing;
+// }
+// // Update Buttons in the game and snow status
+// document.querySelector("[id='toggleSnow']").addEventListener('click', function(){
+//     updateSnowFlag();
+//     if (document.querySelector("[id='toggleSnow']").innerHTML == "SNOW ON")
+//         document.querySelector("[id='toggleSnow']").innerHTML = "SNOW OFF";
+//     else
+//         document.querySelector("[id='toggleSnow']").innerHTML = "SNOW ON";
+// });
 // Parameters to control fog/mist/haze
-var fogFlag = false; var isFoggy = false;
-var mistFlag = false; var isMisty = false;
-var hazeFlag = false; var isHazy = false;
-var fog;
+// var fogFlag = false; var isFoggy = false;
+// var mistFlag = false; var isMisty = false;
+// var hazeFlag = false; var isHazy = false;
+// var fog;
 // Functions to control fog/mist/haze parameters
-function updateFogFlag(){
-    fogFlag = !fogFlag;
-}
-function updateIsFoggy(){
-    isFoggy = !isFoggy;
-}
-function updateMistFlag(){
-    mistFlag = !mistFlag;
-}
-function updateIsMisty(){
-    isMisty = !isMisty;
-}
-function updateHazeFlag(){
-    hazeFlag = !hazeFlag;
-}
-function updateIsHazy(){
-    isHazy = !isHazy;
-}
+// function updateFogFlag(){
+//     fogFlag = !fogFlag;
+// }
+// function updateIsFoggy(){
+//     isFoggy = !isFoggy;
+// }
+// function updateMistFlag(){
+//     mistFlag = !mistFlag;
+// }
+// function updateIsMisty(){
+//     isMisty = !isMisty;
+// }
+// function updateHazeFlag(){
+//     hazeFlag = !hazeFlag;
+// }
+// function updateIsHazy(){
+//     isHazy = !isHazy;
+// }
 // Update Buttons in the game and fog/mist/haze status
-document.querySelector("[id='toggleFog']").addEventListener('click', function(){
-    updateFogFlag();
-    if (document.querySelector("[id='toggleFog']").innerHTML == "FOG ON")
-        document.querySelector("[id='toggleFog']").innerHTML = "FOG OFF";
-    else
-        document.querySelector("[id='toggleFog']").innerHTML = "FOG ON";
-});
-document.querySelector("[id='toggleMist']").addEventListener('click', function(){
-    updateMistFlag();
-    if (document.querySelector("[id='toggleMist']").innerHTML == "MIST ON")
-        document.querySelector("[id='toggleMist']").innerHTML = "MIST OFF";
-    else
-        document.querySelector("[id='toggleMist']").innerHTML = "MIST ON";
-});
-document.querySelector("[id='toggleHaze']").addEventListener('click', function(){
-    updateHazeFlag();
-    if (document.querySelector("[id='toggleHaze']").innerHTML == "HAZE ON")
-        document.querySelector("[id='toggleHaze']").innerHTML = "HAZE OFF";
-    else
-        document.querySelector("[id='toggleHaze']").innerHTML = "HAZE ON";
-});
+// document.querySelector("[id='toggleFog']").addEventListener('click', function(){
+//     updateFogFlag();
+//     if (document.querySelector("[id='toggleFog']").innerHTML == "FOG ON")
+//         document.querySelector("[id='toggleFog']").innerHTML = "FOG OFF";
+//     else
+//         document.querySelector("[id='toggleFog']").innerHTML = "FOG ON";
+// });
+// document.querySelector("[id='toggleMist']").addEventListener('click', function(){
+//     updateMistFlag();
+//     if (document.querySelector("[id='toggleMist']").innerHTML == "MIST ON")
+//         document.querySelector("[id='toggleMist']").innerHTML = "MIST OFF";
+//     else
+//         document.querySelector("[id='toggleMist']").innerHTML = "MIST ON";
+// });
+// document.querySelector("[id='toggleHaze']").addEventListener('click', function(){
+//     updateHazeFlag();
+//     if (document.querySelector("[id='toggleHaze']").innerHTML == "HAZE ON")
+//         document.querySelector("[id='toggleHaze']").innerHTML = "HAZE OFF";
+//     else
+//         document.querySelector("[id='toggleHaze']").innerHTML = "HAZE ON";
+// });
+
+// parameters to control weather
+var currentWeather;
+var weatherFlag = false; var weatherToggle = false;
+var rainParticles; var snowParticles; var fog;
+
+// Functions to control weather parameters
+function updateWeatherFlag(){
+  weatherFlag = !weatherFlag;
+}
+function updateWeatherToggle(){
+  weatherToggle = !weatherToggle;
+}
+
+// Variable for weather button
+var weatherButton = document.querySelector("[id='toggleWeather']");
+
 async function fetchWeather(){
     const ipRequest = await fetch('https://json.geoiplookup.io/');
     const ipResponse = await ipRequest.json();
     const weatherRequest = await fetch('https://api.openweathermap.org/data/2.5/weather?q=' 
                                         + ipResponse.city + ',' + ipResponse.country_code + '&appid=fa452ec635e9759a07cab7433d42104f');
     const weatherResponse = await weatherRequest.json();
+
+    // Control Weather button and weather status
+    // based on current weather condition
+    if (weatherResponse.weather[0].main == "Rain" ||
+        weatherResponse.weather[0].main == "Drizzle" ||
+        weatherResponse.weather[0].main == "Snow" ||
+        weatherResponse.weather[0].main == "Haze" ||
+        weatherResponse.weather[0].main == "Mist" ||
+        weatherResponse.weather[0].main == "Fog" 
+        // || weatherResponse.weather[0].main == "Clouds"
+        ){
+          weatherButton.removeAttribute("hidden");
+          weatherButton.addEventListener('click', function(){
+            updateWeatherFlag();
+            if (weatherButton.innerHTML == "WEATHER ON")
+              weatherButton.innerHTML = "WEATHER OFF";
+            else
+              weatherButton.innerHTML = "WEATHER ON";
+          });
+          weatherFlag = true; weatherToggle = true;
+          weatherButton.innerHTML = "WEATHER OFF";
+        }
     return weatherResponse;
 }
 
@@ -225,38 +264,25 @@ function create(){
     if(navigator.onLine)
         fetchWeather()
             .then(weatherResponse => {
-                console.log(weatherResponse.weather[0].main);
-                if(weatherResponse.weather[0].main == "Rain"){
+                currentWeather = weatherResponse.weather[0].main;
+                console.log(currentWeather);                
+                if(currentWeather == "Rain")
                     addRain(rainParticles, map.widthInPixels, map.heightInPixels);
-                    rainFlag = true; isRaining = true;
-                    document.querySelector("[id='toggleRain']").innerHTML = "RAIN OFF";
-                }
-                else if(weatherResponse.weather[0].main == "Drizzle"){
+
+                else if(currentWeather == "Drizzle")
                     addDrizzle(rainParticles, map.widthInPixels, map.heightInPixels);
-                    drizzleFlag = true; isDrizzling = true;
-                    document.querySelector("[id='toggleDrizzle']").innerHTML = "DRIZZLE OFF";
-                }
-                else if(weatherResponse.weather[0].main == "Snow"){
+                    
+                else if(currentWeather == "Snow")
                     addSnow(snowParticles, map.widthInPixels, map.heightInPixels);
-                    snowFlag = true; isSnowing = true;
-                    document.querySelector("[id='toggleSnow']").innerHTML = "SNOW OFF";
-                }
-                else if(weatherResponse.weather[0].main == "Mist"){
+                    
+                else if(currentWeather == "Mist")
                     changeAtmos(this, fog, "Misty");
-                    mistFlag = true; isMisty = true;
-                    document.querySelector("[id='toggleMist']").innerHTML = "MIST OFF";
-                }
-                else if(weatherResponse.weather[0].main == "Haze"){
+                   
+                else if(currentWeather == "Haze")
                     changeAtmos(this, fog, "Hazy");
-                    hazeFlag = true; isHazy = true;
-                    document.querySelector("[id='toggleHaze']").innerHTML = "HAZE OFF";
-                }
-                
-                else if(weatherResponse.weather[0].main == "Fog"){
+                    
+                else if(currentWeather == "Fog")
                     changeAtmos(this, fog, "foggy");
-                    fogFlag = true; isFoggy = true;
-                    document.querySelector("[id='toggleFog']").innerHTML = "FOG OFF";
-                }
             });
 
   //set boundaries of game world
@@ -336,7 +362,7 @@ function create(){
   this.bombButton = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
 
   camera = this.cameras.main;
-  ammoCount = this.add.text(0,0,"Ammunition Count:" + ammunition +"/10");
+  ammoCount = this.add.text(0, 0,"Ammunition Count:" + ammunition + "/10");
   //set bounds for camera (game world)
   camera.setBounds(0,0,map.widthInPixels, map.heightInPixels);
 }
@@ -419,53 +445,42 @@ function update(){
     }
   }
 
-    if (rainFlag && !isRaining){
+    if (weatherFlag && !weatherToggle){
+      updateWeatherToggle();
+      if (currentWeather == "Rain")
         addRain(rainParticles, map.widthInPixels, map.heightInPixels);
-        updateIsRaining();
-    }
-    if (!rainFlag && isRaining){
-        removeRain();
-        updateIsRaining();
-    }
-    if (drizzleFlag && !isDrizzling){
+  
+      else if (currentWeather == "Drizzle")
         addDrizzle(rainParticles, map.widthInPixels, map.heightInPixels);
-        updateIsDrizzling();
-    }
-    if (!drizzleFlag && isDrizzling){
-        removeDrizzle();
-        updateIsDrizzling();
-    }
-    if (snowFlag && !isSnowing){
+
+      else if(currentWeather == "Snow")
         addSnow(snowParticles, map.widthInPixels, map.heightInPixels);
-        updateIsSnowing();
-    }
-    if (!snowFlag && isSnowing){
-        removeSnow();
-        updateIsSnowing();
-    }
-    if (mistFlag && !isMisty){
+        
+      else if(currentWeather == "Mist")
         changeAtmos(this, fog, "Misty");
-        updateIsMisty();
-    }
-    if (!mistFlag && isMisty){
-        changeAtmos(this, fog, "Clear");
-        updateIsMisty();
-    }
-    if (hazeFlag && !isHazy){
+       
+      else if(currentWeather == "Haze")
         changeAtmos(this, fog, "Hazy");
-        updateIsHazy();
+        
+      else if(currentWeather == "Fog")
+        changeAtmos(this, fog, "foggy"); 
     }
-    if (!hazeFlag && isHazy){
+
+    else if (!weatherFlag && weatherToggle){
+      updateWeatherToggle();
+      if (currentWeather == "Rain")
+        removeRain();
+  
+      else if (currentWeather == "Drizzle")
+        removeDrizzle();
+
+      else if(currentWeather == "Snow")
+        removeSnow();
+        
+      else if(currentWeather == "Mist" ||
+              currentWeather == "Haze" ||
+              currentWeather == "Fog")
         changeAtmos(this, fog, "Clear");
-        updateIsHazy();
-    }
-    if (fogFlag && !isFoggy){
-        changeAtmos(this, fog, "foggy");
-        updateIsFoggy();
-    }
-    if (!fogFlag && isFoggy){
-        changeAtmos(this, fog, "Clear");
-        updateIsFoggy();
     }
 
 }
