@@ -16,7 +16,7 @@
       <div id="signupcontainer" class="container">
           <label for="uname">Username</label>
           <input id="uname" name="username" type="text" maxlength="30" placeholder="Username" required>
-          
+
           <label for="pswd">Password</label>
           <input id="pswd" name="password" type="password" maxlength="30" placeholder="Password" required>
 
@@ -25,14 +25,17 @@
 
           <label for="mail">Email</label>
           <input id="mail" name="email" type="email" placeholder="Email" required>
-          
+
           <% if ( typeof message != 'undefined' && message.length > 0) { %>
             <p align = "center" class="errorMessage"><%= message %></p>
+          <% } %>
+          <% if ( typeof usernameMessage != 'undefined' && usernameMessage.length > 0) { %>
+            <p align = "center" class="errorMessage"><%= usernameMessage %></p>
           <% } %>
 
           <button type="submit">Sign Up!</button>
         </div>
-    
+
     <!--
       <table>
       <tr>
