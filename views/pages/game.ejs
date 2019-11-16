@@ -14,7 +14,7 @@
             </form>
         </div>
       <script src="//cdn.jsdelivr.net/npm/phaser@3.3.0/dist/phaser.min.js"></script>
-      <script src="js/gameScript.js"></script>
+      <script src="js/gameScript.js" defer></script>
       <script src="js/weatherConfig.js" defer></script>
       <h1 align="center">BATTLE BLOBS</h1>
       <p id="colour"><%= character %></p>
@@ -24,5 +24,16 @@
       <form class="" action="/postgame" method="post">
         <button type="submit" name="button">Go to postgame screen</button>
       </form>
+
+      <table>
+        <tr>
+          <td><button id="toggleRain">RAIN ON</button></td>
+          <td><button id="toggleDrizzle">DRIZZLE ON</button></td>
+          <td><button id="toggleSnow">SNOW ON</button></td>
+          <td><button id="toggleFog">FOG ON</button></td>
+          <td><button id="toggleMist">MIST ON</button></td>
+          <td><button id="toggleHaze">HAZE ON</button></td>
+        </tr>
+      </table>
     </body>
 </html>

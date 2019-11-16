@@ -14,15 +14,16 @@ const bcrypt = require('bcrypt');
 const { Pool } = require('pg');
 // var pool = new Pool({
 //   connectionString: process.env.DATABASE_URL
-//   //connectionString: "postgres://postgres:shimarov6929@localhost/cloud5"
 // });
 
-// var pool = new Pool({
-//   user: 'graceluo',
-//   password: 'tokicorgi',
-//   host: 'localhost',
-//   database: 'cloud5'
-// });
+var pool = new Pool({
+  user: 'graceluo',
+  password: 'tokicorgi',
+  host: 'localhost',
+  database: 'cloud5'
+});
+
+
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
@@ -250,8 +251,10 @@ io.on('connection', function (socket) {
   console.log('a user connected');
   // create a new player and add it to our players object
   players[socket.id] = {
-    x: Math.floor(Math.random() * 700) + 50,
-    y: Math.floor(Math.random() * 500) + 50,
+    x: 500,
+    y: 500,
+  //x: Math.floor(Math.random() * 700) + 50,
+  //y: Math.floor(Math.random() * 500) + 50,
     colour: "pink",
     playerId: socket.id,
   }
