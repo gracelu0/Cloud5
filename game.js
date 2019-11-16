@@ -12,10 +12,15 @@ var players = {};
 const bcrypt = require('bcrypt');
 
 const { Pool } = require('pg');
+// var pool = new Pool({
+//   connectionString: process.env.DATABASE_URL
+// });
+
 var pool = new Pool({
   connectionString: process.env.DATABASE_URL
   //connectionString: "postgres://postgres:shimarov6929@localhost/cloud5"
 });
+
 
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -255,10 +260,18 @@ io.on('connection', function (socket) {
   console.log('a user connected');
   // create a new player and add it to our players object
   players[socket.id] = {
-    x: Math.floor(Math.random() * 700) + 50,
-    y: Math.floor(Math.random() * 500) + 50,
+    x: 500,
+    y: 500,
+  //x: Math.floor(Math.random() * 700) + 50,
+  //y: Math.floor(Math.random() * 500) + 50,
+    colour: "pink",
     playerId: socket.id,
   }
+
+  socket.on('updateColour', function (colourData) {
+    players[socket.id].colour = colourData.colour;
+    socket.broadcast.emit('updateSprite', players[socket.id]);
+  });
 
   //send players object to new player
   socket.emit('currentPlayers', players);
@@ -271,12 +284,13 @@ io.on('connection', function (socket) {
     delete players[socket.id];
     io.emit('disconnect', socket.id);
   });
+
   socket.on('playerMovement', function (movementData) {
     players[socket.id].x = movementData.x;
     players[socket.id].y = movementData.y;
     players[socket.id].rotation = movementData.rotation;
     socket.broadcast.emit('playerMoved', players[socket.id]);
-});
+  });
 
 });
 

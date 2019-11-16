@@ -10,7 +10,7 @@ body, html{
     padding: 0 ;
 }
 p{
-  
+  display: none;
 }
 
 #logoutDiv{
