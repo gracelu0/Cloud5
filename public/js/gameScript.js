@@ -538,5 +538,3 @@ playerDeath = function(deadPlayer){
   //healthbar_red.destroy();
   //healthbar_green.destroy();
 }
-
-
