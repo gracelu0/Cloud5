@@ -32,112 +32,160 @@ var shootButton;
 var lastFired = 0;
 var lastBomb = 0;
 var facing = 1;
-var ammunition = 10;
+var ammunition = 100;
 var x;
 var y;
 
 // Parameters to control rain/drizzle
-var rainFlag = false; var isRaining = false;
-var drizzleFlag = false; var isDrizzling = false;
-var rainParticles;
+// var rainFlag = false; var isRaining = false;
+// var drizzleFlag = false; var isDrizzling = false;
+// var rainParticles;
 // Functions to control rain/drizzle parameters
-function updateRainFlag(){
-    rainFlag = !rainFlag;
-}
-function updateIsRaining(){
-    isRaining = !isRaining;
-}
-function updateDrizzleFlag(){
-    drizzleFlag = !drizzleFlag;
-}
-function updateIsDrizzling(){
-    isDrizzling = !isDrizzling;
-}
+// function updateRainFlag(){
+//     rainFlag = !rainFlag;
+// }
+// function updateIsRaining(){
+//     isRaining = !isRaining;
+// }
+// function updateDrizzleFlag(){
+//     drizzleFlag = !drizzleFlag;
+// }
+// function updateIsDrizzling(){
+//     isDrizzling = !isDrizzling;
+// }
 // Update Buttons in the game and rain/drizzle status
-document.querySelector("[id='toggleRain']").addEventListener('click', function(){
-    updateRainFlag();
-    if (document.querySelector("[id='toggleRain']").innerHTML == "RAIN ON")
-        document.querySelector("[id='toggleRain']").innerHTML = "RAIN OFF";
-    else
-        document.querySelector("[id='toggleRain']").innerHTML = "RAIN ON";
-});
-document.querySelector("[id='toggleDrizzle']").addEventListener('click', function(){
-    updateDrizzleFlag();
-    if (document.querySelector("[id='toggleDrizzle']").innerHTML == "DRIZZLE ON")
-        document.querySelector("[id='toggleDrizzle']").innerHTML = "DRIZZLE OFF";
-    else
-        document.querySelector("[id='toggleDrizzle']").innerHTML = "DRIZZLE ON";
-});
+// document.querySelector("[id='toggleRain']").addEventListener('click', function(){
+//     updateRainFlag();
+//     if (document.querySelector("[id='toggleRain']").innerHTML == "RAIN ON")
+//         document.querySelector("[id='toggleRain']").innerHTML = "RAIN OFF";
+//     else
+//         document.querySelector("[id='toggleRain']").innerHTML = "RAIN ON";
+// });
+// document.querySelector("[id='toggleDrizzle']").addEventListener('click', function(){
+//     updateDrizzleFlag();
+//     if (document.querySelector("[id='toggleDrizzle']").innerHTML == "DRIZZLE ON")
+//         document.querySelector("[id='toggleDrizzle']").innerHTML = "DRIZZLE OFF";
+//     else
+//         document.querySelector("[id='toggleDrizzle']").innerHTML = "DRIZZLE ON";
+// });
 // Parameters to control snow
-var snowFlag = false; var isSnowing = false;
-var snowParticles;
-// Functions to control snow parameters
-function updateSnowFlag(){
-    snowFlag = !snowFlag;
-}
-function updateIsSnowing(){
-    isSnowing = !isSnowing;
-}
-// Update Buttons in the game and snow status
-document.querySelector("[id='toggleSnow']").addEventListener('click', function(){
-    updateSnowFlag();
-    if (document.querySelector("[id='toggleSnow']").innerHTML == "SNOW ON")
-        document.querySelector("[id='toggleSnow']").innerHTML = "SNOW OFF";
-    else
-        document.querySelector("[id='toggleSnow']").innerHTML = "SNOW ON";
-});
+// var snowFlag = false; var isSnowing = false;
+// var snowParticles;
+// // Functions to control snow parameters
+// function updateSnowFlag(){
+//     snowFlag = !snowFlag;
+// }
+// function updateIsSnowing(){
+//     isSnowing = !isSnowing;
+// }
+// // Update Buttons in the game and snow status
+// document.querySelector("[id='toggleSnow']").addEventListener('click', function(){
+//     updateSnowFlag();
+//     if (document.querySelector("[id='toggleSnow']").innerHTML == "SNOW ON")
+//         document.querySelector("[id='toggleSnow']").innerHTML = "SNOW OFF";
+//     else
+//         document.querySelector("[id='toggleSnow']").innerHTML = "SNOW ON";
+// });
 // Parameters to control fog/mist/haze
-var fogFlag = false; var isFoggy = false;
-var mistFlag = false; var isMisty = false;
-var hazeFlag = false; var isHazy = false;
-var fog;
+// var fogFlag = false; var isFoggy = false;
+// var mistFlag = false; var isMisty = false;
+// var hazeFlag = false; var isHazy = false;
+// var fog;
 // Functions to control fog/mist/haze parameters
-function updateFogFlag(){
-    fogFlag = !fogFlag;
-}
-function updateIsFoggy(){
-    isFoggy = !isFoggy;
-}
-function updateMistFlag(){
-    mistFlag = !mistFlag;
-}
-function updateIsMisty(){
-    isMisty = !isMisty;
-}
-function updateHazeFlag(){
-    hazeFlag = !hazeFlag;
-}
-function updateIsHazy(){
-    isHazy = !isHazy;
-}
+// function updateFogFlag(){
+//     fogFlag = !fogFlag;
+// }
+// function updateIsFoggy(){
+//     isFoggy = !isFoggy;
+// }
+// function updateMistFlag(){
+//     mistFlag = !mistFlag;
+// }
+// function updateIsMisty(){
+//     isMisty = !isMisty;
+// }
+// function updateHazeFlag(){
+//     hazeFlag = !hazeFlag;
+// }
+// function updateIsHazy(){
+//     isHazy = !isHazy;
+// }
 // Update Buttons in the game and fog/mist/haze status
-document.querySelector("[id='toggleFog']").addEventListener('click', function(){
-    updateFogFlag();
-    if (document.querySelector("[id='toggleFog']").innerHTML == "FOG ON")
-        document.querySelector("[id='toggleFog']").innerHTML = "FOG OFF";
-    else
-        document.querySelector("[id='toggleFog']").innerHTML = "FOG ON";
-});
-document.querySelector("[id='toggleMist']").addEventListener('click', function(){
-    updateMistFlag();
-    if (document.querySelector("[id='toggleMist']").innerHTML == "MIST ON")
-        document.querySelector("[id='toggleMist']").innerHTML = "MIST OFF";
-    else
-        document.querySelector("[id='toggleMist']").innerHTML = "MIST ON";
-});
-document.querySelector("[id='toggleHaze']").addEventListener('click', function(){
-    updateHazeFlag();
-    if (document.querySelector("[id='toggleHaze']").innerHTML == "HAZE ON")
-        document.querySelector("[id='toggleHaze']").innerHTML = "HAZE OFF";
-    else
-        document.querySelector("[id='toggleHaze']").innerHTML = "HAZE ON";
-});
+// document.querySelector("[id='toggleFog']").addEventListener('click', function(){
+//     updateFogFlag();
+//     if (document.querySelector("[id='toggleFog']").innerHTML == "FOG ON")
+//         document.querySelector("[id='toggleFog']").innerHTML = "FOG OFF";
+//     else
+//         document.querySelector("[id='toggleFog']").innerHTML = "FOG ON";
+// });
+// document.querySelector("[id='toggleMist']").addEventListener('click', function(){
+//     updateMistFlag();
+//     if (document.querySelector("[id='toggleMist']").innerHTML == "MIST ON")
+//         document.querySelector("[id='toggleMist']").innerHTML = "MIST OFF";
+//     else
+//         document.querySelector("[id='toggleMist']").innerHTML = "MIST ON";
+// });
+// document.querySelector("[id='toggleHaze']").addEventListener('click', function(){
+//     updateHazeFlag();
+//     if (document.querySelector("[id='toggleHaze']").innerHTML == "HAZE ON")
+//         document.querySelector("[id='toggleHaze']").innerHTML = "HAZE OFF";
+//     else
+//         document.querySelector("[id='toggleHaze']").innerHTML = "HAZE ON";
+// });
+
+//parameters to control music+sound
+var bgmusic;
+var shootSound;
+var musicFlag = true;
+var soundFlag = true;
+
+var musicButton = document.querySelector("[id='music']");
+var soundButton = document.querySelector("[id='sound']");
+
+// parameters to control weather
+var currentWeather;
+var weatherFlag = false; var weatherToggle = false;
+var rainParticles; var snowParticles; var fog;
+
+// Functions to control weather parameters
+function updateWeatherFlag(){
+  weatherFlag = !weatherFlag;
+}
+function updateWeatherToggle(){
+  weatherToggle = !weatherToggle;
+}
+
+// Variable for weather button
+var weatherButton = document.querySelector("[id='toggleWeather']");
+
 async function fetchWeather(){
     const ipRequest = await fetch('https://json.geoiplookup.io/');
     const ipResponse = await ipRequest.json();
     const weatherRequest = await fetch('https://api.openweathermap.org/data/2.5/weather?q='
                                         + ipResponse.city + ',' + ipResponse.country_code + '&appid=fa452ec635e9759a07cab7433d42104f');
     const weatherResponse = await weatherRequest.json();
+
+    // Control Weather button and weather status
+    // based on current weather condition
+    if (weatherResponse.weather[0].main == "Rain" ||
+        weatherResponse.weather[0].main == "Drizzle" ||
+        weatherResponse.weather[0].main == "Snow" ||
+        weatherResponse.weather[0].main == "Haze" ||
+        weatherResponse.weather[0].main == "Mist" ||
+        weatherResponse.weather[0].main == "Fog"
+        // || weatherResponse.weather[0].main == "Clouds"
+        ){
+          weatherButton.removeAttribute("hidden");
+          weatherButton.addEventListener('click', function(){
+            updateWeatherFlag();
+            if (weatherButton.innerHTML == "WEATHER ON")
+              weatherButton.innerHTML = "WEATHER OFF";
+            else
+              weatherButton.innerHTML = "WEATHER ON";
+          });
+          weatherFlag = true; weatherToggle = true;
+          weatherButton.innerHTML = "WEATHER OFF";
+        }
     return weatherResponse;
 }
 
@@ -164,6 +212,9 @@ function preload(){
   this.load.image('rain', 'assets/rain.png');
   this.load.image('snow', 'assets/snowflake-pixel.png');
   this.load.image('fog', 'assets/fog.png');
+
+  this.load.audio('bgmusic', 'assets/audio/bgmusic.mp3');
+  this.load.audio('shootSound', 'assets/audio/shoot.mp3');
 }
 
 class Bullet extends Phaser.Physics.Arcade.Sprite{
@@ -173,18 +224,23 @@ class Bullet extends Phaser.Physics.Arcade.Sprite{
     scene.physics.world.enable(this);
     if(facing == 1){
       this.xSpeed = Phaser.Math.GetSpeed(0,1);
+<<<<<<< HEAD
       this.ySpeed = Phaser.Math.GetSpeed(-400,1);
     }
+=======
+      this.ySpeed = Phaser.Math.GetSpeed(-4000,1);
+    }
+>>>>>>> bc8337582d1f14fc585c8188c69376bef50be246
     else if(facing == 2){
       this.xSpeed = Phaser.Math.GetSpeed(0,1);
-      this.ySpeed = Phaser.Math.GetSpeed(400,1);
+      this.ySpeed = Phaser.Math.GetSpeed(4000,1);
     }
     else if(facing == 3){
-      this.xSpeed = Phaser.Math.GetSpeed(-400,1);
+      this.xSpeed = Phaser.Math.GetSpeed(-4000,1);
       this.ySpeed = Phaser.Math.GetSpeed(0,1);
     }
     else if(facing == 4){
-      this.xSpeed = Phaser.Math.GetSpeed(400,1);
+      this.xSpeed = Phaser.Math.GetSpeed(4000,1);
       this.ySpeed = Phaser.Math.GetSpeed(0,1);
     }
   }
@@ -197,12 +253,13 @@ class Bullet extends Phaser.Physics.Arcade.Sprite{
   }
   update(time, delta){
     if(this){
-      this.x += this.xSpeed * delta;
-      this.y += this.ySpeed * delta;
+      this.x += this.xSpeed;
+      this.y += this.ySpeed;
       this.setPosition(this.x, this.y);
     }
 
-    if(this.x > this.bulletInitX + 500 || this.x < this.bulletInitX - 500 || this.y > this.bulletInitY + 500 || this.y < this.bulletInitY - 500){
+    if(this.x > this.bulletInitX + 500 || this.x < this.bulletInitX - 500 || this.x < -10 || this.x > groundLayer.width ||
+      this.y > this.bulletInitY + 500 || this.y < this.bulletInitY - 500 || this.y < -10 || this.y > groundLayer.width){
       this.destroy();
     }
   }
@@ -218,6 +275,40 @@ function create(){
   bridgeLayer = map.createStaticLayer('Overworld', bridgeTiles,0,0);
   collideLayer = map.createStaticLayer('World', combinedTiles, 0, 0);
 
+  //music
+  shootSound = this.sound.add('shootSound');
+  bgmusic = this.sound.add('bgmusic');
+
+  if(game.sound.context.state === 'suspended') {
+    game.sound.context.resume();
+  }
+
+  bgmusic.play();
+  bgmusic.loop = true;
+
+  musicButton.addEventListener('click', function() {
+    musicFlag = !musicFlag;
+    console.log(musicFlag);
+    if(musicFlag == false) {
+      musicButton.innerHTML = "MUSIC ON";
+      bgmusic.pause();
+    }
+    else {
+      musicButton.innerHTML = "MUSIC OFF";
+      bgmusic.resume();
+    }
+  })
+  soundButton.addEventListener('click', function() {
+    soundFlag = !soundFlag;
+    console.log(soundFlag);
+    if(soundFlag == false) {
+      soundButton.innerHTML = "SOUND ON";
+    }
+    else {
+      soundButton.innerHTML = "SOUND OFF";
+    }
+  })
+
   //weather
   rainParticles = this.add.particles('rain');
   snowParticles = this.add.particles('snow');
@@ -225,38 +316,25 @@ function create(){
     if(navigator.onLine)
         fetchWeather()
             .then(weatherResponse => {
-                console.log(weatherResponse.weather[0].main);
-                if(weatherResponse.weather[0].main == "Rain"){
+                currentWeather = weatherResponse.weather[0].main;
+                console.log(currentWeather);
+                if(currentWeather == "Rain")
                     addRain(rainParticles, map.widthInPixels, map.heightInPixels);
-                    rainFlag = true; isRaining = true;
-                    document.querySelector("[id='toggleRain']").innerHTML = "RAIN OFF";
-                }
-                else if(weatherResponse.weather[0].main == "Drizzle"){
-                    addDrizzle(rainParticles, map.widthInPixels, map.heightInPixels);
-                    drizzleFlag = true; isDrizzling = true;
-                    document.querySelector("[id='toggleDrizzle']").innerHTML = "DRIZZLE OFF";
-                }
-                else if(weatherResponse.weather[0].main == "Snow"){
-                    addSnow(snowParticles, map.widthInPixels, map.heightInPixels);
-                    snowFlag = true; isSnowing = true;
-                    document.querySelector("[id='toggleSnow']").innerHTML = "SNOW OFF";
-                }
-                else if(weatherResponse.weather[0].main == "Mist"){
-                    changeAtmos(this, fog, "Misty");
-                    mistFlag = true; isMisty = true;
-                    document.querySelector("[id='toggleMist']").innerHTML = "MIST OFF";
-                }
-                else if(weatherResponse.weather[0].main == "Haze"){
-                    changeAtmos(this, fog, "Hazy");
-                    hazeFlag = true; isHazy = true;
-                    document.querySelector("[id='toggleHaze']").innerHTML = "HAZE OFF";
-                }
 
-                else if(weatherResponse.weather[0].main == "Fog"){
+                else if(currentWeather == "Drizzle")
+                    addDrizzle(rainParticles, map.widthInPixels, map.heightInPixels);
+
+                else if(currentWeather == "Snow")
+                    addSnow(snowParticles, map.widthInPixels, map.heightInPixels);
+
+                else if(currentWeather == "Mist")
+                    changeAtmos(this, fog, "Misty");
+
+                else if(currentWeather == "Haze")
+                    changeAtmos(this, fog, "Hazy");
+
+                else if(currentWeather == "Fog")
                     changeAtmos(this, fog, "foggy");
-                    fogFlag = true; isFoggy = true;
-                    document.querySelector("[id='toggleFog']").innerHTML = "FOG OFF";
-                }
             });
 
   //set boundaries of game world
@@ -266,12 +344,17 @@ function create(){
   map.setCollisionBetween(1,999,true,collideLayer);
 
   var self = this;
+  var sessionId;
   this.socket = io();
   this.otherPlayers = this.physics.add.group();
 
   //character selection
   var selected = document.getElementById('colour').innerHTML;
   console.log(selected);
+
+  this.socket.on('connect', () => {
+    sessionId = this.socket.id;
+  });
 
   this.socket.on('currentPlayers', function (players) {
     Object.keys(players).forEach(function (id) {
@@ -303,6 +386,36 @@ function create(){
         }
       }.bind(this));
     }.bind(this));
+
+    this.socket.on('player-hit', function(id){
+      if(id === sessionId){
+        self.player.health -= 10;
+      }
+      else{
+        self.otherPlayers.getChildren().forEach(function (otherPlayer){
+          if(id === otherPlayer.playerId){
+            otherPlayer.health -= 10;
+          }
+        })
+      }
+    });
+
+    this.socket.on('bulletsUpdate', function(servBullets){
+      var counter = 0;
+      bullets.getChildren().forEach(child => {
+        if(servBullets[counter]){
+          child.x = servBullets[counter].x;
+          child.y = servBullets[counter].y;
+        }
+        counter++;
+        if(counter > servBullets.length){
+          child.destroy();
+        }
+      })
+      for(var i = counter; i < servBullets.length; i++){
+        addBullets(self,servBullets[i]);
+      }
+    });
 
   this.socket.on('playerMoved', function (playerInfo) {
     self.otherPlayers.getChildren().forEach(function (otherPlayer) {
@@ -388,136 +501,143 @@ function create(){
   this.bombButton = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
 
   camera = this.cameras.main;
-  ammoCount = this.add.text(0,0,"Ammunition Count:" + ammunition +"/10");
+  ammoCount = this.add.text(0, 0,"Ammunition Count:" + ammunition + "/100");
   //set bounds for camera (game world)
   camera.setBounds(0,0,map.widthInPixels, map.heightInPixels);
 }
 
 function update(){
   if(this.player){
-    if (this.cursors.up.isDown && document.activeElement !== messageText){
-      this.player.body.position.y -=4;
-      this.player.flipY = true;
-      facing = 1;
-    }
-    if (this.cursors.down.isDown && document.activeElement !== messageText){
-      this.player.body.position.y +=4;
-      this.player.flipY = false;
-      facing = 2;
-    }
-    if (this.cursors.left.isDown && document.activeElement !== messageText){
-      this.player.body.position.x -=4;
-      this.player.flipX = true;
-      facing = 3;
-    }
-    if (this.cursors.right.isDown && document.activeElement !== messageText){
-      this.player.body.position.x +=4;
-      this.player.flipX = false;
-      facing = 4;
-    }
+    if(this.player.health > 0){
+      if (this.cursors.up.isDown){
+        this.player.body.position.y -=4;
+        this.player.flipY = true;
+        facing = 1;
+      }
+      if (this.cursors.down.isDown){
+        this.player.body.position.y +=4;
+        this.player.flipY = false;
+        facing = 2;
+      }
+      if (this.cursors.left.isDown){
+        this.player.body.position.x -=4;
+        this.player.flipX = true;
+        facing = 3;
+      }
+      if (this.cursors.right.isDown){
+        this.player.body.position.x +=4;
+        this.player.flipX = false;
+        facing = 4;
+      }
 
-    if (this.player.health > 0) {
-      this.healthbar_green.displayWidth = (this.player.health/100)*100;
-      this.healthbar_green.x = this.player.body.position.x + 12;
-      this.healthbar_green.y = this.player.body.position.y - 20;
-      this.healthbar_red.x = this.player.body.position.x + 12;
-      this.healthbar_red.y = this.player.body.position.y - 20;
-    }
+      if(this.player.body.position.x - 455 > 0 && this.player.body.position.x + 495 < groundLayer.width){
+        ammoCount.x = this.player.body.position.x - 455;
+      }
+      if(this.player.body.position.y - 285 > 0 && this.player.body.position.y + 335 < groundLayer.height){
+        ammoCount.y = this.player.body.position.y - 285;
+      }
 
-    if (this.cursors.space.isDown && ammunition > 0 && lastFired == 0 && document.activeElement !== messageText){
-      var bullet = bullets.get();
+      if (this.player.health > 0) {
+        this.healthbar_green.displayWidth = (this.player.health/100)*100;
+        this.healthbar_green.x = this.player.body.position.x + 12;
+        this.healthbar_green.y = this.player.body.position.y - 20;
+        this.healthbar_red.x = this.player.body.position.x + 12;
+        this.healthbar_red.y = this.player.body.position.y - 20;
+      }
 
-      if(bullet){
-        bullet.fire(this.player.body.position.x, this.player.body.position.y);
-        lastFired = 10;
-        ammunition --;
-        ammoCount.setText("Ammunition Count:" + ammunition +"/10");
+      if (this.cursors.space.isDown && ammunition > 0 && lastFired == 0){
+        var bullet = bullets.get();
+
+        if(bullet){
+          if(soundFlag == true) {
+            shootSound.play();
+          }
+          bullet.fire(this.player.body.position.x, this.player.body.position.y);
+          lastFired = 10;
+          ammunition --;
+          ammoCount.setText("Ammunition Count:" + ammunition +"/100");
+          this.socket.emit('bulletFire', { x: this.player.body.position.x, y: this.player.body.position.y, xSpeed:bullet.xSpeed, ySpeed:bullet.ySpeed});
+          }
+      }
+      if(lastFired > 0){
+        lastFired --;
+      }
+
+      if (this.bombButton.isDown && lastBomb == 0){
+        var trap = traps.create(this.player.body.position.x, this.player.body.position.y, 'bomb');
+        trap.body.setImmovable();
+        lastBomb = 30;
+      }
+      if(lastBomb > 0){
+        lastBomb --;
+      }
+
+      this.physics.collide(this.player,collideLayer);
+      this.physics.collide(this.player,this.otherPlayers);
+
+      this.otherPlayers.getChildren().forEach(child => {
+        child.body.immovable = true;
+        if(child.health <= 0){
+          this.socket.emit('playerDied', {id:child.playerId});
+          playerDeath(child);
+        }
+      })
+
+      x = this.player.x;
+      y = this.player.y;
+      if (this.player.oldPosition && (x !== this.player.oldPosition.x || y !== this.player.oldPosition.y)) {
+        this.socket.emit('playerMovement', { x: this.player.x, y: this.player.y});
+      }
+
+      this.player.oldPosition = {
+        x: this.player.x,
+        y: this.player.y,
       }
     }
-    if(lastFired > 0){
-      lastFired --;
-    }
-
-    if (this.bombButton.isDown && lastBomb == 0 && document.activeElement !== messageText){
-      var trap = traps.create(this.player.body.position.x, this.player.body.position.y, 'bomb');
-      trap.body.setImmovable();
-      lastBomb = 30;
-    }
-    if(lastBomb > 0){
-      lastBomb --;
-    }
-
-    this.physics.collide(this.player,collideLayer);
-    this.physics.collide(this.player,this.otherPlayers);
-    bullets.getChildren().forEach(child => {
-      this.physics.collide(child, this.otherPlayers, bulletCollision);
-    })
-    this.otherPlayers.getChildren().forEach(child => {
-      child.body.immovable = true;
-      if(child.health <= 0){
-        playerDeath(child);
-      }
-    })
-
-    x = this.player.x;
-    y = this.player.y;
-    if (this.player.oldPosition && (x !== this.player.oldPosition.x || y !== this.player.oldPosition.y)) {
-      this.socket.emit('playerMovement', { x: this.player.x, y: this.player.y});
-    }
-
-    this.player.oldPosition = {
-      x: this.player.x,
-      y: this.player.y,
+    else{
+      this.socket.emit('playerDied', {id: this.player.playerId});
+      playerDeath(this.player);
+      this.healthbar_green.destroy();
+      this.healthbar_red.destroy();
     }
   }
 
-    if (rainFlag && !isRaining){
+    if (weatherFlag && !weatherToggle){
+      updateWeatherToggle();
+      if (currentWeather == "Rain")
         addRain(rainParticles, map.widthInPixels, map.heightInPixels);
-        updateIsRaining();
-    }
-    if (!rainFlag && isRaining){
-        removeRain();
-        updateIsRaining();
-    }
-    if (drizzleFlag && !isDrizzling){
+
+      else if (currentWeather == "Drizzle")
         addDrizzle(rainParticles, map.widthInPixels, map.heightInPixels);
-        updateIsDrizzling();
-    }
-    if (!drizzleFlag && isDrizzling){
-        removeDrizzle();
-        updateIsDrizzling();
-    }
-    if (snowFlag && !isSnowing){
+
+      else if(currentWeather == "Snow")
         addSnow(snowParticles, map.widthInPixels, map.heightInPixels);
-        updateIsSnowing();
-    }
-    if (!snowFlag && isSnowing){
-        removeSnow();
-        updateIsSnowing();
-    }
-    if (mistFlag && !isMisty){
+
+      else if(currentWeather == "Mist")
         changeAtmos(this, fog, "Misty");
-        updateIsMisty();
-    }
-    if (!mistFlag && isMisty){
-        changeAtmos(this, fog, "Clear");
-        updateIsMisty();
-    }
-    if (hazeFlag && !isHazy){
+
+      else if(currentWeather == "Haze")
         changeAtmos(this, fog, "Hazy");
-        updateIsHazy();
-    }
-    if (!hazeFlag && isHazy){
-        changeAtmos(this, fog, "Clear");
-        updateIsHazy();
-    }
-    if (fogFlag && !isFoggy){
+
+      else if(currentWeather == "Fog")
         changeAtmos(this, fog, "foggy");
-        updateIsFoggy();
     }
-    if (!fogFlag && isFoggy){
+
+    else if (!weatherFlag && weatherToggle){
+      updateWeatherToggle();
+      if (currentWeather == "Rain")
+        removeRain();
+
+      else if (currentWeather == "Drizzle")
+        removeDrizzle();
+
+      else if(currentWeather == "Snow")
+        removeSnow();
+
+      else if(currentWeather == "Mist" ||
+              currentWeather == "Haze" ||
+              currentWeather == "Fog")
         changeAtmos(this, fog, "Clear");
-        updateIsFoggy();
     }
 
 }
@@ -598,15 +718,19 @@ function addOtherPlayers(self, playerInfo) {
   self.otherPlayers.add(otherPlayer);
 }
 
-
+function addBullets(self, bulletInfo){
+  const nBullet = self.add.sprite(bulletInfo.x, bulletInfo.y, 'bulletImg');
+  bullets.add(nBullet);
+}
 
 bulletCollision = function(bullets,hitPlayer){
-  bullets.destroy();
-  hitPlayer.health -= 10;
+    bullets.destroy();
+    hitPlayer.destroy();
 }
 
 playerDeath = function(deadPlayer){
   deadPlayer.destroy();
+  deadPlayer = null;
   //healthbar_red.destroy();
   //healthbar_green.destroy();
 }

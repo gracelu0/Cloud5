@@ -12,16 +12,16 @@ var players = {};
 const bcrypt = require('bcrypt');
 
 const { Pool } = require('pg');
-// var pool = new Pool({
-//   connectionString: process.env.DATABASE_URL
-// });
 
 var pool = new Pool({
+<<<<<<< HEAD
   //connectionString: process.env.DATABASE_URL
   connectionString: "postgres://postgres:shimarov6929@localhost/cloud5"
+=======
+  connectionString: process.env.DATABASE_URL
+  //connectionString: "postgres://postgres:1234@localhost/login"
+>>>>>>> bc8337582d1f14fc585c8188c69376bef50be246
 });
-
-
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
@@ -261,6 +261,9 @@ app.get('/removeUser/:userID', (req,res) => {
     });
 });
 
+var players = {};
+var servBullets = [];
+
 io.on('connection', function (socket) {
   console.log('a user connected');
   // create a new player and add it to our players object
@@ -304,7 +307,64 @@ io.on('connection', function (socket) {
   })
   socket.on('disconnect', function () {
     io.emit('disconnect');
+
+  socket.on('bulletFire', function (bulletInit) {
+    var newBullet = bulletInit;
+    newBullet.x = bulletInit.x;
+    newBullet.y = bulletInit.y;
+    newBullet.owner = socket.id;
+    servBullets.push(newBullet);
+    socket.broadcast.emit('bulletFired', newBullet);
+  });
+
+  socket.on('bulletMovement', function (bulletsInfo){
+    for(var i = 0; i < bulletsInfo.length; i++){
+      servBullets[i].x = bulletsInfo[i].x;
+      servBullets[i].y = bulletsInfo[i].y;
+    }
+    socket.broadcast.emit('bulletMoved', servBullets);
+  });
+
+  socket.on('playerDied', function (deadPlayer){
+    var counter = 0;
+    delete players[deadPlayer.id];
+    for(var id in players){
+      if(id === deadPlayer.id){
+        players.splice(counter, 1);
+      }
+      counter ++;
+    }
   });
 });
+
+function gameLoop(){
+  for(var i = 0; i < servBullets.length; i++){
+    var currBullet = servBullets[i];
+    currBullet.x += currBullet.xSpeed;
+    currBullet.y += currBullet.ySpeed;
+
+    for(var id in players){
+      if(currBullet.owner != id){
+        var dx = players[id].x - currBullet.x;
+        var dy = players[id].y - currBullet.y;
+        var dist = Math.sqrt(dx*dx + dy*dy);
+        if(dist < 30){
+          io.emit('player-hit', id);
+          servBullets.splice(i,1);
+          i--;
+        }
+      }
+    }
+
+    if(currBullet.x < -10 || currBullet.x > 1000 || currBullet.y < -10 || currBullet.y > 1000){
+      servBullets.splice(i,1);
+      i--;
+    }
+  }
+
+  io.emit('bulletsUpdate', servBullets);
+}
+
+setInterval(gameLoop, 16);
 
 server.listen(PORT, () => console.log(`Listening on ${ PORT }`));
