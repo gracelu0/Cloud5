@@ -5,17 +5,19 @@
       <link href="https://fonts.googleapis.com/css?family=Neucha&display=swap" rel="stylesheet">
     <meta charset="utf-8">
     <title>Select Your Character</title>
+    <link rel="icon" href="/assets/alienPink.png">
   </head>
   <body>
 
     <% if ( typeof message != 'undefined' && message.length > 0) { %>
     <p class="successMessage"><%= message %></p>
     <% } %>
-      
+
     <h2 align="center">Select your character:</h2>
+    
     <div id="characterDiv"></div>
     <form align="center" class="" action="/game" method="post">
-      
+      <p name="username"><%=name%></p>
       <label>
           <input name="character" value="pink" type="radio" checked/>
           <img src="assets/ui/alienPink.png">
@@ -36,9 +38,10 @@
           <input name="character" value="yellow" type="radio"/>
           <img src="assets/ui/alienYellow.png">
       </label>
-    
+
       <button type="submit" name="button">Join game!</button>
+
     </form>
-  
+
   </body>
 </html>

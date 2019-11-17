@@ -3,6 +3,7 @@
   <head>
     <link rel="stylesheet" href="/stylesheets/home.css">
     <link href="https://fonts.googleapis.com/css?family=Neucha&display=swap" rel="stylesheet">
+    <link rel="icon" href="/assets/alienPink.png">
     <style>
       /* #movementimg {
         display: block;
@@ -27,14 +28,15 @@
 
     <h1 align="center">HOME SCREEN</h1>
     <h2 align="center">Objective: just win lol</h2>
+    <h2 name="username" ><%= userID %></h2>
     <div class="controlkeys">
       <h3>Controls</h3>
       <img src="/assets/wasd.png" id="movementimg">
       <p id="movement">Movement</p>
-    </div> 
+    </div>
     <form class="" action="/pregame" method="post">
       <button type="submit" name="button">Start</button>
     </form>
-    
+
   </body>
 </html>

@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="/stylesheets/admin.css">
     <link href="https://fonts.googleapis.com/css?family=Sniglet:800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Neucha&display=swap" rel="stylesheet">
+    <link rel="icon" href="/assets/alienPink.png">
   </head>
   <body>
     <div align="right" id="logoutDiv">
@@ -38,9 +39,9 @@
 						<td><%= r.email %></td>
 						<td><%= r.usertype %></td>
 						<td>
-              
+
               <%if( r.usertype == 'User'){%><button type="submit" id="deleteUser">DELETE USER ACCOUNT</button><%}%>
-            
+
             </td>
 					</form>
 				</tr>
@@ -50,7 +51,7 @@
     <form class="" action="/pregame" method="post">
       <button type="submit" name="button">Start</button>
     </form>
-    <form class="" action="/rules" method="post">
+    <form class="" action="/home" method="post">
       <button type="submit" name="button">How to play</button>
     </form>
   </body>

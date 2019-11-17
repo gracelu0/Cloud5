@@ -12,14 +12,10 @@ var players = {};
 const bcrypt = require('bcrypt');
 
 const { Pool } = require('pg');
+
 // var pool = new Pool({
 //   connectionString: process.env.DATABASE_URL
 // });
-
-var pool = new Pool({
-  connectionString: process.env.DATABASE_URL
-  //connectionString: "postgres://postgres:shimarov6929@localhost/cloud5"
-});
 
 var pool = new Pool({
   user: 'graceluo',
@@ -46,7 +42,9 @@ app.get("/forgotPwd", function (req, res) {
 
 
 app.post('/home', (req,res) => {
-    res.render('pages/home');
+    name = req.body.username;
+    console.log("home: " + name);
+    res.render('pages/home', {name});
 });
 
 app.post('/signUp', (req,res) => {
@@ -58,14 +56,18 @@ app.post('/rules', (req,res) => {
 });
 
 app.post('/pregame', (req,res) => {
-    res.render('pages/pregame');
+    name = req.body.username;
+    console.log("pregame: " + name);
+    res.render('pages/pregame', {name});
 });
 
 app.post('/game', (req,res) => {
     //console.log(req.body.character);
+    username = req.body.username;
+    console.log("game name: " + username);
     var selectedCharacter = req.body.character;
     console.log(selectedCharacter);
-    res.render('pages/game', {character: selectedCharacter});
+    res.render('pages/game', {character: selectedCharacter, username});
 });
 
 app.post('/postgame', (req,res) => {
@@ -88,8 +90,9 @@ app.post('/login', (req, res) => {
         else{
             if(await bcrypt.compare(userpwd, result.rows[0].password)){
                 if ((result.rows[0].usertype == 'User'))
-                    res.render('pages/home', {message: 'Successfully logged in!'});
+                    res.render('pages/home', {userID, message: 'Successfully logged in!'});
                 else{ // result.row[0].usertype == 'Admin'
+
 
                     var usersQuery=`SELECT userid, username, email, usertype FROM logindb ORDER BY usertype, username`;
                     pool.query(usersQuery, (error, result) =>{
@@ -264,6 +267,8 @@ app.get('/removeUser/:userID', (req,res) => {
 });
 
 var playerCount = 0;
+var players = {};
+var servBullets = [];
 
 io.on('connection', function (socket) {
   playerCount++;
@@ -312,6 +317,72 @@ io.on('connection', function (socket) {
     socket.broadcast.emit('playerMoved', players[socket.id]);
   });
 
+  socket.on('message', function(data){
+    console.log("catched")
+    console.log(data);
+    io.emit('message', data);
+  })
+  socket.on('disconnect', function () {
+    io.emit('disconnect');
+  });
+
+  socket.on('bulletFire', function (bulletInit) {
+    var newBullet = bulletInit;
+    newBullet.x = bulletInit.x;
+    newBullet.y = bulletInit.y;
+    newBullet.owner = socket.id;
+    servBullets.push(newBullet);
+    socket.broadcast.emit('bulletFired', newBullet);
+  });
+
+  socket.on('bulletMovement', function (bulletsInfo){
+    for(var i = 0; i < bulletsInfo.length; i++){
+      servBullets[i].x = bulletsInfo[i].x;
+      servBullets[i].y = bulletsInfo[i].y;
+    }
+    socket.broadcast.emit('bulletMoved', servBullets);
+  });
+
+  socket.on('playerDied', function (deadPlayer){
+    var counter = 0;
+    delete players[deadPlayer.id];
+    for(var id in players){
+      if(id === deadPlayer.id){
+        players.splice(counter, 1);
+      }
+      counter ++;
+    }
+  });
 });
+
+function gameLoop(){
+  for(var i = 0; i < servBullets.length; i++){
+    var currBullet = servBullets[i];
+    currBullet.x += currBullet.xSpeed;
+    currBullet.y += currBullet.ySpeed;
+
+    for(var id in players){
+      if(currBullet.owner != id){
+        var dx = players[id].x - currBullet.x;
+        var dy = players[id].y - currBullet.y;
+        var dist = Math.sqrt(dx*dx + dy*dy);
+        if(dist < 30){
+          io.emit('player-hit', id);
+          servBullets.splice(i,1);
+          i--;
+        }
+      }
+    }
+
+    if(currBullet.x < -10 || currBullet.x > 1000 || currBullet.y < -10 || currBullet.y > 1000){
+      servBullets.splice(i,1);
+      i--;
+    }
+  }
+
+  io.emit('bulletsUpdate', servBullets);
+}
+
+setInterval(gameLoop, 16);
 
 server.listen(PORT, () => console.log(`Listening on ${ PORT }`));
