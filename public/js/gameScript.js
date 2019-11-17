@@ -135,7 +135,7 @@ document.querySelector("[id='toggleHaze']").addEventListener('click', function()
 async function fetchWeather(){
     const ipRequest = await fetch('https://json.geoiplookup.io/');
     const ipResponse = await ipRequest.json();
-    const weatherRequest = await fetch('https://api.openweathermap.org/data/2.5/weather?q=' 
+    const weatherRequest = await fetch('https://api.openweathermap.org/data/2.5/weather?q='
                                         + ipResponse.city + ',' + ipResponse.country_code + '&appid=fa452ec635e9759a07cab7433d42104f');
     const weatherResponse = await weatherRequest.json();
     return weatherResponse;
@@ -218,7 +218,7 @@ function create(){
   bridgeLayer = map.createStaticLayer('Overworld', bridgeTiles,0,0);
   collideLayer = map.createStaticLayer('World', combinedTiles, 0, 0);
 
-  //weather 
+  //weather
   rainParticles = this.add.particles('rain');
   snowParticles = this.add.particles('snow');
   fog = this.add.image(1350, 1308, 'fog').setAlpha(0);
@@ -251,7 +251,7 @@ function create(){
                     hazeFlag = true; isHazy = true;
                     document.querySelector("[id='toggleHaze']").innerHTML = "HAZE OFF";
                 }
-                
+
                 else if(weatherResponse.weather[0].main == "Fog"){
                     changeAtmos(this, fog, "foggy");
                     fogFlag = true; isFoggy = true;
@@ -312,6 +312,58 @@ function create(){
   });
 });
 
+  // When we receive a message
+  // it will be like { user: 'username', message: 'text' }
+  $("#messageText").keyup(function(event){
+    if(event.keyCode == 90){
+        $("#messageText").val($("#messageText").val()+ 'Z');
+    }
+  });
+
+  $("#messageText").keyup(function(event){
+    if(event.keyCode == 122){
+        $("#messageText").val($("#messageText").val()+ 'z');
+    }
+  });
+
+  $("#messageText").keyup(function(event){
+    if(event.keyCode == 32){
+        $("#messageText").val($("#messageText").val()+' ');
+    }
+  });
+
+  $('.chatForm').submit(function (e) {
+    console.log("sent")
+    // Avoid submitting it through HTTP
+    e.preventDefault();
+    // Retrieve the message from the user
+    var message = $(e.target).find('#messageText').val();
+    //var username = $(e.target).find('#nameGame').val();
+    var username = document.getElementById("nameGame").value;
+    console.log(message);
+    console.log(username);
+    // Send the message to the server
+    self.socket.emit('message', {
+      //user: cookie.get('user') || 'Anonymous',
+      user: username,
+      message: message
+    });
+    // Clear the input and focus it for a new message
+    e.target.reset();
+    $(e.target).find('input').focus();
+  });
+
+  this.socket.on('message', function (data) {
+    console.log("client catched");
+    //alert(data.message);
+    //document.getElementById("chatSection").innerHTML = "ssdfsdf";
+    console.log("data user is" + data.user);
+    $('section').append(data.user + ': ' + data.message + '<br>');
+
+  });
+  //emitMsg(self);
+  // When the form is submitted
+
   bullets = this.physics.add.group({
     classType: Bullet,
     maxSize: 5,
@@ -343,22 +395,22 @@ function create(){
 
 function update(){
   if(this.player){
-    if (this.cursors.up.isDown){
+    if (this.cursors.up.isDown && document.activeElement !== messageText){
       this.player.body.position.y -=4;
       this.player.flipY = true;
       facing = 1;
     }
-    if (this.cursors.down.isDown){
+    if (this.cursors.down.isDown && document.activeElement !== messageText){
       this.player.body.position.y +=4;
       this.player.flipY = false;
       facing = 2;
     }
-    if (this.cursors.left.isDown){
+    if (this.cursors.left.isDown && document.activeElement !== messageText){
       this.player.body.position.x -=4;
       this.player.flipX = true;
       facing = 3;
     }
-    if (this.cursors.right.isDown){
+    if (this.cursors.right.isDown && document.activeElement !== messageText){
       this.player.body.position.x +=4;
       this.player.flipX = false;
       facing = 4;
@@ -372,7 +424,7 @@ function update(){
       this.healthbar_red.y = this.player.body.position.y - 20;
     }
 
-    if (this.cursors.space.isDown && ammunition > 0 && lastFired == 0){
+    if (this.cursors.space.isDown && ammunition > 0 && lastFired == 0 && document.activeElement !== messageText){
       var bullet = bullets.get();
 
       if(bullet){
@@ -386,7 +438,7 @@ function update(){
       lastFired --;
     }
 
-    if (this.bombButton.isDown && lastBomb == 0){
+    if (this.bombButton.isDown && lastBomb == 0 && document.activeElement !== messageText){
       var trap = traps.create(this.player.body.position.x, this.player.body.position.y, 'bomb');
       trap.body.setImmovable();
       lastBomb = 30;
@@ -469,6 +521,26 @@ function update(){
     }
 
 }
+// function emitMsg(self){
+//   $('.chatForm').submit(function (e) {
+//     console.log("sent")
+//     // Avoid submitting it through HTTP
+//     e.preventDefault();
+//     // Retrieve the message from the user
+//     var message = $(e.target).find('input').val();
+//     console.log(message);
+//     // Send the message to the server
+//     self.socket.emit('message', {
+//       //user: cookie.get('user') || 'Anonymous',
+//       user:"sdv",
+//       message: message
+//     });
+//
+//     // Clear the input and focus it for a new message
+//     e.target.reset();
+//     $(e.target).find('input').focus();
+//   });
+// }
 
 function addPlayer(self, playerInfo) {
   var selected = document.getElementById('colour').innerHTML;
@@ -513,15 +585,15 @@ function addOtherPlayers(self, playerInfo) {
     otherPlayer.setTexture('greenPlayer');
   }
   else if (playerInfo.colour == "blue"){
-    otherPlayer.setTexture('bluePlayer'); 
+    otherPlayer.setTexture('bluePlayer');
   }
   else if (playerInfo.colour == "yellow"){
-    otherPlayer.setTexture('yellowPlayer'); 
+    otherPlayer.setTexture('yellowPlayer');
   }
   else if (playerInfo.colour== 'beige'){
     otherPlayer.setTexture('beigePlayer');
   }
-  
+
   otherPlayer.playerId = playerInfo.playerId;
   self.otherPlayers.add(otherPlayer);
 }
@@ -542,35 +614,4 @@ playerDeath = function(deadPlayer){
 
 
 
-var socket = io();
-
-// The user count. Can change when someone joins/leaves
-socket.on('count', function (data) {
-  $('.user-count').html(data);
-});
-
-// When we receive a message
-// it will be like { user: 'username', message: 'text' }
-socket.on('message', function (data) {
-  $('.chat').append('<p><strong>' + data.user + '</strong>: ' + data.message + '</p>');
-});
-
-// When the form is submitted
-  function send(e) {
-  // Avoid submitting it through HTTP
-  e.preventDefault();
-
-  // Retrieve the message from the user
-  var message = $(e.target).find('input').val();
-
-  // Send the message to the server
-  socket.emit('message', {
-    //user: cookie.get('user') || 'Anonymous',
-    user:"sdv",
-    message: message
-  });
-
-  // Clear the input and focus it for a new message
-  e.target.reset();
-  $(e.target).find('input').focus();
-});
+// var socket = io();

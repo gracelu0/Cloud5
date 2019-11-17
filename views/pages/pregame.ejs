@@ -11,11 +11,11 @@
     <% if ( typeof message != 'undefined' && message.length > 0) { %>
     <p class="successMessage"><%= message %></p>
     <% } %>
-      
+
     <h2 align="center">Select your character:</h2>
     <div id="characterDiv"></div>
     <form align="center" class="" action="/game" method="post">
-      
+
       <label>
           <input name="character" value="pink" type="radio" checked/>
           <img src="assets/ui/alienPink.png">
@@ -36,9 +36,10 @@
           <input name="character" value="yellow" type="radio"/>
           <img src="assets/ui/alienYellow.png">
       </label>
-    
+
       <button type="submit" name="button">Join game!</button>
+      
     </form>
-  
+
   </body>
 </html>
