@@ -224,7 +224,7 @@ class Bullet extends Phaser.Physics.Arcade.Sprite{
     scene.physics.world.enable(this);
     if(facing == 1){
       this.xSpeed = Phaser.Math.GetSpeed(0,1);
-      this.ySpeed = Phaser.Math.GetSpeed(-400,1);
+      this.ySpeed = Phaser.Math.GetSpeed(-4000,1);
     }
     else if(facing == 2){
       this.xSpeed = Phaser.Math.GetSpeed(0,1);
