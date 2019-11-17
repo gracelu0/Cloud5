@@ -15,7 +15,6 @@ const { Pool } = require('pg');
 
 var pool = new Pool({
   connectionString: process.env.DATABASE_URL
-  //connectionString: "postgres://postgres:1234@localhost/login"
 });
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -46,11 +45,15 @@ app.post('/rules', (req,res) => {
 });
 
 app.post('/pregame', (req,res) => {
-    res.render('pages/pregame');
+    name = req.body.name;
+    console.log("pregame: " + name);
+    res.render('pages/pregame', {name});
 });
 
 app.post('/game', (req,res) => {
     //console.log(req.body.character);
+    nameGame = req.body.nameGame;
+    console.log("game name: " + name);
     var selectedCharacter = req.body.character;
     console.log(selectedCharacter);
     res.render('pages/game', {character: selectedCharacter});
@@ -76,8 +79,9 @@ app.post('/login', (req, res) => {
         else{
             if(await bcrypt.compare(userpwd, result.rows[0].password)){
                 if ((result.rows[0].usertype == 'User'))
-                    res.render('pages/home', {message: 'Successfully logged in!'});
+                    res.render('pages/home', {userID, message: 'Successfully logged in!'});
                 else{ // result.row[0].usertype == 'Admin'
+
 
                     var usersQuery=`SELECT userid, username, email, usertype FROM logindb ORDER BY usertype, username`;
                     pool.query(usersQuery, (error, result) =>{
@@ -288,6 +292,15 @@ io.on('connection', function (socket) {
     players[socket.id].y = movementData.y;
     players[socket.id].rotation = movementData.rotation;
     socket.broadcast.emit('playerMoved', players[socket.id]);
+  });
+
+  socket.on('message', function(data){
+    console.log("catched")
+    console.log(data);
+    io.emit('message', data);
+  })
+  socket.on('disconnect', function () {
+    io.emit('disconnect');
   });
 
   socket.on('bulletFire', function (bulletInit) {

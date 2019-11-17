@@ -5,8 +5,10 @@
       <link rel="stylesheet" href="/stylesheets/game.css">
       <link href="https://fonts.googleapis.com/css?family=Sniglet:800&display=swap" rel="stylesheet">
       <link href="https://fonts.googleapis.com/css?family=Neucha&display=swap" rel="stylesheet">
+      <link rel="icon" href="/assets/alienPink.png">
     </head>
     <body>
+      <input type="hidden" id="nameGame" value="<%= name %>">
       <script src="/socket.io/socket.io.js"></script>
         <div align="right" id="logoutDiv">
             <form class="" action="/logout" method="post" onsubmit="return confirm('Are you sure you want to logout?')">
@@ -16,11 +18,15 @@
       <script src="//cdn.jsdelivr.net/npm/phaser@3.3.0/dist/phaser.min.js"></script>
       <script src="js/gameScript.js" defer></script>
       <script src="js/weatherConfig.js" defer></script>
+      <!-- Include jquery, cookies, socket.io (client-side) and your own code -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://unpkg.com/cookie_js@1.2.2/cookie.min.js"></script>
+    <script src="https://unpkg.com/socket.io-client@2/dist/socket.io.slim.js"></script>
       <h1 align="center">BATTLE BLOBS</h1>
       <p id="colour"><%= character %></p>
       <div align="center" id="phaser"></div>
 
-      
+
       <form class="" action="/postgame" method="post">
         <button type="submit" name="button">Go to postgame screen</button>
       </form>
@@ -28,15 +34,19 @@
       <button id="music">MUSIC OFF</button>
       <button id="sound">SOUND OFF</button>
 
-      <!-- <table>
-        <tr>
-          <td><button id="toggleRain">RAIN ON</button></td>
-          <td><button id="toggleDrizzle">DRIZZLE ON</button></td>
-          <td><button id="toggleSnow">SNOW ON</button></td>
-          <td><button id="toggleFog">FOG ON</button></td>
-          <td><button id="toggleMist">MIST ON</button></td>
-          <td><button id="toggleHaze">HAZE ON</button></td>
-        </tr>
-      </table> -->
+      <main>
+            <header>
+              <div class="user-count fa fa-user">0</div>
+              <h1>Chat</h1>
+            </header>
+
+            <section class="chat" id  = "chatSection"></section>
+
+            <form class = "chatForm">
+              <input id = "messageText" type="text" placeholder="Say something nice" />
+                <button type="submit" id="chatButton">Send</button>
+            </form>
+          </main>
+
     </body>
 </html>
