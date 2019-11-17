@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css?family=Nunito&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Neucha&display=swap" rel="stylesheet">
     <link rel="icon" href="/assets/alienPink.png">
+    <script src="js/setData.js" defer></script>
   </head>
   <body>
 
@@ -34,7 +35,7 @@
         <p align="center" class="errorMessage"><%= loginMessage %></p>
         <% } %>
         <a href="/forgotPwd">Change Password</a>
-        <button type="submit" name="signInBtn">Login</button>
+        <button type="submit" name="signInBtn" onclick = "getName()">Login</button>
     </form>
     <form class="" action="/signUp" method="post">
       <button type="submit" name="signUpBtn">Sign up</button>
