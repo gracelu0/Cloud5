@@ -133,6 +133,15 @@ var y;
 //         document.querySelector("[id='toggleHaze']").innerHTML = "HAZE ON";
 // });
 
+//parameters to control music+sound
+var bgmusic;
+var shootSound;
+var musicFlag = true;
+var soundFlag = true;
+
+var musicButton = document.querySelector("[id='music']");
+var soundButton = document.querySelector("[id='sound']");
+
 // parameters to control weather
 var currentWeather;
 var weatherFlag = false; var weatherToggle = false;
@@ -203,6 +212,9 @@ function preload(){
   this.load.image('rain', 'assets/rain.png');
   this.load.image('snow', 'assets/snowflake-pixel.png');
   this.load.image('fog', 'assets/fog.png');
+
+  this.load.audio('bgmusic', 'assets/audio/bgmusic.mp3');
+  this.load.audio('shootSound', 'assets/audio/shoot.mp3');
 }
 
 class Bullet extends Phaser.Physics.Arcade.Sprite{
@@ -256,6 +268,40 @@ function create(){
   groundLayer = map.createStaticLayer('Below Player', combinedTiles, 0, 0);
   bridgeLayer = map.createStaticLayer('Overworld', bridgeTiles,0,0);
   collideLayer = map.createStaticLayer('World', combinedTiles, 0, 0);
+
+  //music
+  shootSound = this.sound.add('shootSound');
+  bgmusic = this.sound.add('bgmusic');
+
+  if(game.sound.context.state === 'suspended') {
+    game.sound.context.resume();
+  }
+
+  bgmusic.play();
+  bgmusic.loop = true;
+
+  musicButton.addEventListener('click', function() {
+    musicFlag = !musicFlag;
+    console.log(musicFlag);
+    if(musicFlag == false) {
+      musicButton.innerHTML = "MUSIC ON";
+      bgmusic.pause();
+    }
+    else {
+      musicButton.innerHTML = "MUSIC OFF";
+      bgmusic.resume();
+    }
+  })
+  soundButton.addEventListener('click', function() {
+    soundFlag = !soundFlag;
+    console.log(soundFlag);
+    if(soundFlag == false) {
+      soundButton.innerHTML = "SOUND ON";
+    }
+    else {
+      soundButton.innerHTML = "SOUND OFF";
+    }
+  })
 
   //weather 
   rainParticles = this.add.particles('rain');
@@ -402,6 +448,9 @@ function update(){
       var bullet = bullets.get();
     
       if(bullet){
+        if(soundFlag == true) {
+          shootSound.play();
+        }
         bullet.fire(this.player.body.position.x, this.player.body.position.y);
         lastFired = 10;
         ammunition --;
