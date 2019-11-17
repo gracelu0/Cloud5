@@ -21,6 +21,12 @@ var pool = new Pool({
   //connectionString: "postgres://postgres:shimarov6929@localhost/cloud5"
 });
 
+var pool = new Pool({
+  user: 'graceluo',
+  password: 'tokicorgi',
+  host: 'localhost',
+  database: 'cloud5'
+});
 
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -28,6 +34,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
 
 app.get('/', (req, res) => {
     res.render('pages/login');
@@ -256,8 +263,12 @@ app.get('/removeUser/:userID', (req,res) => {
     });
 });
 
+var playerCount = 0;
+
 io.on('connection', function (socket) {
+  playerCount++;
   console.log('a user connected');
+  io.sockets.emit('numPlayers', playerCount);
   // create a new player and add it to our players object
   players[socket.id] = {
     x: 500,
@@ -270,16 +281,25 @@ io.on('connection', function (socket) {
 
   socket.on('updateColour', function (colourData) {
     players[socket.id].colour = colourData.colour;
+    var sockets = io.sockets.sockets;
+    for(var socketId in sockets) {
+              var colour = players[socketId].colour;
+              console.log(socketId,colour); 
+    }
     socket.broadcast.emit('updateSprite', players[socket.id]);
   });
 
   //send players object to new player
   socket.emit('currentPlayers', players);
 
-  //update all other players of new player
+  //update all other players by adding new player
+  //console.log('new player colour:',players[socket.id].colour);
   socket.broadcast.emit('newPlayer', players[socket.id]);
+  //socket.broadcast.emit('newPlayer', {id: socket.id, players: players} );
+
 
   socket.on('disconnect', function () {
+    playerCount--;
     console.log('user disconnected');
     delete players[socket.id];
     io.emit('disconnect', socket.id);

@@ -291,44 +291,61 @@ function create(){
 
   map.setCollisionBetween(1,999,true,collideLayer);
 
+  //display text 
+  playerCountText = this.add.text(810,550,'',{ fontFamily: '"Roboto Condensed"' });
+  playerCountText.setScrollFactor(0);
+  ammoCount = this.add.text(740, 570,"Ammunition Count:" + ' ' + ammunition + "/10",{ fontFamily: '"Roboto Condensed"' });
+  ammoCount.setScrollFactor(0);
+  
   var self = this;
   this.socket = io();
   this.otherPlayers = this.physics.add.group();
 
   //character selection
   var selected = document.getElementById('colour').innerHTML;
-  console.log(selected);
+  //console.log(selected);
+
+  this.socket.on('numPlayers', (playerCount) =>{
+    playerCountText.setText([
+      playerCount+' players joined',
+    ]);
+  });
 
   this.socket.on('currentPlayers', function (players) {
     Object.keys(players).forEach(function (id) {
       if (players[id].playerId === self.socket.id) {
         addPlayer(self, players[id]);   
       } else {
+        console.log("current players, addothers:",players[id].colour);
         addOtherPlayers(self, players[id]);
       }
+      
     });
   });
 
   this.socket.on('newPlayer', function (playerInfo) {
+    //console.log("adding new player: ", playerInfo.players[playerInfo.id].colour);
+    console.log("new player colour: ",playerInfo.colour)
     addOtherPlayers(self, playerInfo);
   }.bind(this));
 
-    this.socket.on('updateSprite', function (playerInfo) {
-        self.otherPlayers.getChildren().forEach(function (otherPlayer) {
-            if (playerInfo.playerId === otherPlayer.playerId) {
-            otherPlayer.colour = playerInfo.colour;
-            }
-        });
-    });
 
-
-    this.socket.on('disconnect', function (playerId) {
+  this.socket.on('updateSprite', function (playerInfo) {
       self.otherPlayers.getChildren().forEach(function (otherPlayer) {
-        if (playerId === otherPlayer.playerId) {
-          otherPlayer.destroy();
-        }
-      }.bind(this));
+          if (playerInfo.playerId === otherPlayer.playerId) {
+          otherPlayer.colour = playerInfo.colour;
+          }
+      });
+  });
+
+
+  this.socket.on('disconnect', function (playerId) {
+    self.otherPlayers.getChildren().forEach(function (otherPlayer) {
+      if (playerId === otherPlayer.playerId) {
+        otherPlayer.destroy();
+      }
     }.bind(this));
+  }.bind(this));
 
   this.socket.on('playerMoved', function (playerInfo) {
     self.otherPlayers.getChildren().forEach(function (otherPlayer) {
@@ -362,7 +379,8 @@ function create(){
   this.bombButton = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
 
   camera = this.cameras.main;
-  ammoCount = this.add.text(0, 0,"Ammunition Count:" + ammunition + "/10");
+  
+  
   //set bounds for camera (game world)
   camera.setBounds(0,0,map.widthInPixels, map.heightInPixels);
 }
@@ -486,9 +504,10 @@ function update(){
 }
 
 function addPlayer(self, playerInfo) {
+  console.log("in addPlayer");
   var selected = document.getElementById('colour').innerHTML;
   playerInfo.colour = selected;
-  console.log("selected colour: ", playerInfo.colour);
+  //console.log("selected colour: ", playerInfo.colour);
   self.socket.emit('updateColour', { colour: playerInfo.colour});
 
 
@@ -519,6 +538,7 @@ function addPlayer(self, playerInfo) {
 }
 
 function addOtherPlayers(self, playerInfo) {
+  console.log("addOthers colour: ", playerInfo.colour);
   const otherPlayer = self.add.sprite(playerInfo.x, playerInfo.y, 'pinkPlayer').setOrigin(0.5, 0.5);
   otherPlayer.health = 100;
   if (playerInfo.colour == "pink"){
