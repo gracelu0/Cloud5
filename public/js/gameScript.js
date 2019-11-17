@@ -224,13 +224,8 @@ class Bullet extends Phaser.Physics.Arcade.Sprite{
     scene.physics.world.enable(this);
     if(facing == 1){
       this.xSpeed = Phaser.Math.GetSpeed(0,1);
-<<<<<<< HEAD
       this.ySpeed = Phaser.Math.GetSpeed(-400,1);
     }
-=======
-      this.ySpeed = Phaser.Math.GetSpeed(-4000,1);
-    }
->>>>>>> bc8337582d1f14fc585c8188c69376bef50be246
     else if(facing == 2){
       this.xSpeed = Phaser.Math.GetSpeed(0,1);
       this.ySpeed = Phaser.Math.GetSpeed(4000,1);
@@ -429,15 +424,15 @@ function create(){
   // it will be like { user: 'username', message: 'text' }
   $("#messageText").keyup(function(event){
     if(event.keyCode == 90){
-        $("#messageText").val($("#messageText").val()+ 'Z');
-    }
-  });
-
-  $("#messageText").keyup(function(event){
-    if(event.keyCode == 122){
         $("#messageText").val($("#messageText").val()+ 'z');
     }
   });
+
+  // $("#messageText").keyup(function(event){
+  //   if(event.keyCode == 122){
+  //       $("#messageText").val($("#messageText").val()+ 'z');
+  //   }
+  // });
 
   $("#messageText").keyup(function(event){
     if(event.keyCode == 32){
@@ -464,6 +459,7 @@ function create(){
     // Clear the input and focus it for a new message
     e.target.reset();
     $(e.target).find('input').focus();
+    //$(e.target).blur()
   });
 
   this.socket.on('message', function (data) {
@@ -545,7 +541,7 @@ function update(){
         this.healthbar_red.y = this.player.body.position.y - 20;
       }
 
-      if (this.cursors.space.isDown && ammunition > 0 && lastFired == 0){
+      if (this.cursors.space.isDown && ammunition > 0 && lastFired == 0 && document.activeElement !== messageText){
         var bullet = bullets.get();
 
         if(bullet){
@@ -563,7 +559,7 @@ function update(){
         lastFired --;
       }
 
-      if (this.bombButton.isDown && lastBomb == 0){
+      if (this.bombButton.isDown && lastBomb == 0 &&  document.activeElement !== messageText){
         var trap = traps.create(this.player.body.position.x, this.player.body.position.y, 'bomb');
         trap.body.setImmovable();
         lastBomb = 30;
@@ -641,26 +637,26 @@ function update(){
     }
 
 }
-// function emitMsg(self){
-//   $('.chatForm').submit(function (e) {
-//     console.log("sent")
-//     // Avoid submitting it through HTTP
-//     e.preventDefault();
-//     // Retrieve the message from the user
-//     var message = $(e.target).find('input').val();
-//     console.log(message);
-//     // Send the message to the server
-//     self.socket.emit('message', {
-//       //user: cookie.get('user') || 'Anonymous',
-//       user:"sdv",
-//       message: message
-//     });
-//
-//     // Clear the input and focus it for a new message
-//     e.target.reset();
-//     $(e.target).find('input').focus();
-//   });
-// }
+function emitMsg(self){
+  $('.chatForm').submit(function (e) {
+    console.log("sent")
+    // Avoid submitting it through HTTP
+    e.preventDefault();
+    // Retrieve the message from the user
+    var message = $(e.target).find('input').val();
+    console.log(message);
+    // Send the message to the server
+    self.socket.emit('message', {
+      //user: cookie.get('user') || 'Anonymous',
+      user:"sdv",
+      message: message
+    });
+
+    // Clear the input and focus it for a new message
+    e.target.reset();
+    $(e.target).find('input').focus();
+  });
+}
 
 function addPlayer(self, playerInfo) {
   var selected = document.getElementById('colour').innerHTML;

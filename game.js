@@ -302,6 +302,7 @@ io.on('connection', function (socket) {
   })
   socket.on('disconnect', function () {
     io.emit('disconnect');
+  });
 
   socket.on('bulletFire', function (bulletInit) {
     var newBullet = bulletInit;
