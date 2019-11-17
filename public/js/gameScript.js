@@ -637,26 +637,7 @@ function update(){
     }
 
 }
-function emitMsg(self){
-  $('.chatForm').submit(function (e) {
-    console.log("sent")
-    // Avoid submitting it through HTTP
-    e.preventDefault();
-    // Retrieve the message from the user
-    var message = $(e.target).find('input').val();
-    console.log(message);
-    // Send the message to the server
-    self.socket.emit('message', {
-      //user: cookie.get('user') || 'Anonymous',
-      user:"sdv",
-      message: message
-    });
 
-    // Clear the input and focus it for a new message
-    e.target.reset();
-    $(e.target).find('input').focus();
-  });
-}
 
 function addPlayer(self, playerInfo) {
   var selected = document.getElementById('colour').innerHTML;
