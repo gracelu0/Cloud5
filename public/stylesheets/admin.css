@@ -17,6 +17,10 @@ body, html{
   width: 120px;
 }
 
+#logout{
+  width: 100%;
+}
+
 h1, h2, caption, th, p{
   font-family: 'Neucha', cursive;
 }

@@ -25,8 +25,11 @@ body, html{
     width: 100%;
 }
 
-h2,p,h3,figcaption{
+h1,h2,p,h3,figcaption{
     font-family: 'Neucha', cursive;
+}
+h1{
+    font-size: 40pt;
 }
 h2{
     font-size: 35pt;
