@@ -42,6 +42,7 @@ td,th{
 #deleteUser{
   background-color: red;
   opacity: 0.7;
+  padding: 8px;
   font-size: 11pt;
 }
 
@@ -57,7 +58,7 @@ button{
   margin: 8px 0;
   border: none;
   cursor: pointer;
-  width: 100%;
+  width: 40%;
   font-family: 'Neucha', cursive;
   font-size: 20pt;
 

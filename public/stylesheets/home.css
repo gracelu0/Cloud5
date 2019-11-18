@@ -9,6 +9,10 @@ body, html{
     margin: 0 ;
     padding: 0 ;
 }
+.imgContainer{
+    border: 1px solid black;
+    float: left;
+}
 
 #logoutDiv{
     position: absolute;
@@ -17,7 +21,11 @@ body, html{
     width: 120px;
 }
 
-h2,p,h3{
+#logout{
+    width: 100%;
+}
+
+h2,p,h3,figcaption{
     font-family: 'Neucha', cursive;
 }
 h2{
@@ -26,11 +34,14 @@ h2{
 h3{
     font-size: 30pt;
 }
-p{
+p,figcaption{
     font-size: 25pt;
 }
 
+
 .controlkeys{
+    margin-left: 25%;
+    width: 50%;
     text-align: center;
 }
 
@@ -49,7 +60,7 @@ button{
     margin: 8px 0;
     border: none;
     cursor: pointer;
-    width: 100%;
+    width: 40%;
     font-family: 'Neucha', cursive;
     font-size: 20pt;
 
