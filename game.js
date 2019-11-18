@@ -7,8 +7,6 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io').listen(server);
 
-var players = {};
-
 const bcrypt = require('bcrypt');
 
 const { Pool } = require('pg');
@@ -16,6 +14,15 @@ const { Pool } = require('pg');
 var pool = new Pool({
   connectionString: process.env.DATABASE_URL
 });
+
+// var pool = new Pool({
+//   user: 'graceluo',
+//   password: 'tokicorgi',
+//   host: 'localhost',
+//   database: 'cloud5'
+// });
+
+
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
@@ -250,11 +257,14 @@ app.get('/removeUser/:userID', (req,res) => {
     });
 });
 
+var playerCount = 0;
 var players = {};
 var servBullets = [];
 
 io.on('connection', function (socket) {
+  playerCount++;
   console.log('a user connected');
+  io.sockets.emit('numPlayers', playerCount);
   // create a new player and add it to our players object
   players[socket.id] = {
     x: 500,
@@ -278,6 +288,7 @@ io.on('connection', function (socket) {
   socket.broadcast.emit('newPlayer', players[socket.id]);
 
   socket.on('disconnect', function () {
+    playerCount--;
     console.log('user disconnected');
     delete players[socket.id];
     io.emit('disconnect', socket.id);
@@ -296,6 +307,7 @@ io.on('connection', function (socket) {
     io.emit('message', data);
   })
   socket.on('disconnect', function () {
+    io.sockets.emit('numPlayers', playerCount);
     io.emit('disconnect');
   });
 
