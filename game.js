@@ -12,7 +12,7 @@ const bcrypt = require('bcrypt');
 const { Pool } = require('pg');
 
 var pool = new Pool({
-  connectionString: 'postgres://postgres:1234@localhost/login'
+  connectionString: process.env.DATABASE_URL
 });
 
 
