@@ -27,9 +27,11 @@
       <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
       <script src="https://unpkg.com/cookie_js@1.2.2/cookie.min.js"></script>
       <script src="https://unpkg.com/socket.io-client@2/dist/socket.io.slim.js"></script>
+      
       <h1 align="center">BATTLE BLOBS</h1>
       <p id="colour"><%= character %></p>
       <!-- <p id = "usernameGame"></p> -->
+      
       <div align="center" id="gameTimer"></div>
       <div id="phaser"></div>
       <div id="chatArea">
@@ -38,7 +40,7 @@
       <form class = "chatForm">
           <input id = "messageText" type="text" placeholder="Say something nice" />
             <button type="submit" id="chatButton">Send</button>
-        </form>
+      </form>
       <div id="toggles">
         <button id="toggleWeather" hidden>WEATHER ON</button>
         <button id="music">MUSIC OFF</button>
@@ -70,15 +72,6 @@
             trapSecs--;
           }, 1000)
       </script>
-
-      
-
-     
-        
-
-        <!--<section class="chat" id  = "chatSection"></section>>-->
-        
-
 
     </body>
 </html>
