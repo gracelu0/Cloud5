@@ -127,7 +127,7 @@ class Bullet extends Phaser.Physics.Arcade.Sprite{
     scene.physics.world.enable(this);
     if(facing == 1){
       this.xSpeed = Phaser.Math.GetSpeed(0,1);
-      this.ySpeed = Phaser.Math.GetSpeed(-400,1);
+      this.ySpeed = Phaser.Math.GetSpeed(-4000,1);
     }
     else if(facing == 2){
       this.xSpeed = Phaser.Math.GetSpeed(0,1);
@@ -556,26 +556,7 @@ function update(){
     }
 
 }
-function emitMsg(self){
-  $('.chatForm').submit(function (e) {
-    console.log("sent")
-    // Avoid submitting it through HTTP
-    e.preventDefault();
-    // Retrieve the message from the user
-    var message = $(e.target).find('input').val();
-    console.log(message);
-    // Send the message to the server
-    self.socket.emit('message', {
-      //user: cookie.get('user') || 'Anonymous',
-      user:"sdv",
-      message: message
-    });
 
-    // Clear the input and focus it for a new message
-    e.target.reset();
-    $(e.target).find('input').focus();
-  });
-}
 
 function addPlayer(self, playerInfo) {
   console.log("in addPlayer");

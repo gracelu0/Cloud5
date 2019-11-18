@@ -7,22 +7,15 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io').listen(server);
 
-var players = {};
-
 const bcrypt = require('bcrypt');
 
 const { Pool } = require('pg');
 
-// var pool = new Pool({
-//   connectionString: process.env.DATABASE_URL
-// });
-
 var pool = new Pool({
-  user: 'graceluo',
-  password: 'tokicorgi',
-  host: 'localhost',
-  database: 'cloud5'
+  connectionString: process.env.DATABASE_URL
 });
+
+
 
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -56,18 +49,13 @@ app.post('/rules', (req,res) => {
 });
 
 app.post('/pregame', (req,res) => {
-    name = req.body.username;
-    console.log("pregame: " + name);
-    res.render('pages/pregame', {name});
+    res.render('pages/pregame');
 });
 
 app.post('/game', (req,res) => {
-    //console.log(req.body.character);
-    username = req.body.username;
-    console.log("game name: " + username);
     var selectedCharacter = req.body.character;
     console.log(selectedCharacter);
-    res.render('pages/game', {character: selectedCharacter, username});
+    res.render('pages/game', {character: selectedCharacter});
 });
 
 app.post('/postgame', (req,res) => {
@@ -90,7 +78,7 @@ app.post('/login', (req, res) => {
         else{
             if(await bcrypt.compare(userpwd, result.rows[0].password)){
                 if ((result.rows[0].usertype == 'User'))
-                    res.render('pages/home', {userID, message: 'Successfully logged in!'});
+                    res.render('pages/home', {message: 'Successfully logged in!'});
                 else{ // result.row[0].usertype == 'Admin'
 
 
@@ -282,6 +270,7 @@ io.on('connection', function (socket) {
   //y: Math.floor(Math.random() * 500) + 50,
     colour: "pink",
     playerId: socket.id,
+    username: socket.username,
   }
 
   socket.on('updateColour', function (colourData) {
