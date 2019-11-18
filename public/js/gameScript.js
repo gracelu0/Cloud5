@@ -405,6 +405,7 @@ function create(){
         counter++;
         if(counter > servBullets.length){
           child.destroy();
+          child = null;
         }
       })
       for(var i = counter; i < servBullets.length; i++){
