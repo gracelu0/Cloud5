@@ -31,11 +31,11 @@ h2{
 
 #phaser,#toggles{
     width: 60%;
-    margin-left: 1%;
     margin-top: 3%;
+    margin-left: 1%;
     display: flex;
-   /* flex-direction: column;
-    justify-content: center;*/
+    flex-direction: column;
+    justify-content: center;
     float: left;
 }
 

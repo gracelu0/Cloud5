@@ -1,7 +1,7 @@
 var config = {
     type: Phaser.WEBGL,
     width: 950,
-    height: 550,
+    height: 600,
     parent: 'phaser',
     physics: {
       default: 'arcade',
@@ -412,7 +412,7 @@ var config = {
     this.bombButton = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
   
     camera = this.cameras.main;
-    // = this.add.text(0, 0,"Ammunition Count:" + ammunition + "/100");
+
     //set bounds for camera (game world)
     camera.setBounds(0,0,map.widthInPixels, map.heightInPixels);
   }
