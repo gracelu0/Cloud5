@@ -14,7 +14,7 @@ const bcrypt = require('bcrypt');
 const { Pool } = require('pg');
 
 var pool = new Pool({
-   connectionString: process.env.DATABASE_URL
+  connectionString: process.env.DATABASE_URL
 });
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -303,6 +303,8 @@ io.on('connection', function (socket) {
     var newBullet = bulletInit;
     newBullet.x = bulletInit.x;
     newBullet.y = bulletInit.y;
+    newBullet.initX = bulletInit.initX;
+    newBullet.initY = bulletInit.initY;
     newBullet.owner = socket.id;
     servBullets.push(newBullet);
     socket.broadcast.emit('bulletFired', newBullet);
@@ -347,7 +349,7 @@ function gameLoop(){
       }
     }
 
-    if(currBullet.x < -10 || currBullet.x > 1000 || currBullet.y < -10 || currBullet.y > 1000){
+    if(currBullet.x < -10 || currBullet.x > currBullet.initX + 500 || currBullet.y < -10 || currBullet.y > currBullet.initY + 500){
       servBullets.splice(i,1);
       i--;
     }
