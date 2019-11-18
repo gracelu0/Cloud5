@@ -475,7 +475,6 @@ function create(){
 
   bullets = this.physics.add.group({
     classType: Bullet,
-    maxSize: 5,
     runChildUpdate: true
   });
   bullets.enable = true;
@@ -529,7 +528,7 @@ function update(){
       if(this.player.body.position.x - 455 > 0 && this.player.body.position.x + 495 < groundLayer.width){
         ammoCount.x = this.player.body.position.x - 455;
       }
-      if(this.player.body.position.y - 285 > 0 && this.player.body.position.y + 335 < groundLayer.height){
+      if(this.player.body.position.y - 285 > 0 && this.player.body.position.y + 305 < groundLayer.height){
         ammoCount.y = this.player.body.position.y - 285;
       }
 
@@ -549,7 +548,7 @@ function update(){
             shootSound.play();
           }
           bullet.fire(this.player.body.position.x, this.player.body.position.y);
-          lastFired = 10;
+          lastFired = 20;
           ammunition --;
           ammoCount.setText("Ammunition Count:" + ammunition +"/100");
           this.socket.emit('bulletFire', { x: this.player.body.position.x, y: this.player.body.position.y, xSpeed:bullet.xSpeed, ySpeed:bullet.ySpeed, initX: bullet.bulletInitX, initY: bullet.bulletInitY});

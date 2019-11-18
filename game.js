@@ -349,7 +349,7 @@ function gameLoop(){
       }
     }
 
-    if(currBullet.x < -10 || currBullet.x > currBullet.initX + 500 || currBullet.y < -10 || currBullet.y > currBullet.initY + 500){
+    if(currBullet.x < -10 || currBullet.x < currBullet.initX - 500 || currBullet.x > currBullet.initX + 500 || currBullet.y < -10 || currBullet.y < currBullet.initY - 500 || currBullet.y > currBullet.initY + 500){
       servBullets.splice(i,1);
       i--;
     }
