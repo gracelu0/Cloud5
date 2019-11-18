@@ -29,10 +29,10 @@ h2{
   font-size: 18pt;
 }
 
-#phaser{
-  border: 2px solid black;
+#phaser,#toggles{
     width: 60%;
-    margin-left: 10%;
+    margin-left: 1%;
+    margin-top: 3%;
     display: flex;
    /* flex-direction: column;
     justify-content: center;*/
@@ -41,9 +41,10 @@ h2{
 
 #toggles{
   border: none;
-  width: 50%;
-  margin-left: 10%;
-  bottom: 0;
+  width: 10%;
+  margin-left: 1%;
+  display: block;
+
 }
 
 
@@ -54,9 +55,10 @@ button{
     margin: 8px 0;
     border: none;
     cursor: pointer;
-    width: 25%;
+    width: 100%;
     font-family: 'Neucha', cursive;
     font-size: 14pt;
+    bottom:0;
 
     -webkit-transition-duration: 0.4s;
     transition-duration: 0.4s;

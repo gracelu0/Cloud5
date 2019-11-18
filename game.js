@@ -15,12 +15,6 @@ var pool = new Pool({
   connectionString: 'postgres://postgres:1234@localhost/login'
 });
 
-// var pool = new Pool({
-//   user: 'graceluo',
-//   password: 'tokicorgi',
-//   host: 'localhost',
-//   database: 'cloud5'
-// });
 
 
 

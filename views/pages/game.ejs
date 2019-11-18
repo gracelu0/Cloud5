@@ -8,8 +8,8 @@
       <link href="https://fonts.googleapis.com/css?family=Neucha&display=swap" rel="stylesheet">
       <link rel="icon" href="/assets/alienPink.png">
       <script src="js/getData.js" defer></script>
-
     </head>
+
     <body>
       <input type="text" id="nameGame" value="" hidden>
       <script src="/socket.io/socket.io.js"></script>
@@ -33,6 +33,11 @@
       <!-- <p id = "usernameGame"></p> -->
       
       <div align="center" id="gameTimer"></div>
+      <div class= "btn-group" id="toggles">
+          <button id="toggleWeather" hidden>WEATHER ON</button>
+          <button id="music">MUSIC OFF</button>
+          <button id="sound">SOUND OFF</button>
+        </div>
       <div id="phaser"></div>
       <div id="chatArea">
         <ul id="messages"></ul>
@@ -41,11 +46,7 @@
           <input id = "messageText" type="text" placeholder="Say something nice" />
             <button type="submit" id="chatButton">Send</button>
       </form>
-      <div id="toggles">
-        <button id="toggleWeather" hidden>WEATHER ON</button>
-        <button id="music">MUSIC OFF</button>
-        <button id="sound">SOUND OFF</button>
-      </div>
+
 
 
       <form class="" id="postGame" action="/postgame" method="post">

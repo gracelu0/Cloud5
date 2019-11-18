@@ -8,8 +8,8 @@
     background: white; 
     padding: 0px; 
     bottom: 10px; 
-    width: 25%; 
-    margin-left: 72%;
+    width: 24%; 
+    margin-left: 72.5%;
     }
 
 .chatForm input { 
@@ -46,6 +46,6 @@
 }
       
 #messages li:nth-child(odd) { 
-    background: #eee; 
+    background:#b3cfa9; 
 }
       
