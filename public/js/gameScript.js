@@ -552,7 +552,7 @@ function update(){
           lastFired = 10;
           ammunition --;
           ammoCount.setText("Ammunition Count:" + ammunition +"/100");
-          this.socket.emit('bulletFire', { x: this.player.body.position.x, y: this.player.body.position.y, xSpeed:bullet.xSpeed, ySpeed:bullet.ySpeed});
+          this.socket.emit('bulletFire', { x: this.player.body.position.x, y: this.player.body.position.y, xSpeed:bullet.xSpeed, ySpeed:bullet.ySpeed, initX: bullet.bulletInitX, initY: bullet.bulletInitY});
           }
       }
       if(lastFired > 0){
