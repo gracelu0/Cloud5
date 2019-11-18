@@ -10,26 +10,48 @@
     <body>
       <input type="hidden" id="nameGame" value="<%= name %>">
       <script src="/socket.io/socket.io.js"></script>
-        <div align="right" id="logoutDiv">
-            <form class="" action="/logout" method="post" onsubmit="return confirm('Are you sure you want to logout?')">
-              <button type="submit" id="logout">Logout</button>
-            </form>
-        </div>
+      <div align="right" id="logoutDiv">
+          <form class="" action="/logout" method="post" onsubmit="return confirm('Are you sure you want to logout?')">
+            <button type="submit" id="logout">Logout</button>
+          </form>
+      </div>
       <script src="//cdn.jsdelivr.net/npm/phaser@3.3.0/dist/phaser.min.js"></script>
       <script src="js/gameScript.js" defer></script>
       <script src="js/weatherConfig.js" defer></script>
-      <!-- Include jquery, cookies, socket.io (client-side) and your own code -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-    <script src="https://unpkg.com/cookie_js@1.2.2/cookie.min.js"></script>
-    <script src="https://unpkg.com/socket.io-client@2/dist/socket.io.slim.js"></script>
+        <!-- Include jquery, cookies, socket.io (client-side) and your own code -->
+      <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+      <script src="https://unpkg.com/cookie_js@1.2.2/cookie.min.js"></script>
+      <script src="https://unpkg.com/socket.io-client@2/dist/socket.io.slim.js"></script>
       <h1 align="center">BATTLE BLOBS</h1>
       <p id="colour"><%= character %></p>
+      <div align="center" id="gameTimer"></div>
       <div align="center" id="phaser"></div>
 
 
-      <form class="" action="/postgame" method="post">
-        <button type="submit" name="button">Go to postgame screen</button>
+      <form class="" id="postGame" action="/postgame" method="post">
+        <button type="submit" name="button" hidden>Go to postgame screen</button>
       </form>
+      <script type="text/javascript">
+        var trapSecs = 20; var gamePlaySecs = 60;
+        var timer;
+        timer = setInterval(function() {
+            var element = document.getElementById('gameTimer');
+            element.innerHTML = "<h2>Set Traps! Time Remaining: <b>"+trapSecs+"</b></h2>";
+            if(trapSecs < 1){
+                clearInterval(timer);
+                timer = setInterval(function() {
+                  var element = document.getElementById('gameTimer');
+                  element.innerHTML = "<h2>Game Time Remaining: <b>"+gamePlaySecs+"</b></h2>";
+                  if (gamePlaySecs < 1){
+                    clearInterval(timer);
+                    document.getElementById('postGame').submit();
+                  }
+                  gamePlaySecs--;
+              }, 1000);
+            }
+            trapSecs--;
+          }, 1000)
+      </script>
       <button id="toggleWeather" hidden>WEATHER ON</button>
       <button id="music">MUSIC OFF</button>
       <button id="sound">SOUND OFF</button>
