@@ -338,25 +338,27 @@ io.on('connection', function (socket) {
 function gameLoop(){
   for(var i = 0; i < servBullets.length; i++){
     var currBullet = servBullets[i];
-    currBullet.x += currBullet.xSpeed;
-    currBullet.y += currBullet.ySpeed;
+    if(currBullet && servBullets[i]){
+      currBullet.x += currBullet.xSpeed;
+      currBullet.y += currBullet.ySpeed;
 
-    for(var id in players){
-      if(currBullet.owner != id){
-        var dx = players[id].x - currBullet.x;
-        var dy = players[id].y - currBullet.y;
-        var dist = Math.sqrt(dx*dx + dy*dy);
-        if(dist < 30){
-          io.emit('player-hit', id);
-          servBullets.splice(i,1);
-          i--;
+      for(var id in players){
+        if(currBullet.owner != id){
+          var dx = players[id].x - currBullet.x;
+          var dy = players[id].y - currBullet.y;
+          var dist = Math.sqrt(dx*dx + dy*dy);
+          if(dist < 30){
+            io.emit('player-hit', id);
+            servBullets.splice(i,1);
+            i--;
+          }
         }
       }
-    }
 
-    if(currBullet.x < -10 || currBullet.x > currBullet.initX + 500 || currBullet.y < -10 || currBullet.y > currBullet.initY + 500){
-      servBullets.splice(i,1);
-      i--;
+      if(currBullet.x < -10 || currBullet.x < currBullet.initX - 500 || currBullet.x > currBullet.initX + 500 || currBullet.y < -10 || currBullet.y < currBullet.initY - 500 || currBullet.y > currBullet.initY + 500){
+        servBullets.splice(i,1);
+        i--;
+      }
     }
   }
 
@@ -376,3 +378,4 @@ module.exports = {
   playerCount: playerCount,
   app: app,
 }
+
