@@ -72,3 +72,16 @@ button:hover{
     height: 30%;
     margin: 0 auto;
 }
+
+#logoutDiv{
+    position: fixed;
+    top: 100px;
+    right: 10px;
+    width: 130px;
+
+}
+
+#logout{
+    width: 100%;
+    margin: 0;
+}
