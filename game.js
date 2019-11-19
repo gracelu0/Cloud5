@@ -367,4 +367,15 @@ function gameLoop(){
 
 setInterval(gameLoop, 16);
 
-server.listen(PORT, () => console.log(`Listening on ${ PORT }`));
+if(!module.parent){
+  server.listen(PORT, () => console.log(`Listening on ${ PORT }`));
+}
+
+
+//testing
+module.exports = {
+  players: players,
+  playerCount: playerCount,
+  app: app,
+}
+
