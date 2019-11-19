@@ -8,7 +8,7 @@
   "main": "game.js",
   "scripts": {
     "start": "nodemon game.js",
-    "test": "node test.js"
+    "test": "mocha"
   },
   "dependencies": {
     "bcrypt": "^3.0.6",
@@ -23,7 +23,11 @@
     "socket.io": "^2.3.0"
   },
   "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.2.2",
     "request": "^2.81.0",
+    "superagent": "^5.1.0",
+    "supertest": "^4.0.2",
     "tape": "^4.7.0"
   },
   "repository": {
