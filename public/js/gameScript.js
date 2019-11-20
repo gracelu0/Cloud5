@@ -293,7 +293,9 @@ var config = {
       this.socket.on('disconnect', function (playerId) {
         self.otherPlayers.getChildren().forEach(function (otherPlayer) {
           if (playerId === otherPlayer.playerId) {
+            otherPlayer.usernameText.destroy();
             otherPlayer.destroy();
+            
           }
         }.bind(this));
       }.bind(this));
@@ -332,9 +334,27 @@ var config = {
       self.otherPlayers.getChildren().forEach(function (otherPlayer) {
             if (playerInfo.playerId === otherPlayer.playerId) {
                 otherPlayer.setPosition(playerInfo.x, playerInfo.y);
+                var usernameLength = playerInfo.playerUsername.length;
+                console.log("length", usernameLength);
+                var offset = 0;
+                if (usernameLength < 5){
+                  offset = -10;
+                }
+                else if (usernameLength < 10){
+                  offset = usernameLength*2;
+                }
+                else{
+                  offset = 12*(usernameLength/5);
+                }
+
+                otherPlayer.usernameText.x = playerInfo.x - offset;
+                otherPlayer.usernameText.y = playerInfo.y + 8;
+                otherPlayer.usernameText.setText(playerInfo.playerUsername);
+
             }
       });
     });
+    var username = document.getElementById("nameGame").value;
   
     //chat 
     // When we receive a message
@@ -364,7 +384,7 @@ var config = {
       // Retrieve the message from the user
       var message = $(e.target).find('#messageText').val();
       //var username = $(e.target).find('#nameGame').val();
-      var username = document.getElementById("nameGame").value;
+      //var username = document.getElementById("nameGame").value;
       console.log(message);
       console.log(username);
       // Send the message to the server
@@ -387,8 +407,12 @@ var config = {
       $('#messages').append($('<li>').text(data.user + ': ' + data.message));
   
     });
+
+    this.socket.emit('username',username);
     //emitMsg(self);
     // When the form is submitted
+
+
   
     bullets = this.physics.add.group({
       classType: Bullet,
@@ -616,6 +640,13 @@ var config = {
   function addOtherPlayers(self, playerInfo) {
     const otherPlayer = self.add.sprite(playerInfo.x, playerInfo.y, 'pinkPlayer').setOrigin(0.5, 0.5);
     otherPlayer.health = 100;
+    otherPlayer.usernameText = self.add.text(playerInfo.x, playerInfo.y,playerInfo.playerUsername, 
+      {
+      fontFamily:'Neucha',
+      color:'#000000',
+      align:'center',
+      fontSize: '12px'
+    });
     if (playerInfo.colour == "pink"){
        otherPlayer.setTexture('pinkPlayer');
     }
@@ -647,6 +678,7 @@ var config = {
   }
   
   playerDeath = function(deadPlayer){
+    deadPlayer.usernameText.destroy();
     deadPlayer.destroy();
     deadPlayer = null;
     //healthbar_red.destroy();
