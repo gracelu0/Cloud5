@@ -11,9 +11,16 @@ const bcrypt = require('bcrypt');
 
 const { Pool } = require('pg');
 
+// var pool = new Pool({
+//   connectionString: process.env.DATABASE_URL
+// });
 var pool = new Pool({
-  connectionString: process.env.DATABASE_URL
+  user: 'graceluo',
+  password: 'tokicorgi',
+  host: 'localhost',
+  database: 'cloud5'
 });
+
 
 
 
@@ -264,7 +271,7 @@ io.on('connection', function (socket) {
     y: 500,
   //x: Math.floor(Math.random() * 700) + 50,
   //y: Math.floor(Math.random() * 500) + 50,
-    colour: "pink",
+    colour: socket.colour,
     playerId: socket.id,
     username: socket.username,
   }
@@ -374,5 +381,5 @@ if(!module.parent){
 module.exports = {
   players: players,
   playerCount: playerCount,
-  app: app,
+  app: server,
 }

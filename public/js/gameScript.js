@@ -243,9 +243,9 @@ var config = {
     map.setCollisionBetween(1,999,true,collideLayer);
 
     //display text 
-    playerCountText = this.add.text(10,30,'',{ fontFamily: '"Roboto Condensed"' });
+    playerCountText = this.add.text(10,20,'',{ fontFamily: 'Neucha', fontSize:'20px' });
     playerCountText.setScrollFactor(0);
-    ammoCount = this.add.text(10, 50,"Ammunition Count:" + ' ' + ammunition + "/100",{ fontFamily: '"Roboto Condensed"' });
+    ammoCount = this.add.text(10, 40,"Ammunition Count:" + ' ' + ammunition + "/100",{ fontFamily: 'Neucha', fontSize:'20px' });
     ammoCount.setScrollFactor(0);
   
     var self = this;
@@ -442,20 +442,30 @@ var config = {
           this.player.flipX = false;
           facing = 4;
         }
-  
-        // if(this.player.body.position.x - 455 > 0 && this.player.body.position.x + 495 < groundLayer.width){
-        //   ammoCount.x = this.player.body.position.x - 455;
-        // }
-        // if(this.player.body.position.y - 285 > 0 && this.player.body.position.y + 335 < groundLayer.height){
-        //   ammoCount.y = this.player.body.position.y - 285;
-        // }
+
+
   
         if (this.player.health > 0) {
+          var usernameLength = document.getElementById("nameGame").value.length;
+          var offset = 0;
+          if (usernameLength < 5){
+            offset = -10;
+          }
+          else if (usernameLength < 10){
+            offset = usernameLength*0.5;
+          }
+          else{
+            offset = 12*(usernameLength/8);
+          }
+
           this.healthbar_green.displayWidth = (this.player.health/100)*100;
           this.healthbar_green.x = this.player.body.position.x + 12;
           this.healthbar_green.y = this.player.body.position.y - 20;
           this.healthbar_red.x = this.player.body.position.x + 12;
           this.healthbar_red.y = this.player.body.position.y - 20;
+
+          this.usernameText.x = this.player.body.position.x - offset;
+          this.usernameText.y = this.player.body.position.y + 22;
         }
   
         if (this.cursors.space.isDown && ammunition > 0 && lastFired == 0 && document.activeElement !== messageText){
@@ -512,6 +522,7 @@ var config = {
         playerDeath(this.player);
         this.healthbar_green.destroy();
         this.healthbar_red.destroy();
+        this.usernameText.destroy();
       }
     }
   
@@ -557,6 +568,8 @@ var config = {
   
   
   function addPlayer(self, playerInfo) {
+    var username = document.getElementById("nameGame").value;
+    console.log(username.length);
     var selected = document.getElementById('colour').innerHTML;
     playerInfo.colour = selected;
     console.log("selected colour: ", playerInfo.colour);
@@ -564,6 +577,7 @@ var config = {
   
   
     self.player = self.physics.add.sprite(playerInfo.x, playerInfo.y, 'pinkPlayer').setOrigin(0.5, 0.5);
+
     if (selected == 'pink'){
       self.player.setTexture('pinkPlayer');
     }
@@ -579,6 +593,8 @@ var config = {
     else if (selected == 'beige'){
       self.player.setTexture('beigePlayer');
     }
+
+
     self.player.setCollideWorldBounds(true);
     self.player.health = 100;
     self.healthbar_red = self.physics.add.sprite(self.player.body.position.x, self.player.body.position.y, 'healthbar_red');
@@ -586,7 +602,15 @@ var config = {
     self.healthbar_green.setScale(.4);
     self.healthbar_red.setScale(.4);
     self.healthbar_red.displayWidth = (self.player.health/100) * 100;
+    self.usernameText = self.add.text(self.player.body.position.x, self.player.body.position.y,username, 
+      {
+      fontFamily:'Neucha',
+      color:'#000000',
+      align:'center',
+      fontSize: '12px'
+    });
     self.cameras.main.startFollow(self.player, true,0.5,0.5,0.5,0.5);
+
   }
   
   function addOtherPlayers(self, playerInfo) {
