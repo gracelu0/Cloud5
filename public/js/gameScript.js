@@ -6,7 +6,8 @@ var config = {
     physics: {
       default: 'arcade',
       arcade: {
-        gravity: {y: 0}
+        gravity: {y: 0},
+        debug: true
       }
     },
     scene: {
@@ -242,9 +243,9 @@ var config = {
     map.setCollisionBetween(1,999,true,collideLayer);
 
     //display text 
-    playerCountText = this.add.text(10,30,'',{ fontFamily: '"Roboto Condensed"' });
+    playerCountText = this.add.text(10,20,'',{ fontFamily: 'Neucha', fontSize:'20px' });
     playerCountText.setScrollFactor(0);
-    ammoCount = this.add.text(10, 50,"Ammunition Count:" + ' ' + ammunition + "/100",{ fontFamily: '"Roboto Condensed"' });
+    ammoCount = this.add.text(10, 40,"Ammunition Count:" + ' ' + ammunition + "/100",{ fontFamily: 'Neucha', fontSize:'20px' });
     ammoCount.setScrollFactor(0);
   
     var self = this;
@@ -288,26 +289,30 @@ var config = {
       });
     });
   
-    this.socket.on('disconnect', function (playerId) {
-      self.otherPlayers.getChildren().forEach(function (otherPlayer) {
-        if (playerId === otherPlayer.playerId) {
-          otherPlayer.destroy();
-        }
-      }.bind(this));
-    }.bind(this));
   
-    this.socket.on('player-hit', function(id){
-      if(id === sessionId){
-        self.player.health -= 10;
-      }
-      else{
-        self.otherPlayers.getChildren().forEach(function (otherPlayer){
-          if(id === otherPlayer.playerId){
-            otherPlayer.health -= 10;
+      this.socket.on('disconnect', function (playerId) {
+        self.otherPlayers.getChildren().forEach(function (otherPlayer) {
+          if (playerId === otherPlayer.playerId) {
+            otherPlayer.usernameText.destroy();
+            otherPlayer.destroy();
+            
           }
-        })
-      }
-    });
+        }.bind(this));
+      }.bind(this));
+  
+      this.socket.on('player-hit', function(id){
+        if(id === sessionId){
+          self.player.health -= 10;
+        }
+        else{
+          self.otherPlayers.getChildren().forEach(function (otherPlayer){
+            if(id === otherPlayer.playerId){
+              otherPlayer.health -= 10;
+            }
+          })
+        }
+      });
+
   
     this.socket.on('bulletsUpdate', function(servBullets){
       var counter = 0;
@@ -328,11 +333,45 @@ var config = {
   
     this.socket.on('playerMoved', function (playerInfo) {
       self.otherPlayers.getChildren().forEach(function (otherPlayer) {
-        if (playerInfo.playerId === otherPlayer.playerId) {
-          otherPlayer.setPosition(playerInfo.x, playerInfo.y);
-        }
+            if (playerInfo.playerId === otherPlayer.playerId) {
+                otherPlayer.setPosition(playerInfo.x, playerInfo.y);
+                var usernameLength = playerInfo.playerUsername.length;
+                console.log("length", usernameLength);
+                var offset = 0;
+                if (usernameLength < 5){
+                  offset = -10;
+                }
+                else if (usernameLength < 10){
+                  offset = usernameLength*2;
+                }
+                else{
+                  offset = 12*(usernameLength/5);
+                }
+
+                otherPlayer.usernameText.x = playerInfo.x - offset;
+                otherPlayer.usernameText.y = playerInfo.y + 8;
+                otherPlayer.usernameText.setText(playerInfo.playerUsername);
+
+               if (playerInfo.colour == "pink"){
+                  otherPlayer.setTexture('pinkPlayer');
+               }
+               else if (playerInfo.colour == "green"){
+                 otherPlayer.setTexture('greenPlayer');
+               }
+               else if (playerInfo.colour == "blue"){
+                 otherPlayer.setTexture('bluePlayer');
+               }
+               else if (playerInfo.colour == "yellow"){
+                 otherPlayer.setTexture('yellowPlayer');
+               }
+               else if (playerInfo.colour== 'beige'){
+                 otherPlayer.setTexture('beigePlayer');
+               }
+
+            }
       });
     });
+    var username = document.getElementById("nameGame").value;
   
     //chat 
     // When we receive a message
@@ -362,7 +401,7 @@ var config = {
       // Retrieve the message from the user
       var message = $(e.target).find('#messageText').val();
       //var username = $(e.target).find('#nameGame').val();
-      var username = document.getElementById("nameGame").value;
+      //var username = document.getElementById("nameGame").value;
       console.log(message);
       console.log(username);
       // Send the message to the server
@@ -385,8 +424,12 @@ var config = {
       $('#messages').append($('<li>').text(data.user + ': ' + data.message));
   
     });
+
+    this.socket.emit('username',username);
     //emitMsg(self);
     // When the form is submitted
+
+
   
     bullets = this.physics.add.group({
       classType: Bullet,
@@ -439,20 +482,30 @@ var config = {
           this.player.flipX = false;
           facing = 4;
         }
-  
-        // if(this.player.body.position.x - 455 > 0 && this.player.body.position.x + 495 < groundLayer.width){
-        //   ammoCount.x = this.player.body.position.x - 455;
-        // }
-        // if(this.player.body.position.y - 285 > 0 && this.player.body.position.y + 335 < groundLayer.height){
-        //   ammoCount.y = this.player.body.position.y - 285;
-        // }
+
+
   
         if (this.player.health > 0) {
+          var usernameLength = document.getElementById("nameGame").value.length;
+          var offset = 0;
+          if (usernameLength < 5){
+            offset = -10;
+          }
+          else if (usernameLength < 10){
+            offset = usernameLength*0.5;
+          }
+          else{
+            offset = 12*(usernameLength/8);
+          }
+
           this.healthbar_green.displayWidth = (this.player.health/100)*100;
           this.healthbar_green.x = this.player.body.position.x + 12;
           this.healthbar_green.y = this.player.body.position.y - 20;
           this.healthbar_red.x = this.player.body.position.x + 12;
           this.healthbar_red.y = this.player.body.position.y - 20;
+
+          this.usernameText.x = this.player.body.position.x - offset;
+          this.usernameText.y = this.player.body.position.y + 22;
         }
   
         if (this.cursors.space.isDown && ammunition > 0 && lastFired == 0 && document.activeElement !== messageText){
@@ -509,6 +562,7 @@ var config = {
         playerDeath(this.player);
         this.healthbar_green.destroy();
         this.healthbar_red.destroy();
+        this.usernameText.destroy();
       }
     }
   
@@ -554,13 +608,16 @@ var config = {
   
   
   function addPlayer(self, playerInfo) {
+    var username = document.getElementById("nameGame").value;
+    console.log(username.length);
     var selected = document.getElementById('colour').innerHTML;
     playerInfo.colour = selected;
     console.log("selected colour: ", playerInfo.colour);
-    self.socket.emit('updateColour', { colour: playerInfo.colour});
+    self.socket.emit('updateColour', {colour: playerInfo.colour});
   
   
     self.player = self.physics.add.sprite(playerInfo.x, playerInfo.y, 'pinkPlayer').setOrigin(0.5, 0.5);
+
     if (selected == 'pink'){
       self.player.setTexture('pinkPlayer');
     }
@@ -576,6 +633,8 @@ var config = {
     else if (selected == 'beige'){
       self.player.setTexture('beigePlayer');
     }
+
+
     self.player.setCollideWorldBounds(true);
     self.player.health = 100;
     self.healthbar_red = self.physics.add.sprite(self.player.body.position.x, self.player.body.position.y, 'healthbar_red');
@@ -583,12 +642,27 @@ var config = {
     self.healthbar_green.setScale(.4);
     self.healthbar_red.setScale(.4);
     self.healthbar_red.displayWidth = (self.player.health/100) * 100;
+    self.usernameText = self.add.text(self.player.body.position.x, self.player.body.position.y,username, 
+      {
+      fontFamily:'Neucha',
+      color:'#000000',
+      align:'center',
+      fontSize: '12px'
+    });
     self.cameras.main.startFollow(self.player, true,0.5,0.5,0.5,0.5);
+
   }
   
   function addOtherPlayers(self, playerInfo) {
     const otherPlayer = self.add.sprite(playerInfo.x, playerInfo.y, 'pinkPlayer').setOrigin(0.5, 0.5);
     otherPlayer.health = 100;
+    otherPlayer.usernameText = self.add.text(playerInfo.x, playerInfo.y,playerInfo.playerUsername, 
+      {
+      fontFamily:'Neucha',
+      color:'#000000',
+      align:'center',
+      fontSize: '12px'
+    });
     if (playerInfo.colour == "pink"){
        otherPlayer.setTexture('pinkPlayer');
     }
@@ -620,6 +694,7 @@ var config = {
   }
   
   playerDeath = function(deadPlayer){
+    deadPlayer.usernameText.destroy();
     deadPlayer.destroy();
     deadPlayer = null;
     //healthbar_red.destroy();
