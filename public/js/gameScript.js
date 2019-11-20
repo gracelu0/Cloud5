@@ -213,28 +213,28 @@ var config = {
     snowParticles = this.add.particles('snow');
     fog = this.add.image(1350, 1308, 'fog').setAlpha(0);
       if(navigator.onLine)
-          fetchWeather()
-              .then(weatherResponse => {
-                  currentWeather = weatherResponse.weather[0].main;
-                  console.log(currentWeather);
-                  if(currentWeather == "Rain")
-                      addRain(rainParticles, map.widthInPixels, map.heightInPixels);
+        fetchWeather()
+          .then(weatherResponse => {
+            currentWeather = weatherResponse.weather[0].main;
+            console.log(currentWeather);
+            if(currentWeather == "Rain")
+              addRain(rainParticles, map.widthInPixels, map.heightInPixels);
+
+            else if(currentWeather == "Drizzle")
+              addDrizzle(rainParticles, map.widthInPixels, map.heightInPixels);
   
-                  else if(currentWeather == "Drizzle")
-                      addDrizzle(rainParticles, map.widthInPixels, map.heightInPixels);
+            else if(currentWeather == "Snow")
+              addSnow(snowParticles, map.widthInPixels, map.heightInPixels);
   
-                  else if(currentWeather == "Snow")
-                      addSnow(snowParticles, map.widthInPixels, map.heightInPixels);
+            else if(currentWeather == "Mist")
+              changeAtmos(this, fog, "Misty");
   
-                  else if(currentWeather == "Mist")
-                      changeAtmos(this, fog, "Misty");
+            else if(currentWeather == "Haze")
+              changeAtmos(this, fog, "Hazy");
   
-                  else if(currentWeather == "Haze")
-                      changeAtmos(this, fog, "Hazy");
-  
-                  else if(currentWeather == "Fog")
-                      changeAtmos(this, fog, "foggy");
-              });
+            else if(currentWeather == "Fog")
+              changeAtmos(this, fog, "foggy");
+          });
   
     //set boundaries of game world
     this.physics.world.bounds.width = groundLayer.width;
@@ -281,14 +281,15 @@ var config = {
       addOtherPlayers(self, playerInfo);
     }.bind(this));
   
-      this.socket.on('updateSprite', function (playerInfo) {
-          self.otherPlayers.getChildren().forEach(function (otherPlayer) {
-              if (playerInfo.playerId === otherPlayer.playerId) {
-              otherPlayer.colour = playerInfo.colour;
-              }
-          });
+    this.socket.on('updateSprite', function (playerInfo) {
+      self.otherPlayers.getChildren().forEach(function (otherPlayer) {
+        if (playerInfo.playerId === otherPlayer.playerId) {
+          otherPlayer.colour = playerInfo.colour;
+        }
       });
+    });
   
+<<<<<<< HEAD
   
       this.socket.on('disconnect', function (playerId) {
         self.otherPlayers.getChildren().forEach(function (otherPlayer) {
@@ -310,25 +311,65 @@ var config = {
               otherPlayer.health -= 10;
             }
           })
-        }
-      });
+||||||| merged common ancestors
   
-      this.socket.on('bulletsUpdate', function(servBullets){
-        var counter = 0;
-        bullets.getChildren().forEach(child => {
-          if(servBullets[counter]){
-            child.x = servBullets[counter].x;
-            child.y = servBullets[counter].y;
+      this.socket.on('disconnect', function (playerId) {
+        self.otherPlayers.getChildren().forEach(function (otherPlayer) {
+          if (playerId === otherPlayer.playerId) {
+            otherPlayer.destroy();
           }
-          counter++;
-          if(counter > servBullets.length){
-            child.destroy();
+        }.bind(this));
+      }.bind(this));
+  
+      this.socket.on('player-hit', function(id){
+        if(id === sessionId){
+          self.player.health -= 10;
+        }
+        else{
+          self.otherPlayers.getChildren().forEach(function (otherPlayer){
+            if(id === otherPlayer.playerId){
+              otherPlayer.health -= 10;
+            }
+          })
+=======
+    this.socket.on('disconnect', function (playerId) {
+      self.otherPlayers.getChildren().forEach(function (otherPlayer) {
+        if (playerId === otherPlayer.playerId) {
+          otherPlayer.destroy();
+>>>>>>> 9a738628958e5e362da25558f4724b7dbc82b33c
+        }
+      }.bind(this));
+    }.bind(this));
+  
+    this.socket.on('player-hit', function(id){
+      if(id === sessionId){
+        self.player.health -= 10;
+      }
+      else{
+        self.otherPlayers.getChildren().forEach(function (otherPlayer){
+          if(id === otherPlayer.playerId){
+            otherPlayer.health -= 10;
           }
         })
-        for(var i = counter; i < servBullets.length; i++){
-          addBullets(self,servBullets[i]);
+      }
+    });
+  
+    this.socket.on('bulletsUpdate', function(servBullets){
+      var counter = 0;
+      bullets.getChildren().forEach(child => {
+        if(servBullets[counter]){
+          child.x = servBullets[counter].x;
+          child.y = servBullets[counter].y;
         }
-      });
+        counter++;
+        if(counter > servBullets.length){
+          child.destroy();
+        }
+      })
+      for(var i = counter; i < servBullets.length; i++){
+        addBullets(self,servBullets[i]);
+      }
+    });
   
     this.socket.on('playerMoved', function (playerInfo) {
       self.otherPlayers.getChildren().forEach(function (otherPlayer) {
@@ -432,7 +473,6 @@ var config = {
   
     bullets = this.physics.add.group({
       classType: Bullet,
-      maxSize: 5,
       runChildUpdate: true
     });
     bullets.enable = true;
@@ -516,7 +556,7 @@ var config = {
               shootSound.play();
             }
             bullet.fire(this.player.body.position.x, this.player.body.position.y);
-            lastFired = 10;
+            lastFired = 20;
             ammunition --;
             ammoCount.setText("Ammunition Count:" + ' '+ ammunition +"/100");
             this.socket.emit('bulletFire', { x: this.player.body.position.x, y: this.player.body.position.y, xSpeed:bullet.xSpeed, ySpeed:bullet.ySpeed, initX: bullet.bulletInitX, initY: bullet.bulletInitY});
