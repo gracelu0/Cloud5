@@ -17,6 +17,8 @@ var pool = new Pool({
 
 
 
+
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -264,15 +266,10 @@ io.on('connection', function (socket) {
     y: 500,
   //x: Math.floor(Math.random() * 700) + 50,
   //y: Math.floor(Math.random() * 500) + 50,
-    colour: "pink",
+    colour: socket.colour,
     playerId: socket.id,
-    username: socket.username,
+    playerUsername: socket.username,
   }
-
-  socket.on('updateColour', function (colourData) {
-    players[socket.id].colour = colourData.colour;
-    socket.broadcast.emit('updateSprite', players[socket.id]);
-  });
 
   //send players object to new player
   socket.emit('currentPlayers', players);
@@ -280,12 +277,16 @@ io.on('connection', function (socket) {
   //update all other players of new player
   socket.broadcast.emit('newPlayer', players[socket.id]);
 
-  socket.on('disconnect', function () {
-    playerCount--;
-    console.log('user disconnected');
-    delete players[socket.id];
-    io.emit('disconnect', socket.id);
+  socket.on('updateColour', function (colourData) {
+    socket.colour = colourData.colour;
+    players[socket.id].colour = colourData.colour;
+    socket.broadcast.emit('updateSprite', players[socket.id]);
   });
+
+  socket.on('username', function(username){
+    socket.username = username;
+    players[socket.id].playerUsername = username;
+  })
 
   socket.on('playerMovement', function (movementData) {
     players[socket.id].x = movementData.x;
@@ -298,11 +299,8 @@ io.on('connection', function (socket) {
     console.log("catched")
     console.log(data);
     io.emit('message', data);
-  })
-  socket.on('disconnect', function () {
-    io.sockets.emit('numPlayers', playerCount);
-    io.emit('disconnect');
   });
+
 
   socket.on('bulletFire', function (bulletInit) {
     var newBullet = bulletInit;
@@ -333,6 +331,16 @@ io.on('connection', function (socket) {
       counter ++;
     }
   });
+
+  socket.on('disconnect', function () {
+    playerCount--;
+    console.log('user disconnected');
+    delete players[socket.id];
+    io.sockets.emit('numPlayers', playerCount);
+    io.emit('disconnect', socket.id);
+
+  });
+
 });
 
 function gameLoop(){
