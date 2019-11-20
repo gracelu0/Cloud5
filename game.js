@@ -11,15 +11,10 @@ const bcrypt = require('bcrypt');
 
 const { Pool } = require('pg');
 
-// var pool = new Pool({
-//   connectionString: process.env.DATABASE_URL
-// });
 var pool = new Pool({
-  user: 'graceluo',
-  password: 'tokicorgi',
-  host: 'localhost',
-  database: 'cloud5'
+  connectionString: process.env.DATABASE_URL
 });
+
 
 
 
@@ -284,7 +279,7 @@ io.on('connection', function (socket) {
 
   socket.on('updateColour', function (colourData) {
     socket.colour = colourData.colour;
-    players[socket.id].colour = socket.colour;
+    players[socket.id].colour = colourData.colour;
     socket.broadcast.emit('updateSprite', players[socket.id]);
   });
 

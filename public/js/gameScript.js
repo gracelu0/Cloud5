@@ -351,6 +351,22 @@ var config = {
                 otherPlayer.usernameText.y = playerInfo.y + 8;
                 otherPlayer.usernameText.setText(playerInfo.playerUsername);
 
+               if (playerInfo.colour == "pink"){
+                  otherPlayer.setTexture('pinkPlayer');
+               }
+               else if (playerInfo.colour == "green"){
+                 otherPlayer.setTexture('greenPlayer');
+               }
+               else if (playerInfo.colour == "blue"){
+                 otherPlayer.setTexture('bluePlayer');
+               }
+               else if (playerInfo.colour == "yellow"){
+                 otherPlayer.setTexture('yellowPlayer');
+               }
+               else if (playerInfo.colour== 'beige'){
+                 otherPlayer.setTexture('beigePlayer');
+               }
+
             }
       });
     });
@@ -597,7 +613,7 @@ var config = {
     var selected = document.getElementById('colour').innerHTML;
     playerInfo.colour = selected;
     console.log("selected colour: ", playerInfo.colour);
-    self.socket.emit('updateColour', { colour: playerInfo.colour});
+    self.socket.emit('updateColour', {colour: playerInfo.colour});
   
   
     self.player = self.physics.add.sprite(playerInfo.x, playerInfo.y, 'pinkPlayer').setOrigin(0.5, 0.5);
