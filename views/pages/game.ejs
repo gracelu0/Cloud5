@@ -51,9 +51,12 @@
 
       <form class="" id="postGame" action="/postgame" method="post">
         <button type="submit" name="button" hidden>Go to postgame screen</button>
+        <input id="trapTime" value="<%= trapTime %>" hidden>
+        <input id="gameTime" value="<%= gameTime %>"hidden>
       </form>
       <script type="text/javascript">
-        var trapSecs = 20; var gamePlaySecs = 300;
+        var trapSecs = document.getElementById('trapTime').value; 
+        var gamePlaySecs = document.getElementById('gameTime').value;
         var timer;
         timer = setInterval(function() {
             var element = document.getElementById('gameTimer');

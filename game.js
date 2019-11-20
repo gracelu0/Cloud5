@@ -48,12 +48,6 @@ app.post('/pregame', (req,res) => {
     res.render('pages/pregame');
 });
 
-app.post('/game', (req,res) => {
-    var selectedCharacter = req.body.character;
-    console.log(selectedCharacter);
-    res.render('pages/game', {character: selectedCharacter});
-});
-
 app.post('/postgame', (req,res) => {
     res.render('pages/postgame');
 });
@@ -366,6 +360,15 @@ function gameLoop(){
 }
 
 setInterval(gameLoop, 16);
+
+var trapSecs = 5; var gameSecs = 5;
+var totalGameTime = trapSecs + gameSecs;
+
+app.post('/game', (req,res) => {
+  var selectedCharacter = req.body.character;
+  console.log(selectedCharacter);
+  res.render('pages/game', {character: selectedCharacter, gameTime: gameSecs, trapTime: trapSecs});
+});
 
 if(!module.parent){
   server.listen(PORT, () => console.log(`Listening on ${ PORT }`));
