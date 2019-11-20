@@ -6,7 +6,8 @@ var config = {
     physics: {
       default: 'arcade',
       arcade: {
-        gravity: {y: 0}
+        gravity: {y: 0},
+        debug: true
       }
     },
     scene: {
@@ -288,7 +289,6 @@ var config = {
       });
     });
   
-<<<<<<< HEAD
   
       this.socket.on('disconnect', function (playerId) {
         self.otherPlayers.getChildren().forEach(function (otherPlayer) {
@@ -310,48 +310,9 @@ var config = {
               otherPlayer.health -= 10;
             }
           })
-||||||| merged common ancestors
-  
-      this.socket.on('disconnect', function (playerId) {
-        self.otherPlayers.getChildren().forEach(function (otherPlayer) {
-          if (playerId === otherPlayer.playerId) {
-            otherPlayer.destroy();
-          }
-        }.bind(this));
-      }.bind(this));
-  
-      this.socket.on('player-hit', function(id){
-        if(id === sessionId){
-          self.player.health -= 10;
         }
-        else{
-          self.otherPlayers.getChildren().forEach(function (otherPlayer){
-            if(id === otherPlayer.playerId){
-              otherPlayer.health -= 10;
-            }
-          })
-=======
-    this.socket.on('disconnect', function (playerId) {
-      self.otherPlayers.getChildren().forEach(function (otherPlayer) {
-        if (playerId === otherPlayer.playerId) {
-          otherPlayer.destroy();
->>>>>>> 9a738628958e5e362da25558f4724b7dbc82b33c
-        }
-      }.bind(this));
-    }.bind(this));
-  
-    this.socket.on('player-hit', function(id){
-      if(id === sessionId){
-        self.player.health -= 10;
-      }
-      else{
-        self.otherPlayers.getChildren().forEach(function (otherPlayer){
-          if(id === otherPlayer.playerId){
-            otherPlayer.health -= 10;
-          }
-        })
-      }
-    });
+      });
+
   
     this.socket.on('bulletsUpdate', function(servBullets){
       var counter = 0;
