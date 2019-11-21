@@ -321,7 +321,7 @@ io.on('connection', function (socket) {
     var newTrap = trapInit;
     newTrap.x = trapInit.x;
     newTrap.y = trapInit.y;
-    newTrap.onwer = socket.id;
+    newTrap.owner = socket.id;
     servTraps.push(newTrap);
   })
 
@@ -339,6 +339,12 @@ io.on('connection', function (socket) {
   socket.on('disconnect', function () {
     playerCount--;
     console.log('user disconnected');
+    for(var i = 0; i < servTraps.length; i++){
+      if(servTraps[i].owner == socket.id){
+        servTraps.splice(i,1);
+        i--;
+      }
+    }
     delete players[socket.id];
     io.sockets.emit('numPlayers', playerCount);
     io.emit('disconnect', socket.id);
