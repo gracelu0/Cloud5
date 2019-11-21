@@ -16,6 +16,8 @@ var pool = new Pool({
 });
 
 
+
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -53,7 +55,7 @@ app.post('/waitForPlayers', (req,res) => {
   res.render('pages/gameStaging', {character: selectedCharacter});
 });
 
-var trapSecs = 20; var gameSecs = 20;
+var trapSecs = 20; var gameSecs = 60;
 var totalGameTime = trapSecs + gameSecs;
 
 app.post('/game', (req,res) => {

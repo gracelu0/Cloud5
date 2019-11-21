@@ -302,7 +302,22 @@ var config = {
     playerCountText.setScrollFactor(0);
     ammoCount = this.add.text(10, 40,"Ammunition Count:" + ' ' + ammunition + "/100",{ fontFamily: 'Neucha', fontSize:'20px' });
     ammoCount.setScrollFactor(0);
-  
+
+    //timer
+    //this.totalTime = 180;
+
+    //timerText = this.add.text(10, 450, 'Countdown: ' + formatTime(this.totalTime));
+    // console.log(document.getElementById('trapTime').value);
+    // timerText = this.add.text(40, 40, 'Timer: ' + formatTime(document.getElementById('trapTime').value));
+
+    // timedEvent = this.time.addEvent({
+    //   delay: 1000,
+    //   callback: timer,
+    //   callbackScope: this,
+    //   loop: true
+    // });
+
+
     var self = this;
     var sessionId;
     this.socket = io();
@@ -701,8 +716,24 @@ var config = {
                 currentWeather == "Fog")
           changeAtmos(this, fog, "Clear");
       }
-  
+      timerText.setText(40, 10, 'Timer: ' + formatTime(document.getElementById('trapTime').value));
   }
+
+  function formatTime(seconds){
+    //Minutes
+    var minutes = Math.floor(seconds/60);
+    //seconds
+    var secondsPart = seconds%60;
+    //add zeros to left of seconds
+    secondsPart = secondsPart.toString().padStart(2,'0');
+    //return formatted time
+    return `${minutes}:${secondsPart}`;
+  }
+
+  // function timer(){
+  //   this.totalTime-=1;
+  //   timerText.setText('Countdown: '+formatTime(this.totalTime));
+  // }
   
   function addPlayer(self, playerInfo) {
     var username = document.getElementById("nameGame").value;
