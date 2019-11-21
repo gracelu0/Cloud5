@@ -252,6 +252,7 @@ app.get('/removeUser/:userID', (req,res) => {
 var playerCount = 0;
 var players = {};
 var servBullets = [];
+var servTraps = [];
 
 io.on('connection', function (socket) {
   playerCount++;
@@ -320,6 +321,7 @@ io.on('connection', function (socket) {
     var newTrap = trapInit;
     newTrap.x = trapInit.x;
     newTrap.y = trapInit.y;
+    newTrap.onwer = socket.id;
     servTraps.push(newTrap);
   })
 
@@ -358,7 +360,7 @@ function gameLoop(){
           var dy = players[id].y - currBullet.y;
           var dist = Math.sqrt(dx*dx + dy*dy);
           if(dist < 30){
-            io.emit('player-hit', id);
+            io.emit('playerHit', id);
             servBullets.splice(i,1);
             i--;
           }
@@ -372,7 +374,26 @@ function gameLoop(){
     }
   }
 
+  for(var i = 0; i < servTraps.length; i++){
+    var currTrap = servTraps[i];
+    if(currTrap && servTraps[i]){
+      for(var id in players){
+        if(currTrap.owner != id){
+          var dx = players[id].x - currTrap.x;
+          var dy = players[id].y - currTrap.y;
+          var dist = Math.sqrt(dx*dx + dy*dy);
+          if(dist < 10){
+            io.emit('trapHit', id);
+            servTraps.splice(i,1);
+            i--;
+          }
+        }
+      }
+    }
+  }
+
   io.emit('bulletsUpdate', servBullets);
+  io.emit('trapsUpdate', servTraps);
 }
 
 setInterval(gameLoop, 16);
