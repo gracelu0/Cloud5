@@ -585,6 +585,7 @@ var config = {
           var trap = traps.create(this.player.body.position.x, this.player.body.position.y, 'bomb');
           trap.body.setImmovable();
           lastBomb = 30;
+          this.socket.emit('trapSet', { x: this.player.body.position.x, y: this.player.body.position.y });
         }
         if(lastBomb > 0){
           lastBomb --;
@@ -598,6 +599,7 @@ var config = {
           if(child.health <= 0){
             this.socket.emit('playerDied', {id:child.playerId});
             playerDeath(child);
+            child.usernameText.destroy();
           }
         })
   
@@ -744,13 +746,7 @@ var config = {
     bullets.add(nBullet);
   }
   
-  bulletCollision = function(bullets,hitPlayer){
-      bullets.destroy();
-      hitPlayer.destroy();
-  }
-  
   playerDeath = function(deadPlayer){
-    deadPlayer.usernameText.destroy();
     deadPlayer.destroy();
     deadPlayer = null;
     //healthbar_red.destroy();

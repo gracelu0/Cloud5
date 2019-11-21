@@ -307,7 +307,6 @@ io.on('connection', function (socket) {
     newBullet.initY = bulletInit.initY;
     newBullet.owner = socket.id;
     servBullets.push(newBullet);
-    socket.broadcast.emit('bulletFired', newBullet);
   });
 
   socket.on('bulletMovement', function (bulletsInfo){
@@ -315,8 +314,14 @@ io.on('connection', function (socket) {
       servBullets[i].x = bulletsInfo[i].x;
       servBullets[i].y = bulletsInfo[i].y;
     }
-    socket.broadcast.emit('bulletMoved', servBullets);
   });
+
+  socket.on('trapSet', function (trapInit) {
+    var newTrap = trapInit;
+    newTrap.x = trapInit.x;
+    newTrap.y = trapInit.y;
+    servTraps.push(newTrap);
+  })
 
   socket.on('playerDied', function (deadPlayer){
     var counter = 0;
