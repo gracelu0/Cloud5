@@ -47,10 +47,19 @@ app.post('/pregame', (req,res) => {
     res.render('pages/pregame');
 });
 
+app.post('/waitForPlayers', (req,res) => {
+  var selectedCharacter = req.body.character;
+  console.log(selectedCharacter);
+  res.render('pages/gameStaging', {character: selectedCharacter});
+});
+
+var trapSecs = 20; var gameSecs = 20;
+var totalGameTime = trapSecs + gameSecs;
+
 app.post('/game', (req,res) => {
-    var selectedCharacter = req.body.character;
-    console.log(selectedCharacter);
-    res.render('pages/game', {character: selectedCharacter});
+  var selectedCharacter = req.body.character;
+  console.log(selectedCharacter);
+  res.render('pages/game', {character: selectedCharacter, gameTime: gameSecs, trapTime: trapSecs});
 });
 
 app.post('/postgame', (req,res) => {
