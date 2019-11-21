@@ -94,6 +94,61 @@ var config = {
   }
   
   function preload(){
+    //preloader
+    var progressBar = this.add.graphics();
+    var progressBox = this.add.graphics();
+    progressBox.fillStyle(0x222222, 0.8);
+    progressBox.fillRect(315,270,320,50);
+
+    var width = this.cameras.main.width;
+    var height = this.cameras.main.height;
+
+    var loadingText = this.make.text({
+      x: width / 2,
+      y: height / 2 - 50,
+      text: 'Loading...',
+      style: {
+        font: '30px Neucha',
+        fill: '#ffffff'
+      }
+    });
+    loadingText.setOrigin(0.5,0.5);
+
+    var percentText = this.make.text({
+      x: width / 2,
+      y: height / 2 - 5,
+      text: '0%',
+      style: {
+        font: '18px Neucha',
+        fill: '#ffffff'
+      }
+    });
+    percentText.setOrigin(0.5,0.5);
+
+    
+    //event listeners (events emitted from Phaser's LoaderPlugin)
+    this.load.on('progress', function(value){
+      console.log(value);
+      progressBar.clear();
+      progressBar.fillStyle(0xffffff, 1);
+      progressBar.fillRect(325,280,300*value,30);
+
+      percentText.setText(parseInt(value*100) + '%');
+    });
+
+    this.load.on('fileprogress', function(value){
+      console.log(file.src);
+    });
+
+    this.load.on('complete', function(value){
+      console.log('complete');
+      progressBar.destroy();
+      progressBox.destroy();
+      loadingText.destroy();
+      percentText.destroy();
+    });
+
+
     //map tiles
     this.load.image('overworld', 'assets/overworld.png');
     this.load.image('combinedTiles', 'assets/combinedTiles.png');
@@ -290,29 +345,40 @@ var config = {
     });
   
   
-      this.socket.on('disconnect', function (playerId) {
-        self.otherPlayers.getChildren().forEach(function (otherPlayer) {
-          if (playerId === otherPlayer.playerId) {
-            otherPlayer.usernameText.destroy();
-            otherPlayer.destroy();
-            
-          }
-        }.bind(this));
+    this.socket.on('disconnect', function (playerId) {
+      self.otherPlayers.getChildren().forEach(function (otherPlayer) {
+        if (playerId === otherPlayer.playerId) {
+          otherPlayer.usernameText.destroy();
+          otherPlayer.destroy();  
+        }
       }.bind(this));
+    }.bind(this));
   
-      this.socket.on('player-hit', function(id){
-        if(id === sessionId){
-          self.player.health -= 10;
-        }
-        else{
-          self.otherPlayers.getChildren().forEach(function (otherPlayer){
-            if(id === otherPlayer.playerId){
-              otherPlayer.health -= 10;
-            }
-          })
-        }
-      });
+    this.socket.on('playerHit', function(id){
+      if(id === sessionId){
+        self.player.health -= 10;
+      }
+      else{
+        self.otherPlayers.getChildren().forEach(function (otherPlayer){
+          if(id === otherPlayer.playerId){
+            otherPlayer.health -= 10;
+          }
+        })
+      }
+    });
 
+    this.socket.on('trapHit', function(id){
+      if(id === sessionId){
+        self.player.health -= 10;
+      }
+      else{
+        self.otherPlayers.getChildren().forEach(function (otherPlayer){
+          if(id === otherPlayer.playerId){
+            otherPlayer.health -= 10;
+          }
+        })
+      }
+    });
   
     this.socket.on('bulletsUpdate', function(servBullets){
       var counter = 0;
@@ -327,9 +393,26 @@ var config = {
         }
       })
       for(var i = counter; i < servBullets.length; i++){
-        addBullets(self,servBullets[i]);
+        addBullets(self, servBullets[i]);
       }
     });
+
+    this.socket.on('trapsUpdate', function(servTraps){
+      var counter = 0;
+      traps.getChildren().forEach(child => {
+        if(servTraps[counter]){
+          child.x = servTraps[counter].x;
+          child.y = servTraps[counter].y;
+        }
+        counter++;
+        if(counter > servTraps.length){
+          child.destroy();
+        }
+      })
+      for(var i = counter; i < servTraps.length; i++){
+        addTraps(self, servTraps[i]);
+      }
+    })
   
     this.socket.on('playerMoved', function (playerInfo) {
       self.otherPlayers.getChildren().forEach(function (otherPlayer) {
@@ -489,13 +572,13 @@ var config = {
           var usernameLength = document.getElementById("nameGame").value.length;
           var offset = 0;
           if (usernameLength < 5){
-            offset = -10;
+            offset = -12;
           }
           else if (usernameLength < 10){
-            offset = usernameLength*0.5;
+            offset = -usernameLength*2;
           }
           else{
-            offset = 12*(usernameLength/8);
+            offset = -usernameLength;
           }
 
           this.healthbar_green.displayWidth = (this.player.health/100)*100;
@@ -505,7 +588,7 @@ var config = {
           this.healthbar_red.y = this.player.body.position.y - 20;
 
           this.usernameText.x = this.player.body.position.x - offset;
-          this.usernameText.y = this.player.body.position.y + 22;
+          this.usernameText.y = this.player.body.position.y + 30;
         }
   
         if (this.cursors.space.isDown && ammunition > 0 && lastFired == 0 && document.activeElement !== messageText){
@@ -530,6 +613,7 @@ var config = {
           var trap = traps.create(this.player.body.position.x, this.player.body.position.y, 'bomb');
           trap.body.setImmovable();
           lastBomb = 30;
+          this.socket.emit('trapSet', { x: this.player.body.position.x, y: this.player.body.position.y });
         }
         if(lastBomb > 0){
           lastBomb --;
@@ -543,6 +627,7 @@ var config = {
           if(child.health <= 0){
             this.socket.emit('playerDied', {id:child.playerId});
             playerDeath(child);
+            child.usernameText.destroy();
           }
         })
   
@@ -649,6 +734,7 @@ var config = {
       align:'center',
       fontSize: '12px'
     });
+    self.usernameText.setOrigin(0.5,0.5);
     self.cameras.main.startFollow(self.player, true,0.5,0.5,0.5,0.5);
 
   }
@@ -687,14 +773,13 @@ var config = {
     const nBullet = self.add.sprite(bulletInfo.x, bulletInfo.y, 'bulletImg');
     bullets.add(nBullet);
   }
-  
-  bulletCollision = function(bullets,hitPlayer){
-      bullets.destroy();
-      hitPlayer.destroy();
+
+  function addTraps(self, trapInfo){
+    const nTrap = self.add.sprite(trapInfo.x, trapInfo.y, 'bomb');
+    traps.add(nTrap);
   }
   
   playerDeath = function(deadPlayer){
-    deadPlayer.usernameText.destroy();
     deadPlayer.destroy();
     deadPlayer = null;
     //healthbar_red.destroy();
