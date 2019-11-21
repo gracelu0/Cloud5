@@ -345,29 +345,40 @@ var config = {
     });
   
   
-      this.socket.on('disconnect', function (playerId) {
-        self.otherPlayers.getChildren().forEach(function (otherPlayer) {
-          if (playerId === otherPlayer.playerId) {
-            otherPlayer.usernameText.destroy();
-            otherPlayer.destroy();
-            
-          }
-        }.bind(this));
+    this.socket.on('disconnect', function (playerId) {
+      self.otherPlayers.getChildren().forEach(function (otherPlayer) {
+        if (playerId === otherPlayer.playerId) {
+          otherPlayer.usernameText.destroy();
+          otherPlayer.destroy();  
+        }
       }.bind(this));
+    }.bind(this));
   
-      this.socket.on('player-hit', function(id){
-        if(id === sessionId){
-          self.player.health -= 10;
-        }
-        else{
-          self.otherPlayers.getChildren().forEach(function (otherPlayer){
-            if(id === otherPlayer.playerId){
-              otherPlayer.health -= 10;
-            }
-          })
-        }
-      });
+    this.socket.on('playerHit', function(id){
+      if(id === sessionId){
+        self.player.health -= 10;
+      }
+      else{
+        self.otherPlayers.getChildren().forEach(function (otherPlayer){
+          if(id === otherPlayer.playerId){
+            otherPlayer.health -= 10;
+          }
+        })
+      }
+    });
 
+    this.socket.on('trapHit', function(id){
+      if(id === sessionId){
+        self.player.health -= 10;
+      }
+      else{
+        self.otherPlayers.getChildren().forEach(function (otherPlayer){
+          if(id === otherPlayer.playerId){
+            otherPlayer.health -= 10;
+          }
+        })
+      }
+    });
   
     this.socket.on('bulletsUpdate', function(servBullets){
       var counter = 0;
@@ -382,9 +393,26 @@ var config = {
         }
       })
       for(var i = counter; i < servBullets.length; i++){
-        addBullets(self,servBullets[i]);
+        addBullets(self, servBullets[i]);
       }
     });
+
+    this.socket.on('trapsUpdate', function(servTraps){
+      var counter = 0;
+      traps.getChildren().forEach(child => {
+        if(servTraps[counter]){
+          child.x = servTraps[counter].x;
+          child.y = servTraps[counter].y;
+        }
+        counter++;
+        if(counter > servTraps.length){
+          child.destroy();
+        }
+      })
+      for(var i = counter; i < servTraps.length; i++){
+        addTraps(self, servTraps[i]);
+      }
+    })
   
     this.socket.on('playerMoved', function (playerInfo) {
       self.otherPlayers.getChildren().forEach(function (otherPlayer) {
@@ -744,6 +772,11 @@ var config = {
   function addBullets(self, bulletInfo){
     const nBullet = self.add.sprite(bulletInfo.x, bulletInfo.y, 'bulletImg');
     bullets.add(nBullet);
+  }
+
+  function addTraps(self, trapInfo){
+    const nTrap = self.add.sprite(trapInfo.x, trapInfo.y, 'bomb');
+    traps.add(nTrap);
   }
   
   playerDeath = function(deadPlayer){
