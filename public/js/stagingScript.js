@@ -2,6 +2,13 @@ var socket = io();
 
 socket.on('numPlayers', function (playerCount) {
     console.log(playerCount);
+    var waitMessage = document.getElementById('waitMessage');
+
+    if (playerCount == 3)
+        waitMessage.innerHTML = "<h2>Waiting for <b>"+(4-playerCount)+"</b> more player to join...</h2>";
+    else
+        waitMessage.innerHTML = "<h2>Waiting for <b>"+(4-playerCount)+"</b> more players to join...</h2>";
+
     if (playerCount == 4){
         document.getElementById('gamePage').submit();
     }
