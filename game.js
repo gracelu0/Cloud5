@@ -16,9 +16,6 @@ var pool = new Pool({
 });
 
 
-
-
-
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
