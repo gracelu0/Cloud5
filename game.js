@@ -12,7 +12,8 @@ const bcrypt = require('bcrypt');
 const { Pool } = require('pg');
 
 var pool = new Pool({
-  connectionString: process.env.DATABASE_URL
+  //connectionString: process.env.DATABASE_URL
+  connectionString: "postgres://postgres:shimarov6929@localhost/cloud5"
 });
 
 
@@ -326,14 +327,22 @@ io.on('connection', function (socket) {
   })
 
   socket.on('playerDied', function (deadPlayer){
+    //console.log("insockect on server: " + deadPlayer.username);
+    var username = deadPlayer.username;
+    console.log(deadPlayer);
+    io.emit('died', deadPlayer);
     var counter = 0;
     delete players[deadPlayer.id];
     for(var id in players){
       if(id === deadPlayer.id){
         players.splice(counter, 1);
+
       }
       counter ++;
+
     }
+    console.log("died");
+
   });
 
   socket.on('disconnect', function () {
@@ -415,4 +424,3 @@ module.exports = {
   playerCount: playerCount,
   app: app,
 }
-

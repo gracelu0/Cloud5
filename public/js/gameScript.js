@@ -17,9 +17,9 @@ var config = {
       update: update
     }
   }
-  
+
   var game = new Phaser.Game(config);
-  
+
   var map;
   var collideLayer;
   var groundLayer;
@@ -35,22 +35,22 @@ var config = {
   var ammunition = 100;
   var x;
   var y;
-  
-  
+
+
   //parameters to control music+sound
   var bgmusic;
   var shootSound;
   var musicFlag = true;
   var soundFlag = true;
-  
+
   var musicButton = document.querySelector("[id='music']");
   var soundButton = document.querySelector("[id='sound']");
-  
+
   // parameters to control weather
   var currentWeather;
   var weatherFlag = false; var weatherToggle = false;
   var rainParticles; var snowParticles; var fog;
-  
+
   // Functions to control weather parameters
   function updateWeatherFlag(){
     weatherFlag = !weatherFlag;
@@ -58,17 +58,17 @@ var config = {
   function updateWeatherToggle(){
     weatherToggle = !weatherToggle;
   }
-  
+
   // Variable for weather button
   var weatherButton = document.querySelector("[id='toggleWeather']");
-  
+
   async function fetchWeather(){
       const ipRequest = await fetch('https://json.geoiplookup.io/');
       const ipResponse = await ipRequest.json();
       const weatherRequest = await fetch('https://api.openweathermap.org/data/2.5/weather?q='
                                           + ipResponse.city + ',' + ipResponse.country_code + '&appid=fa452ec635e9759a07cab7433d42104f');
       const weatherResponse = await weatherRequest.json();
-  
+
       // Control Weather button and weather status
       // based on current weather condition
       if (weatherResponse.weather[0].main == "Rain" ||
@@ -92,7 +92,7 @@ var config = {
           }
       return weatherResponse;
   }
-  
+
   function preload(){
     //preloader
     var progressBar = this.add.graphics();
@@ -125,7 +125,7 @@ var config = {
     });
     percentText.setOrigin(0.5,0.5);
 
-    
+
     //event listeners (events emitted from Phaser's LoaderPlugin)
     this.load.on('progress', function(value){
       console.log(value);
@@ -154,28 +154,28 @@ var config = {
     this.load.image('combinedTiles', 'assets/combinedTiles.png');
     //map in json format
     this.load.tilemapTiledJSON('map', 'assets/map.json');
-  
+
     //sprites
     this.load.image('pinkPlayer','assets/alienPink.png');
     this.load.image('greenPlayer','assets/alienGreen.png');
     this.load.image('yellowPlayer','assets/alienYellow.png');
     this.load.image('bluePlayer','assets/alienBlue.png');
     this.load.image('beigePlayer','assets/alienBeige.png');
-  
+
     this.load.image('healthbar_green', 'assets/healthbar_green.png');
     this.load.image('healthbar_red', 'assets/healthbar_red.png');
-  
+
     this.load.image('bulletImg','assets/testBullet.png');
     this.load.image('bomb','assets/bomb.png');
-  
+
     this.load.image('rain', 'assets/rain.png');
     this.load.image('snow', 'assets/snowflake-pixel.png');
     this.load.image('fog', 'assets/fog.png');
-  
+
     this.load.audio('bgmusic', 'assets/audio/bgmusic.mp3');
     this.load.audio('shootSound', 'assets/audio/shoot.mp3');
   }
-  
+
   class Bullet extends Phaser.Physics.Arcade.Sprite{
     constructor(scene){
       super(scene, x, y, 'bulletImg');
@@ -211,35 +211,35 @@ var config = {
         this.y += this.ySpeed;
         this.setPosition(this.x, this.y);
       }
-  
+
       if(this.x > this.bulletInitX + 500 || this.x < this.bulletInitX - 500 || this.x < -10 || this.x > groundLayer.width ||
         this.y > this.bulletInitY + 500 || this.y < this.bulletInitY - 500 || this.y < -10 || this.y > groundLayer.width){
         this.destroy();
       }
     }
   }
-  
+
   function create(){
     //add map
     map = this.add.tilemap('map');
-  
+
     var bridgeTiles = map.addTilesetImage('overworld');
     var combinedTiles = map.addTilesetImage('combinedTiles');
     groundLayer = map.createStaticLayer('Below Player', combinedTiles, 0, 0);
     bridgeLayer = map.createStaticLayer('Overworld', bridgeTiles,0,0);
     collideLayer = map.createStaticLayer('World', combinedTiles, 0, 0);
-  
+
     //music
     shootSound = this.sound.add('shootSound');
     bgmusic = this.sound.add('bgmusic');
-  
+
     if(game.sound.context.state === 'suspended') {
       game.sound.context.resume();
     }
-  
+
     bgmusic.play();
     bgmusic.loop = true;
-  
+
     musicButton.addEventListener('click', function() {
       musicFlag = !musicFlag;
       console.log(musicFlag);
@@ -262,7 +262,7 @@ var config = {
         soundButton.innerHTML = "SOUND OFF";
       }
     })
-  
+
     //weather
     rainParticles = this.add.particles('rain');
     snowParticles = this.add.particles('snow');
@@ -277,37 +277,37 @@ var config = {
 
             else if(currentWeather == "Drizzle")
               addDrizzle(rainParticles, map.widthInPixels, map.heightInPixels);
-  
+
             else if(currentWeather == "Snow")
               addSnow(snowParticles, map.widthInPixels, map.heightInPixels);
-  
+
             else if(currentWeather == "Mist")
               changeAtmos(this, fog, "Misty");
-  
+
             else if(currentWeather == "Haze")
               changeAtmos(this, fog, "Hazy");
-  
+
             else if(currentWeather == "Fog")
               changeAtmos(this, fog, "foggy");
           });
-  
+
     //set boundaries of game world
     this.physics.world.bounds.width = groundLayer.width;
     this.physics.world.bounds.height = groundLayer.height;
-  
+
     map.setCollisionBetween(1,999,true,collideLayer);
 
-    //display text 
+    //display text
     playerCountText = this.add.text(10,20,'',{ fontFamily: 'Neucha', fontSize:'20px' });
     playerCountText.setScrollFactor(0);
     ammoCount = this.add.text(10, 40,"Ammunition Count:" + ' ' + ammunition + "/100",{ fontFamily: 'Neucha', fontSize:'20px' });
     ammoCount.setScrollFactor(0);
-  
+
     var self = this;
     var sessionId;
     this.socket = io();
     this.otherPlayers = this.physics.add.group();
-  
+
     //character selection
     var selected = document.getElementById('colour').innerHTML;
     console.log(selected);
@@ -317,11 +317,11 @@ var config = {
           playerCount+' players joined',
         ]);
       });
-  
+
     this.socket.on('connect', () => {
       sessionId = this.socket.id;
     });
-  
+
     this.socket.on('currentPlayers', function (players) {
       Object.keys(players).forEach(function (id) {
         if (players[id].playerId === self.socket.id) {
@@ -331,11 +331,11 @@ var config = {
         }
       });
     });
-  
+
     this.socket.on('newPlayer', function (playerInfo) {
       addOtherPlayers(self, playerInfo);
     }.bind(this));
-  
+
     this.socket.on('updateSprite', function (playerInfo) {
       self.otherPlayers.getChildren().forEach(function (otherPlayer) {
         if (playerInfo.playerId === otherPlayer.playerId) {
@@ -343,17 +343,17 @@ var config = {
         }
       });
     });
-  
-  
+
+
     this.socket.on('disconnect', function (playerId) {
       self.otherPlayers.getChildren().forEach(function (otherPlayer) {
         if (playerId === otherPlayer.playerId) {
           otherPlayer.usernameText.destroy();
-          otherPlayer.destroy();  
+          otherPlayer.destroy();
         }
       }.bind(this));
     }.bind(this));
-  
+
     this.socket.on('playerHit', function(id){
       if(id === sessionId){
         self.player.health -= 10;
@@ -379,7 +379,7 @@ var config = {
         })
       }
     });
-  
+
     this.socket.on('bulletsUpdate', function(servBullets){
       var counter = 0;
       bullets.getChildren().forEach(child => {
@@ -413,7 +413,7 @@ var config = {
         addTraps(self, servTraps[i]);
       }
     })
-  
+
     this.socket.on('playerMoved', function (playerInfo) {
       self.otherPlayers.getChildren().forEach(function (otherPlayer) {
             if (playerInfo.playerId === otherPlayer.playerId) {
@@ -455,8 +455,8 @@ var config = {
       });
     });
     var username = document.getElementById("nameGame").value;
-  
-    //chat 
+
+    //chat
     // When we receive a message
     // it will be like { user: 'username', message: 'text' }
     $("#messageText").keyup(function(event){
@@ -464,19 +464,19 @@ var config = {
           $("#messageText").val($("#messageText").val()+ 'z');
       }
     });
-  
+
     // $("#messageText").keyup(function(event){
     //   if(event.keyCode == 122){
     //       $("#messageText").val($("#messageText").val()+ 'z');
     //   }
     // });
-  
+
     $("#messageText").keyup(function(event){
       if(event.keyCode == 32){
           $("#messageText").val($("#messageText").val()+' ');
       }
     });
-  
+
     $('.chatForm').submit(function (e) {
       console.log("sent")
       // Avoid submitting it through HTTP
@@ -498,14 +498,24 @@ var config = {
       $(e.target).find('input').focus();
       //$(e.target).blur()
     });
-  
+
     this.socket.on('message', function (data) {
       console.log("client catched");
       //alert(data.message);
       //document.getElementById("chatSection").innerHTML = "ssdfsdf";
       console.log("data user is" + data.user);
       $('#messages').append($('<li>').text(data.user + ': ' + data.message));
-  
+
+    });
+
+    this.socket.on('died', function (deadPlayer) {
+      console.log("died");
+      //alert(data.message);
+      //document.getElementById("chatSection").innerHTML = "ssdfsdf";
+      //console.log("data user is" + data.user);
+      console.log(deadPlayer.username);
+      $('#messages').append($('<li>').html('<b>' + deadPlayer.username + ' is dead!</b>'));
+
     });
 
     this.socket.emit('username',username);
@@ -513,35 +523,35 @@ var config = {
     // When the form is submitted
 
 
-  
+
     bullets = this.physics.add.group({
       classType: Bullet,
       runChildUpdate: true
     });
     bullets.enable = true;
     bullets.physicsBodyType = Phaser.Physics.ARCADE;
-  
+
     traps = this.physics.add.group({
       classType: Phaser.GameObjects.Sprite
     })
-  
+
   //   const debugGraphics = this.add.graphics().setAlpha(0.75);
   //   collideLayer.renderDebug(debugGraphics, {
   //     tileColor: null, // Color of non-colliding tiles
   //     collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
   //     faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
   //   });
-  
+
     //set player movement input
     this.cursors = this.input.keyboard.createCursorKeys();
     this.bombButton = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
-  
+
     camera = this.cameras.main;
 
     //set bounds for camera (game world)
     camera.setBounds(0,0,map.widthInPixels, map.heightInPixels);
   }
-  
+
   function update(){
     if(this.player){
       if(this.player.health > 0){
@@ -567,7 +577,7 @@ var config = {
         }
 
 
-  
+
         if (this.player.health > 0) {
           var usernameLength = document.getElementById("nameGame").value.length;
           var offset = 0;
@@ -590,10 +600,10 @@ var config = {
           this.usernameText.x = this.player.body.position.x - offset;
           this.usernameText.y = this.player.body.position.y + 30;
         }
-  
+
         if (this.cursors.space.isDown && ammunition > 0 && lastFired == 0 && document.activeElement !== messageText){
           var bullet = bullets.get();
-  
+
           if(bullet){
             if(soundFlag == true) {
               shootSound.play();
@@ -608,7 +618,7 @@ var config = {
         if(lastFired > 0){
           lastFired --;
         }
-  
+
         if (this.bombButton.isDown && lastBomb == 0 &&  document.activeElement !== messageText){
           var trap = traps.create(this.player.body.position.x, this.player.body.position.y, 'bomb');
           trap.body.setImmovable();
@@ -618,91 +628,105 @@ var config = {
         if(lastBomb > 0){
           lastBomb --;
         }
-  
+
         this.physics.collide(this.player,collideLayer);
         this.physics.collide(this.player,this.otherPlayers);
-  
+
         this.otherPlayers.getChildren().forEach(child => {
           child.body.immovable = true;
           if(child.health <= 0){
-            this.socket.emit('playerDied', {id:child.playerId});
+            //this.socket.emit('playerDied', {id:child.playerId, username: child.playerUsername});
+            console.log("player id" + child.playerId);
+            console.log("username" + child.playerUsername)
+            console.log("in update1");
             playerDeath(child);
             child.usernameText.destroy();
           }
         })
-  
+
         x = this.player.x;
         y = this.player.y;
         if (this.player.oldPosition && (x !== this.player.oldPosition.x || y !== this.player.oldPosition.y)) {
           this.socket.emit('playerMovement', { x: this.player.x, y: this.player.y});
         }
-  
+
         this.player.oldPosition = {
           x: this.player.x,
           y: this.player.y,
         }
       }
-      else{
-        this.socket.emit('playerDied', {id: this.player.playerId});
+      else if(this.player.health == 0){
+        this.player.health = -5;
+        console.log("username in els" + this.player.playerUsername);
+        console.log("id in els" + this.player.playerId);
+        this.socket.emit('playerDied', {id: this.player.playerId, username: this.player.playerUsername});
+        console.log("in update2");
         playerDeath(this.player);
         this.healthbar_green.destroy();
         this.healthbar_red.destroy();
         this.usernameText.destroy();
+
+        //continue;
       }
+      // else{
+      //
+      // }
     }
-  
+
+
       if (weatherFlag && !weatherToggle){
         updateWeatherToggle();
         if (currentWeather == "Rain")
           addRain(rainParticles, map.widthInPixels, map.heightInPixels);
-  
+
         else if (currentWeather == "Drizzle")
           addDrizzle(rainParticles, map.widthInPixels, map.heightInPixels);
-  
+
         else if(currentWeather == "Snow")
           addSnow(snowParticles, map.widthInPixels, map.heightInPixels);
-  
+
         else if(currentWeather == "Mist")
           changeAtmos(this, fog, "Misty");
-  
+
         else if(currentWeather == "Haze")
           changeAtmos(this, fog, "Hazy");
-  
+
         else if(currentWeather == "Fog")
           changeAtmos(this, fog, "foggy");
       }
-  
+
       else if (!weatherFlag && weatherToggle){
         updateWeatherToggle();
         if (currentWeather == "Rain")
           removeRain();
-  
+
         else if (currentWeather == "Drizzle")
           removeDrizzle();
-  
+
         else if(currentWeather == "Snow")
           removeSnow();
-  
+
         else if(currentWeather == "Mist" ||
                 currentWeather == "Haze" ||
                 currentWeather == "Fog")
           changeAtmos(this, fog, "Clear");
       }
-  
+
   }
-  
-  
+
+
   function addPlayer(self, playerInfo) {
     var username = document.getElementById("nameGame").value;
+    playerInfo.playerUsername = username;
     console.log(username.length);
     var selected = document.getElementById('colour').innerHTML;
     playerInfo.colour = selected;
     console.log("selected colour: ", playerInfo.colour);
     self.socket.emit('updateColour', {colour: playerInfo.colour});
-  
-  
-    self.player = self.physics.add.sprite(playerInfo.x, playerInfo.y, 'pinkPlayer').setOrigin(0.5, 0.5);
 
+
+    self.player = self.physics.add.sprite(playerInfo.x, playerInfo.y, 'pinkPlayer').setOrigin(0.5, 0.5);
+    self.player.playerUsername = playerInfo.playerUsername;
     if (selected == 'pink'){
       self.player.setTexture('pinkPlayer');
     }
@@ -727,7 +751,7 @@ var config = {
     self.healthbar_green.setScale(.4);
     self.healthbar_red.setScale(.4);
     self.healthbar_red.displayWidth = (self.player.health/100) * 100;
-    self.usernameText = self.add.text(self.player.body.position.x, self.player.body.position.y,username, 
+    self.usernameText = self.add.text(self.player.body.position.x, self.player.body.position.y,username,
       {
       fontFamily:'Neucha',
       color:'#000000',
@@ -738,11 +762,11 @@ var config = {
     self.cameras.main.startFollow(self.player, true,0.5,0.5,0.5,0.5);
 
   }
-  
+
   function addOtherPlayers(self, playerInfo) {
     const otherPlayer = self.add.sprite(playerInfo.x, playerInfo.y, 'pinkPlayer').setOrigin(0.5, 0.5);
     otherPlayer.health = 100;
-    otherPlayer.usernameText = self.add.text(playerInfo.x, playerInfo.y,playerInfo.playerUsername, 
+    otherPlayer.usernameText = self.add.text(playerInfo.x, playerInfo.y,playerInfo.playerUsername,
       {
       fontFamily:'Neucha',
       color:'#000000',
@@ -764,11 +788,12 @@ var config = {
     else if (playerInfo.colour== 'beige'){
       otherPlayer.setTexture('beigePlayer');
     }
-  
+
     otherPlayer.playerId = playerInfo.playerId;
+    otherPlayer.playerUsername = playerInfo.playerUsername;
     self.otherPlayers.add(otherPlayer);
   }
-  
+
   function addBullets(self, bulletInfo){
     const nBullet = self.add.sprite(bulletInfo.x, bulletInfo.y, 'bulletImg');
     bullets.add(nBullet);
@@ -778,15 +803,15 @@ var config = {
     const nTrap = self.add.sprite(trapInfo.x, trapInfo.y, 'bomb');
     traps.add(nTrap);
   }
-  
+
   playerDeath = function(deadPlayer){
     deadPlayer.destroy();
     deadPlayer = null;
     //healthbar_red.destroy();
     //healthbar_green.destroy();
   }
-  
-  
-  
-  
+
+
+
+
   // var socket = io();
