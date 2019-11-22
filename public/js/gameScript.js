@@ -716,19 +716,19 @@ var config = {
                 currentWeather == "Fog")
           changeAtmos(this, fog, "Clear");
       }
-      timerText.setText(40, 10, 'Timer: ' + formatTime(document.getElementById('trapTime').value));
+      //timerText.setText(40, 10, 'Timer: ' + formatTime(document.getElementById('trapTime').value));
   }
 
-  function formatTime(seconds){
-    //Minutes
-    var minutes = Math.floor(seconds/60);
-    //seconds
-    var secondsPart = seconds%60;
-    //add zeros to left of seconds
-    secondsPart = secondsPart.toString().padStart(2,'0');
-    //return formatted time
-    return `${minutes}:${secondsPart}`;
-  }
+  // function formatTime(seconds){
+  //   //Minutes
+  //   var minutes = Math.floor(seconds/60);
+  //   //seconds
+  //   var secondsPart = seconds%60;
+  //   //add zeros to left of seconds
+  //   secondsPart = secondsPart.toString().padStart(2,'0');
+  //   //return formatted time
+  //   return `${minutes}:${secondsPart}`;
+  // }
 
   // function timer(){
   //   this.totalTime-=1;
