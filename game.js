@@ -17,6 +17,9 @@ var pool = new Pool({
 });
 
 
+
+
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -48,10 +51,20 @@ app.post('/pregame', (req,res) => {
     res.render('pages/pregame');
 });
 
+app.post('/waitForPlayers', (req,res) => {
+  var selectedCharacter = req.body.character;
+  console.log(selectedCharacter);
+  res.render('pages/gameStaging', {character: selectedCharacter});
+});
+
+
+var trapSecs = 30; var gameSecs = 120;
+var totalGameTime = trapSecs + gameSecs;
+
 app.post('/game', (req,res) => {
-    var selectedCharacter = req.body.character;
-    console.log(selectedCharacter);
-    res.render('pages/game', {character: selectedCharacter});
+  var selectedCharacter = req.body.character;
+  console.log(selectedCharacter);
+  res.render('pages/game', {character: selectedCharacter, gameTime: gameSecs, trapTime: trapSecs});
 });
 
 app.post('/postgame', (req,res) => {
@@ -252,6 +265,7 @@ app.get('/removeUser/:userID', (req,res) => {
 
 var playerCount = 0;
 var players = {};
+var redBars = {};
 var servBullets = [];
 var servTraps = [];
 
@@ -267,7 +281,7 @@ io.on('connection', function (socket) {
   //y: Math.floor(Math.random() * 500) + 50,
     colour: socket.colour,
     playerId: socket.id,
-    playerUsername: socket.username,
+    playerUsername: socket.username
   }
 
   //send players object to new player
@@ -285,12 +299,11 @@ io.on('connection', function (socket) {
   socket.on('username', function(username){
     socket.username = username;
     players[socket.id].playerUsername = username;
-  })
+  });
 
   socket.on('playerMovement', function (movementData) {
     players[socket.id].x = movementData.x;
     players[socket.id].y = movementData.y;
-    players[socket.id].rotation = movementData.rotation;
     socket.broadcast.emit('playerMoved', players[socket.id]);
   });
 
@@ -324,7 +337,7 @@ io.on('connection', function (socket) {
     newTrap.y = trapInit.y;
     newTrap.owner = socket.id;
     servTraps.push(newTrap);
-  })
+  });
 
   socket.on('playerDied', function (deadPlayer){
     //console.log("insockect on server: " + deadPlayer.username);
@@ -357,7 +370,6 @@ io.on('connection', function (socket) {
     delete players[socket.id];
     io.sockets.emit('numPlayers', playerCount);
     io.emit('disconnect', socket.id);
-
   });
 
 });
@@ -397,7 +409,7 @@ function gameLoop(){
           var dx = players[id].x - currTrap.x;
           var dy = players[id].y - currTrap.y;
           var dist = Math.sqrt(dx*dx + dy*dy);
-          if(dist < 10){
+          if(dist < 20){
             io.emit('trapHit', id);
             servTraps.splice(i,1);
             i--;

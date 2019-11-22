@@ -303,10 +303,26 @@ var config = {
     ammoCount = this.add.text(10, 40,"Ammunition Count:" + ' ' + ammunition + "/100",{ fontFamily: 'Neucha', fontSize:'20px' });
     ammoCount.setScrollFactor(0);
 
+    //timer
+    //this.totalTime = 180;
+
+    //timerText = this.add.text(10, 450, 'Countdown: ' + formatTime(this.totalTime));
+    // console.log(document.getElementById('trapTime').value);
+    // timerText = this.add.text(40, 40, 'Timer: ' + formatTime(document.getElementById('trapTime').value));
+
+    // timedEvent = this.time.addEvent({
+    //   delay: 1000,
+    //   callback: timer,
+    //   callbackScope: this,
+    //   loop: true
+    // });
+
+
     var self = this;
     var sessionId;
     this.socket = io();
     this.otherPlayers = this.physics.add.group();
+    this.redBars = this.physics.add.group();
 
     //character selection
     var selected = document.getElementById('colour').innerHTML;
@@ -349,6 +365,8 @@ var config = {
       self.otherPlayers.getChildren().forEach(function (otherPlayer) {
         if (playerId === otherPlayer.playerId) {
           otherPlayer.usernameText.destroy();
+          otherPlayer.healthbar_green.destroy();
+          otherPlayer.healthbar_red.destroy();
           otherPlayer.destroy();
         }
       }.bind(this));
@@ -412,45 +430,50 @@ var config = {
       for(var i = counter; i < servTraps.length; i++){
         addTraps(self, servTraps[i]);
       }
-    })
+    });
 
     this.socket.on('playerMoved', function (playerInfo) {
       self.otherPlayers.getChildren().forEach(function (otherPlayer) {
             if (playerInfo.playerId === otherPlayer.playerId) {
-                otherPlayer.setPosition(playerInfo.x, playerInfo.y);
-                var usernameLength = playerInfo.playerUsername.length;
-                console.log("length", usernameLength);
-                var offset = 0;
-                if (usernameLength < 5){
-                  offset = -10;
-                }
-                else if (usernameLength < 10){
-                  offset = usernameLength*2;
-                }
-                else{
-                  offset = 12*(usernameLength/5);
-                }
+              otherPlayer.setPosition(playerInfo.x, playerInfo.y);
+              var usernameLength = playerInfo.playerUsername.length;
+              console.log("length", usernameLength);
+              var offset = 0;
+              if (usernameLength < 5){
+                offset = -10;
+              }
+              else if (usernameLength < 10){
+                offset = usernameLength*2;
+              }
+              else{
+                offset = 12*(usernameLength/5);
+              }
 
-                otherPlayer.usernameText.x = playerInfo.x - offset;
-                otherPlayer.usernameText.y = playerInfo.y + 8;
-                otherPlayer.usernameText.setText(playerInfo.playerUsername);
 
-               if (playerInfo.colour == "pink"){
-                  otherPlayer.setTexture('pinkPlayer');
-               }
-               else if (playerInfo.colour == "green"){
-                 otherPlayer.setTexture('greenPlayer');
-               }
-               else if (playerInfo.colour == "blue"){
-                 otherPlayer.setTexture('bluePlayer');
-               }
-               else if (playerInfo.colour == "yellow"){
-                 otherPlayer.setTexture('yellowPlayer');
-               }
-               else if (playerInfo.colour== 'beige'){
-                 otherPlayer.setTexture('beigePlayer');
-               }
+              otherPlayer.healthbar_red.x = playerInfo.x;
+              otherPlayer.healthbar_red.y = playerInfo.y - 32;
+              otherPlayer.healthbar_green.x = playerInfo.x;
+              otherPlayer.healthbar_green.y = playerInfo.y - 32;
 
+              otherPlayer.usernameText.x = playerInfo.x - offset;
+              otherPlayer.usernameText.y = playerInfo.y + 8;
+              otherPlayer.usernameText.setText(playerInfo.playerUsername);
+
+              if (playerInfo.colour == "pink"){
+                otherPlayer.setTexture('pinkPlayer');
+              }
+              else if (playerInfo.colour == "green"){
+                otherPlayer.setTexture('greenPlayer');
+              }
+              else if (playerInfo.colour == "blue"){
+                otherPlayer.setTexture('bluePlayer');
+              }
+              else if (playerInfo.colour == "yellow"){
+                otherPlayer.setTexture('yellowPlayer');
+              }
+              else if (playerInfo.colour== 'beige'){
+                otherPlayer.setTexture('beigePlayer');
+              }
             }
       });
     });
@@ -641,6 +664,11 @@ var config = {
             console.log("in update1");
             playerDeath(child);
             child.usernameText.destroy();
+            child.healthbar_green.destroy();
+            child.healthbar_red.destroy();
+          }
+          else{
+            child.healthbar_green.displayWidth = (child.health/100)*100;
           }
         })
 
@@ -711,10 +739,25 @@ var config = {
                 currentWeather == "Fog")
           changeAtmos(this, fog, "Clear");
       }
-
+      //timerText.setText(40, 10, 'Timer: ' + formatTime(document.getElementById('trapTime').value));
   }
 
+  // function formatTime(seconds){
+  //   //Minutes
+  //   var minutes = Math.floor(seconds/60);
+  //   //seconds
+  //   var secondsPart = seconds%60;
+  //   //add zeros to left of seconds
+  //   secondsPart = secondsPart.toString().padStart(2,'0');
+  //   //return formatted time
+  //   return `${minutes}:${secondsPart}`;
+  // }
 
+  // function timer(){
+  //   this.totalTime-=1;
+  //   timerText.setText('Countdown: '+formatTime(this.totalTime));
+  // }
+  
   function addPlayer(self, playerInfo) {
     var username = document.getElementById("nameGame").value;
     playerInfo.playerUsername = username;
@@ -723,6 +766,8 @@ var config = {
     playerInfo.colour = selected;
     console.log("selected colour: ", playerInfo.colour);
     self.socket.emit('updateColour', {colour: playerInfo.colour});
+
+    self.player = self.physics.add.sprite(playerInfo.x, playerInfo.y, 'pinkPlayer').setOrigin(0.5, 0.5);
 
 
     self.player = self.physics.add.sprite(playerInfo.x, playerInfo.y, 'pinkPlayer').setOrigin(0.5, 0.5);
@@ -746,8 +791,8 @@ var config = {
 
     self.player.setCollideWorldBounds(true);
     self.player.health = 100;
-    self.healthbar_red = self.physics.add.sprite(self.player.body.position.x, self.player.body.position.y, 'healthbar_red');
-    self.healthbar_green = self.physics.add.sprite(self.player.body.position.x, self.player.body.position.y, 'healthbar_green');
+    self.healthbar_red = self.physics.add.sprite(self.player.body.position.x + 12, self.player.body.position.y - 20, 'healthbar_red');
+    self.healthbar_green = self.physics.add.sprite(self.player.body.position.x + 12, self.player.body.position.y - 20, 'healthbar_green');
     self.healthbar_green.setScale(.4);
     self.healthbar_red.setScale(.4);
     self.healthbar_red.displayWidth = (self.player.health/100) * 100;
@@ -760,12 +805,16 @@ var config = {
     });
     self.usernameText.setOrigin(0.5,0.5);
     self.cameras.main.startFollow(self.player, true,0.5,0.5,0.5,0.5);
-
   }
 
   function addOtherPlayers(self, playerInfo) {
     const otherPlayer = self.add.sprite(playerInfo.x, playerInfo.y, 'pinkPlayer').setOrigin(0.5, 0.5);
     otherPlayer.health = 100;
+    otherPlayer.healthbar_red = self.physics.add.sprite(playerInfo.x, playerInfo.y - 32, 'healthbar_red');
+    otherPlayer.healthbar_green = self.physics.add.sprite(playerInfo.x, playerInfo.y - 32, 'healthbar_green');
+    otherPlayer.healthbar_green.setScale(.4);
+    otherPlayer.healthbar_red.setScale(.4);
+    otherPlayer.healthbar_green.displayWidth = (otherPlayer.health/100) * 100;
     otherPlayer.usernameText = self.add.text(playerInfo.x, playerInfo.y,playerInfo.playerUsername,
       {
       fontFamily:'Neucha',
