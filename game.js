@@ -47,22 +47,31 @@ app.post('/pregame', (req,res) => {
     res.render('pages/pregame');
 });
 
+var blockGamersFlag = false; 
+
 app.post('/waitForPlayers', (req,res) => {
   var selectedCharacter = req.body.character;
   console.log(selectedCharacter);
-  res.render('pages/gameStaging', {character: selectedCharacter});
+  if (!blockGamersFlag)
+    res.render('pages/gameStaging', {character: selectedCharacter});
+  else
+    console.log("players blocked")
 });
 
 var trapSecs = 20; var gameSecs = 20;
 var totalGameTime = trapSecs + gameSecs;
 
 app.post('/game', (req,res) => {
+  blockGamersFlag = true;
   var selectedCharacter = req.body.character;
+  console.log(blockGamersFlag);
   console.log(selectedCharacter);
   res.render('pages/game', {character: selectedCharacter, gameTime: gameSecs, trapTime: trapSecs});
 });
 
 app.post('/postgame', (req,res) => {
+    blockGamersFlag = false;
+    console.log(blockGamersFlag);
     res.render('pages/postgame');
 });
 
