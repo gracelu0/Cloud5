@@ -12,8 +12,11 @@ const bcrypt = require('bcrypt');
 const { Pool } = require('pg');
 
 var pool = new Pool({
-  connectionString: process.env.DATABASE_URL
+  //connectionString: process.env.DATABASE_URL
+  connectionString: "postgres://postgres:shimarov6929@localhost/cloud5"
 });
+
+
 
 
 
@@ -48,10 +51,21 @@ app.post('/pregame', (req,res) => {
     res.render('pages/pregame');
 });
 
+app.post('/waitForPlayers', (req,res) => {
+  //var selectedCharacter = req.body.character;
+  //console.log(selectedCharacter);
+  res.render('pages/gameStaging');
+});
+
+
+var trapSecs = 30; var gameSecs = 120;
+var totalGameTime = trapSecs + gameSecs;
+
 app.post('/game', (req,res) => {
-    var selectedCharacter = req.body.character;
-    console.log(selectedCharacter);
-    res.render('pages/game', {character: selectedCharacter});
+  // var selectedCharacter = req.body.colorGame;
+  // console.log(selectedCharacter);
+  //res.render('pages/game', {character: selectedCharacter, gameTime: gameSecs, trapTime: trapSecs});
+  res.render('pages/game', {gameTime: gameSecs, trapTime: trapSecs});
 });
 
 app.post('/postgame', (req,res) => {
@@ -252,11 +266,13 @@ app.get('/removeUser/:userID', (req,res) => {
 
 var playerCount = 0;
 var players = {};
+var redBars = {};
 var servBullets = [];
+var servTraps = [];
 
 io.on('connection', function (socket) {
   playerCount++;
-  console.log('a user connected');
+  console.log('a user connected. Num of players: ' + playerCount);
   io.sockets.emit('numPlayers', playerCount);
   // create a new player and add it to our players object
   players[socket.id] = {
@@ -264,15 +280,10 @@ io.on('connection', function (socket) {
     y: 500,
   //x: Math.floor(Math.random() * 700) + 50,
   //y: Math.floor(Math.random() * 500) + 50,
-    colour: "pink",
+    colour: socket.colour,
     playerId: socket.id,
-    username: socket.username,
+    playerUsername: socket.username
   }
-
-  socket.on('updateColour', function (colourData) {
-    players[socket.id].colour = colourData.colour;
-    socket.broadcast.emit('updateSprite', players[socket.id]);
-  });
 
   //send players object to new player
   socket.emit('currentPlayers', players);
@@ -280,17 +291,20 @@ io.on('connection', function (socket) {
   //update all other players of new player
   socket.broadcast.emit('newPlayer', players[socket.id]);
 
-  socket.on('disconnect', function () {
-    playerCount--;
-    console.log('user disconnected');
-    delete players[socket.id];
-    io.emit('disconnect', socket.id);
+  socket.on('updateColour', function (colourData) {
+    socket.colour = colourData.colour;
+    players[socket.id].colour = colourData.colour;
+    socket.broadcast.emit('updateSprite', players[socket.id]);
+  });
+
+  socket.on('username', function(username){
+    socket.username = username;
+    players[socket.id].playerUsername = username;
   });
 
   socket.on('playerMovement', function (movementData) {
     players[socket.id].x = movementData.x;
     players[socket.id].y = movementData.y;
-    players[socket.id].rotation = movementData.rotation;
     socket.broadcast.emit('playerMoved', players[socket.id]);
   });
 
@@ -298,11 +312,8 @@ io.on('connection', function (socket) {
     console.log("catched")
     console.log(data);
     io.emit('message', data);
-  })
-  socket.on('disconnect', function () {
-    io.sockets.emit('numPlayers', playerCount);
-    io.emit('disconnect');
   });
+
 
   socket.on('bulletFire', function (bulletInit) {
     var newBullet = bulletInit;
@@ -312,7 +323,6 @@ io.on('connection', function (socket) {
     newBullet.initY = bulletInit.initY;
     newBullet.owner = socket.id;
     servBullets.push(newBullet);
-    socket.broadcast.emit('bulletFired', newBullet);
   });
 
   socket.on('bulletMovement', function (bulletsInfo){
@@ -320,19 +330,53 @@ io.on('connection', function (socket) {
       servBullets[i].x = bulletsInfo[i].x;
       servBullets[i].y = bulletsInfo[i].y;
     }
-    socket.broadcast.emit('bulletMoved', servBullets);
+  });
+
+  socket.on('trapSet', function (trapInit) {
+    var newTrap = trapInit;
+    newTrap.x = trapInit.x;
+    newTrap.y = trapInit.y;
+    newTrap.owner = socket.id;
+    servTraps.push(newTrap);
   });
 
   socket.on('playerDied', function (deadPlayer){
+    //console.log("insockect on server: " + deadPlayer.username);
+    console.log("player died. Players joined: " + playerCount )
+    playerCount--;
+    console.log("player died. Players joined (updated): " + playerCount )
+    var username = deadPlayer.username;
+    console.log(deadPlayer);
+    io.sockets.emit('numPlayers', playerCount);
+    io.emit('died', deadPlayer);
     var counter = 0;
     delete players[deadPlayer.id];
     for(var id in players){
       if(id === deadPlayer.id){
         players.splice(counter, 1);
+
       }
       counter ++;
+
     }
+    console.log("died");
+
   });
+
+  socket.on('disconnect', function () {
+    playerCount--;
+    console.log('user disconnected');
+    for(var i = 0; i < servTraps.length; i++){
+      if(servTraps[i].owner == socket.id){
+        servTraps.splice(i,1);
+        i--;
+      }
+    }
+    delete players[socket.id];
+    io.sockets.emit('numPlayers', playerCount);
+    io.emit('disconnect', socket.id);
+  });
+
 });
 
 function gameLoop(){
@@ -348,7 +392,7 @@ function gameLoop(){
           var dy = players[id].y - currBullet.y;
           var dist = Math.sqrt(dx*dx + dy*dy);
           if(dist < 30){
-            io.emit('player-hit', id);
+            io.emit('playerHit', id);
             servBullets.splice(i,1);
             i--;
           }
@@ -362,7 +406,26 @@ function gameLoop(){
     }
   }
 
+  for(var i = 0; i < servTraps.length; i++){
+    var currTrap = servTraps[i];
+    if(currTrap && servTraps[i]){
+      for(var id in players){
+        if(currTrap.owner != id){
+          var dx = players[id].x - currTrap.x;
+          var dy = players[id].y - currTrap.y;
+          var dist = Math.sqrt(dx*dx + dy*dy);
+          if(dist < 20){
+            io.emit('trapHit', id);
+            servTraps.splice(i,1);
+            i--;
+          }
+        }
+      }
+    }
+  }
+
   io.emit('bulletsUpdate', servBullets);
+  io.emit('trapsUpdate', servTraps);
 }
 
 setInterval(gameLoop, 16);
@@ -378,4 +441,3 @@ module.exports = {
   playerCount: playerCount,
   app: app,
 }
-

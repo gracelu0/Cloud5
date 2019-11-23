@@ -8,10 +8,12 @@
       <link href="https://fonts.googleapis.com/css?family=Neucha&display=swap" rel="stylesheet">
       <link rel="icon" href="/assets/alienPink.png">
       <script src="js/getData.js" defer></script>
+      <script src="js/getColor.js" defer></script>
     </head>
 
     <body>
       <input type="text" id="nameGame" value="" hidden>
+      <input type="text" id="colorGame" value="">
       <script src="/socket.io/socket.io.js"></script>
 
       <div align="right" id="logoutDiv">
@@ -23,27 +25,26 @@
       <script src="//cdn.jsdelivr.net/npm/phaser@3.3.0/dist/phaser.min.js"></script>
       <script src="js/gameScript.js" defer></script>
       <script src="js/weatherConfig.js" defer></script>
-        <!-- Include jquery, cookies, socket.io (client-side) and your own code -->
+      <!-- Include jquery, cookies, socket.io (client-side) and your own code -->
       <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
       <script src="https://unpkg.com/cookie_js@1.2.2/cookie.min.js"></script>
       <script src="https://unpkg.com/socket.io-client@2/dist/socket.io.slim.js"></script>
-      
+
       <h1 align="center">BATTLE BLOBS</h1>
-      <p id="colour"><%= character %></p>
       <!-- <p id = "usernameGame"></p> -->
-      
+
       <div align="center" id="gameTimer"></div>
       <div class= "btn-group" id="toggles">
           <button id="toggleWeather" hidden>WEATHER ON</button>
           <button id="music">MUSIC OFF</button>
           <button id="sound">SOUND OFF</button>
-        </div>
+      </div>
       <div id="phaser"></div>
       <div id="chatArea">
         <ul id="messages"></ul>
       </div>
       <form class = "chatForm">
-          <input id = "messageText" type="text" placeholder="Say something nice" />
+          <input id = "messageText" type="text" placeholder="Say something nice" >
             <button type="submit" id="chatButton">Send</button>
       </form>
 
@@ -51,27 +52,42 @@
 
       <form class="" id="postGame" action="/postgame" method="post">
         <button type="submit" name="button" hidden>Go to postgame screen</button>
+        <input id="trapTime" value="<%= trapTime %>" hidden>
+        <input id="gameTime" value="<%= gameTime %>"hidden>
       </form>
       <script type="text/javascript">
-        var trapSecs = 20; var gamePlaySecs = 300;
+        var trapSecs = document.getElementById('trapTime').value;
+        var gamePlaySecs = document.getElementById('gameTime').value;
         var timer;
+
         timer = setInterval(function() {
-            var element = document.getElementById('gameTimer');
-            element.innerHTML = "<h2>Set Traps! Time Remaining: <b>"+trapSecs+"</b></h2>";
-            if(trapSecs < 1){
-                clearInterval(timer);
-                timer = setInterval(function() {
-                  var element = document.getElementById('gameTimer');
-                  element.innerHTML = "<h2>Game Time Remaining: <b>"+gamePlaySecs+"</b></h2>";
-                  if (gamePlaySecs < 1){
-                    clearInterval(timer);
-                    document.getElementById('postGame').submit();
-                  }
-                  gamePlaySecs--;
-              }, 1000);
-            }
-            trapSecs--;
-          }, 1000)
+          var element = document.getElementById('gameTimer');
+          element.innerHTML = "<h2>Set Traps! Time Remaining: <b>"+formatTime(trapSecs)+"</b></h2>";
+          if(trapSecs < 1){
+              clearInterval(timer);
+              timer = setInterval(function() {
+                var element = document.getElementById('gameTimer');
+                element.innerHTML = "<h2>Battle! Time Remaining: <b>"+formatTime(gamePlaySecs)+"</b></h2>";
+                if (gamePlaySecs < 1){
+                  clearInterval(timer);
+                  document.getElementById('postGame').submit();
+                }
+                gamePlaySecs--;
+            }, 1000);
+          }
+          trapSecs--;
+        }, 1000)
+
+        function formatTime(seconds){
+          //Minutes
+          var minutes = Math.floor(seconds/60);
+          //seconds
+          var secondsPart = seconds%60;
+          //add zeros to left of seconds
+          secondsPart = secondsPart.toString().padStart(2,'0');
+          //return formatted time
+          return `${minutes}:${secondsPart}`;
+        }
       </script>
 
     </body>
