@@ -166,7 +166,7 @@ var config = {
     this.load.image('healthbar_red', 'assets/healthbar_red.png');
   
     this.load.image('bulletImg','assets/testBullet.png');
-    this.load.image('bomb','assets/bomb.png');
+    this.load.image('bomb','assets/tileLava.png');
   
     this.load.image('rain', 'assets/rain.png');
     this.load.image('snow', 'assets/snowflake-pixel.png');
@@ -244,11 +244,11 @@ var config = {
       musicFlag = !musicFlag;
       console.log(musicFlag);
       if(musicFlag == false) {
-        musicButton.innerHTML = "MUSIC ON";
+        //musicButton.innerHTML = "MUSIC ON";
         bgmusic.pause();
       }
       else {
-        musicButton.innerHTML = "MUSIC OFF";
+       // musicButton.innerHTML = "MUSIC OFF";
         bgmusic.resume();
       }
     })
@@ -256,10 +256,10 @@ var config = {
       soundFlag = !soundFlag;
       console.log(soundFlag);
       if(soundFlag == false) {
-        soundButton.innerHTML = "SOUND ON";
+       // soundButton.innerHTML = "SOUND ON";
       }
       else {
-        soundButton.innerHTML = "SOUND OFF";
+       // soundButton.innerHTML = "SOUND OFF";
       }
     })
   

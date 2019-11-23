@@ -25,6 +25,12 @@ h2{
   font-family: 'Neucha', cursive;
   font-size: 18pt;
 }
+h5{
+  font-family: 'Neucha', cursive;
+  font-size: 14pt;
+}
+
+
 
 #phaser,#toggles{
     width: 60%;
@@ -71,79 +77,100 @@ button{
     width: 90px;
   }
 
-
-/*  * {
-  box-sizing: border-box;
-  transition: all .3s ease;
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+  margin: 10px;
 }
 
-
-main {
-  width: calc(100% - 20px);
-  max-width: 500px;
-  margin: 0 auto;
-  font-family: Helvetica, Arial, Sans, sans-serif;
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
 
-h1, .user-count {
-  margin: 0;
-  padding: 10px 0;
-  font-size: 32px;
-}
-
-.user-count {
-  float: right;
-}
-
-.chat {
-  content: '';
-  width: 100%;
-  height: calc(100vh - 165px);
-  background: white;
-  padding: 5px 10px;
-}
-
-.chat p {
-  margin: 0 0 5px 0;
-}
-
-input {
-  width: 100%;
-  font: inherit;
-  background: #fff;
-  border: none;
-  margin-top: 10px;
-  padding: 5px 10px;
-}
-
-button:hover {
+/* The slider */
+.slider {
+  position: absolute;
   cursor: pointer;
-  background: #ddd;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
 }
 
-#chatButton{
-  background-color: darkgreen;
-  color: white;
-  padding: 7px 10px;
-  margin: 8px 0;
-  border: none;
-  cursor: pointer;
-  width: 30%;
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider::after {
+  position:relative;
+  top:-15px;
+  left: 13px;
+  content: "label";
   font-family: 'Neucha', cursive;
-  font-size: 10pt;
-
-  -webkit-transition-duration: 0.4s;
-  transition-duration: 0.4s;
+  font-size: 14pt;
 }
-@media all and (min-width: 500px) {
-  .chat {
-    height: calc(100vh - 140px);
-  }
-  input {
-    width: calc(100% - 160px);
-  }
-  button {
-    float: right;
-    width: 150px;
-  }
-} */
+
+#toggleWeather::after{
+  content: "WEATHER";
+  top:-15px;
+  left: 0px;
+}
+
+#music::after{
+  content: "MUSIC";
+  top:-15px;
+  left: 5px;
+}
+
+#sound::after{
+  content: "SOUNDFX";
+  top:-15px;
+  left: 0px;
+  font-size: 12pt;
+}
+
+input:checked + .slider {
+  background-color: darkgreen;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.switch h5 {
+  position: absolute;
+  top: 0;
+  margin: 0.75rem;
+}

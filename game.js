@@ -16,6 +16,9 @@ var pool = new Pool({
 });
 
 
+
+
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -270,10 +273,10 @@ io.on('connection', function (socket) {
   io.sockets.emit('numPlayers', playerCount);
   // create a new player and add it to our players object
   players[socket.id] = {
-    x: 500,
-    y: 500,
-  //x: Math.floor(Math.random() * 700) + 50,
-  //y: Math.floor(Math.random() * 500) + 50,
+    //x: 1400,
+    //y: 1325,
+    x: Math.floor(Math.random() * 326) + 1075,
+    y: Math.floor(Math.random() * 326) + 1000,
     colour: socket.colour,
     playerId: socket.id,
     playerUsername: socket.username
