@@ -325,8 +325,8 @@ var config = {
     this.redBars = this.physics.add.group();
 
     //character selection
-    var selected = document.getElementById('colour').innerHTML;
-    console.log(selected);
+    // var selected = document.getElementById("colorGame").value;
+    // console.log("color selected " + selected);
 
     this.socket.on('numPlayers', (playerCount) =>{
         playerCountText.setText([
@@ -482,21 +482,29 @@ var config = {
     //chat
     // When we receive a message
     // it will be like { user: 'username', message: 'text' }
+
     $("#messageText").keyup(function(event){
       if(event.keyCode == 90){
+    console.log("asd");
+          $("#messageText").val($("#messageText").val()+ 'Z');
+      }
+    });
+
+    $("#messageText").keyup(function(event){
+      if(event.keyCode == 122){
           $("#messageText").val($("#messageText").val()+ 'z');
       }
     });
 
-    // $("#messageText").keyup(function(event){
-    //   if(event.keyCode == 122){
-    //       $("#messageText").val($("#messageText").val()+ 'z');
-    //   }
-    // });
-
     $("#messageText").keyup(function(event){
       if(event.keyCode == 32){
           $("#messageText").val($("#messageText").val()+' ');
+      }
+    });
+
+    $("#messageText").keyup(function(event){
+      if(event.keyCode == 27){
+          $("#messageText").blur();
       }
     });
 
@@ -757,20 +765,18 @@ var config = {
   //   this.totalTime-=1;
   //   timerText.setText('Countdown: '+formatTime(this.totalTime));
   // }
-  
+
   function addPlayer(self, playerInfo) {
     var username = document.getElementById("nameGame").value;
     playerInfo.playerUsername = username;
     console.log(username.length);
-    var selected = document.getElementById('colour').innerHTML;
+    var selected = document.getElementById("colorGame").value;
+    console.log("color selected " + selected);
     playerInfo.colour = selected;
     console.log("selected colour: ", playerInfo.colour);
     self.socket.emit('updateColour', {colour: playerInfo.colour});
 
-    self.player = self.physics.add.sprite(playerInfo.x, playerInfo.y, 'pinkPlayer').setOrigin(0.5, 0.5);
-
-
-    self.player = self.physics.add.sprite(playerInfo.x, playerInfo.y, 'pinkPlayer').setOrigin(0.5, 0.5);
+    self.player = self.physics.add.sprite(playerInfo.x, playerInfo.y, selected).setOrigin(0.5, 0.5);
     self.player.playerUsername = playerInfo.playerUsername;
     if (selected == 'pink'){
       self.player.setTexture('pinkPlayer');
