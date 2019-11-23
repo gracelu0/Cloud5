@@ -514,46 +514,31 @@ var config = {
       e.preventDefault();
       // Retrieve the message from the user
       var message = $(e.target).find('#messageText').val();
-      //var username = $(e.target).find('#nameGame').val();
-      //var username = document.getElementById("nameGame").value;
       console.log(message);
       console.log(username);
       // Send the message to the server
       self.socket.emit('message', {
-        //user: cookie.get('user') || 'Anonymous',
         user: username,
         message: message
       });
       // Clear the input and focus it for a new message
       e.target.reset();
       $(e.target).find('input').focus();
-      //$(e.target).blur()
     });
 
     this.socket.on('message', function (data) {
       console.log("client catched");
-      //alert(data.message);
-      //document.getElementById("chatSection").innerHTML = "ssdfsdf";
       console.log("data user is" + data.user);
       $('#messages').append($('<li>').text(data.user + ': ' + data.message));
-
     });
 
     this.socket.on('died', function (deadPlayer) {
       console.log("died");
-      //alert(data.message);
-      //document.getElementById("chatSection").innerHTML = "ssdfsdf";
-      //console.log("data user is" + data.user);
       console.log(deadPlayer.username);
-      $('#messages').append($('<li>').html('<b>' + deadPlayer.username + ' is dead!</b>'));
-
+      $('#messages').append($('<li>').html('<b>' + deadPlayer.username + ' was killed!</b>'));
     });
 
     this.socket.emit('username',username);
-    //emitMsg(self);
-    // When the form is submitted
-
-
 
     bullets = this.physics.add.group({
       classType: Bullet,
@@ -701,14 +686,8 @@ var config = {
         this.healthbar_green.destroy();
         this.healthbar_red.destroy();
         this.usernameText.destroy();
-
-        //continue;
       }
-      // else{
-      //
-      // }
     }
-
 
       if (weatherFlag && !weatherToggle){
         updateWeatherToggle();
@@ -794,7 +773,6 @@ var config = {
       self.player.setTexture('beigePlayer');
     }
 
-
     self.player.setCollideWorldBounds(true);
     self.player.health = 100;
     self.healthbar_red = self.physics.add.sprite(self.player.body.position.x + 12, self.player.body.position.y - 20, 'healthbar_red');
@@ -865,8 +843,5 @@ var config = {
     //healthbar_red.destroy();
     //healthbar_green.destroy();
   }
-
-
-
 
   // var socket = io();

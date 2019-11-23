@@ -272,7 +272,7 @@ var servTraps = [];
 
 io.on('connection', function (socket) {
   playerCount++;
-  console.log('a user connected');
+  console.log('a user connected. Num of players: ' + playerCount);
   io.sockets.emit('numPlayers', playerCount);
   // create a new player and add it to our players object
   players[socket.id] = {
