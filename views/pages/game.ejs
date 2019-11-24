@@ -7,6 +7,8 @@
       <link href="https://fonts.googleapis.com/css?family=Sniglet:800&display=swap" rel="stylesheet">
       <link href="https://fonts.googleapis.com/css?family=Neucha&display=swap" rel="stylesheet">
       <link rel="icon" href="/assets/alienPink.png">
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
       <script src="js/getData.js" defer></script>
       <script src="js/getColor.js" defer></script>
     </head>
@@ -47,10 +49,49 @@
               <input type="checkbox" checked>
               <span id="sound" class="slider round"></span>
             </label>
-          <!--<button id="toggleWeather" hidden>WEATHER ON</button>
-          <button id="music">MUSIC OFF</button>
-          <button id="sound">SOUND OFF</button>-->
+
+          <button type="button" class="collapsible" id="controlsBtn"><i class="material-icons">help_outline</i> Controls</button>
+          <div id="controls" class="content">
+            <figure>
+              <img src="/assets/arrowkeys.png" height="60" width= "100" id="arrowkeys">
+              <figcaption id="movement">Move</figcaption>
+          </figure>
+          <figure>
+              <img src="/assets/keyz.png" height= "40" width="40" id="spacebar" alt="">
+              <figcaption id="movement">Set mines</figcaption>
+          </figure>
+          <figure>
+              <img src="/assets/spacebar.png" height= "40" width="80" id="spacebar" alt="">
+              <figcaption id="movement">Attack!</figcaption>
+          </figure>
+          <figure>
+              <img src="/assets/esc.png" height= "50" width="50" id="spacebar" alt="">
+              <figcaption id="movement">Exit chat</figcaption>
+          </figure>
+          </div>
+          
       </div>
+
+      
+      <script>
+        var coll = document.getElementsByClassName("collapsible");
+        var i;
+
+        for (i = 0; i < coll.length; i++) {
+          coll[i].addEventListener("click", function() {
+            var figures = document.getElementsByTagName("figure");
+            console.log("figures: ", figures.length);
+            for (j = 0; j < figures.length; j++){
+              if (figures[j].style.display === "none") {
+                figures[j].style.display = "block";
+              } else {
+                figures[j].style.display = "none";
+              }
+            }
+          });
+        }
+      </script>
+
       <div id="phaser"></div>
       <div id="chatArea">
         <ul id="messages"></ul>
