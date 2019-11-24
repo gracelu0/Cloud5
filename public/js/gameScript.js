@@ -33,6 +33,7 @@ var config = {
   var lastBomb = 0;
   var facing = 1;
   var ammunition = 100;
+  var trapAmmo = 10;
   var x;
   var y;
 
@@ -298,6 +299,8 @@ var config = {
     playerCountText.setScrollFactor(0);
     ammoCount = this.add.text(10, 40,"Ammunition Count:" + ' ' + ammunition + "/100",{ fontFamily: 'Neucha', fontSize:'20px' });
     ammoCount.setScrollFactor(0);
+    trapCount = this.add.text(10, 60,"Trap Count:" + ' ' + trapAmmo + "/10",{ fontFamily: 'Neucha', fontSize:'20px' });
+    trapCount.setScrollFactor(0);
 
     //timer
     //this.totalTime = 180;
@@ -613,11 +616,15 @@ var config = {
           lastFired --;
         }
 
-        if (this.bombButton.isDown && lastBomb == 0 &&  document.activeElement !== messageText){
-          var trap = traps.create(this.player.body.position.x, this.player.body.position.y, 'bomb');
-          trap.body.setImmovable();
-          lastBomb = 30;
-          this.socket.emit('trapSet', { x: this.player.body.position.x, y: this.player.body.position.y });
+        if (this.bombButton.isDown && trapAmmo > 0 && lastBomb == 0 &&  document.activeElement !== messageText){
+          if(!this.physics.overlap(this.player,traps)){
+            var trap = traps.create(this.player.body.position.x, this.player.body.position.y, 'bomb');
+            trap.body.setImmovable();
+            lastBomb = 30;
+            trapAmmo --;
+            trapCount.setText("Trap Count:" + ' ' + trapAmmo + "/10");
+            this.socket.emit('trapSet', { x: this.player.body.position.x, y: this.player.body.position.y });
+          }
         }
         if(lastBomb > 0){
           lastBomb --;
@@ -630,6 +637,7 @@ var config = {
           child.body.immovable = true;
           if(child.health <= 0){
             //this.socket.emit('playerDied', {id:child.playerId, username: child.playerUsername});
+            child.health = -5;
             console.log("player id" + child.playerId);
             console.log("username" + child.playerUsername)
             console.log("in update1");
@@ -819,8 +827,4 @@ var config = {
   playerDeath = function(deadPlayer){
     deadPlayer.destroy();
     deadPlayer = null;
-    //healthbar_red.destroy();
-    //healthbar_green.destroy();
   }
-
-  // var socket = io();

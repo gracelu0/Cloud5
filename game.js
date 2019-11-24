@@ -268,7 +268,6 @@ app.get('/removeUser/:userID', (req,res) => {
 var playerCount = 0;
 var playerAlive = 0;
 var players = {};
-var redBars = {};
 var servBullets = [];
 var servTraps = [];
 
@@ -348,21 +347,20 @@ io.on('connection', function (socket) {
     console.log("player died. Players alive (unupdated): " + playerAlive )
     playerAlive--;
     console.log("player died. Players joined (updated): " + playerAlive );
-      console.log("Players joined: " + playerCount)
+    console.log("Players joined: " + playerCount)
     var username = deadPlayer.username;
     console.log(username + " was killed");
     io.sockets.emit('numPlayers', playerAlive);
     io.emit('died', deadPlayer);
     var counter = 0;
     delete players[deadPlayer.id];
-    for(var id in players){
+    /*for(var id in players){
       if(id === deadPlayer.id){
         players.splice(counter, 1);
 
       }
       counter ++;
-
-    }
+    }*/
   });
 
   socket.on('disconnect', function () {
