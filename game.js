@@ -265,6 +265,7 @@ app.get('/removeUser/:userID', (req,res) => {
 });
 
 var playerCount = 0;
+var playerAlive = 0;
 var players = {};
 var redBars = {};
 var servBullets = [];
@@ -272,6 +273,7 @@ var servTraps = [];
 
 io.on('connection', function (socket) {
   playerCount++;
+  playerAlive = playerCount;
   console.log('a user connected. Num of players: ' + playerCount);
   io.sockets.emit('numPlayers', playerCount);
   // create a new player and add it to our players object
@@ -342,12 +344,13 @@ io.on('connection', function (socket) {
 
   socket.on('playerDied', function (deadPlayer){
     //console.log("insockect on server: " + deadPlayer.username);
-    console.log("player died. Players joined: " + playerCount )
-    playerCount--;
-    console.log("player died. Players joined (updated): " + playerCount )
+    console.log("player died. Players alive (unupdated): " + playerAlive )
+    playerAlive--;
+    console.log("player died. Players joined (updated): " + playerAlive );
+      console.log("Players joined: " + playerCount)
     var username = deadPlayer.username;
-    console.log(deadPlayer);
-    io.sockets.emit('numPlayers', playerCount);
+    console.log(username + " was killed");
+    io.sockets.emit('numPlayers', playerAlive);
     io.emit('died', deadPlayer);
     var counter = 0;
     delete players[deadPlayer.id];
@@ -359,13 +362,11 @@ io.on('connection', function (socket) {
       counter ++;
 
     }
-    console.log("died");
-
   });
 
   socket.on('disconnect', function () {
     playerCount--;
-    console.log('user disconnected');
+    console.log('user disconnected. Players joined: ' + playerCount);
     for(var i = 0; i < servTraps.length; i++){
       if(servTraps[i].owner == socket.id){
         servTraps.splice(i,1);
