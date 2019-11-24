@@ -7,7 +7,7 @@ var config = {
       default: 'arcade',
       arcade: {
         gravity: {y: 0},
-        debug: true
+        debug: false
       }
     },
     scene: {
@@ -82,13 +82,13 @@ var config = {
             weatherButton.removeAttribute("hidden");
             weatherButton.addEventListener('click', function(){
               updateWeatherFlag();
-              if (weatherButton.innerHTML == "WEATHER ON")
-                weatherButton.innerHTML = "WEATHER OFF";
-              else
-                weatherButton.innerHTML = "WEATHER ON";
-            });
+            //   if (weatherButton.innerHTML == "WEATHER ON")
+            //     weatherButton.innerHTML = "WEATHER OFF";
+            //   else
+            //     weatherButton.innerHTML = "WEATHER ON";
+             });
             weatherFlag = true; weatherToggle = true;
-            weatherButton.innerHTML = "WEATHER OFF";
+            // weatherButton.innerHTML = "WEATHER OFF";
           }
       return weatherResponse;
   }
@@ -166,8 +166,8 @@ var config = {
     this.load.image('healthbar_red', 'assets/healthbar_red.png');
 
     this.load.image('bulletImg','assets/testBullet.png');
-    this.load.image('bomb','assets/bomb.png');
-
+    this.load.image('bomb','assets/tileLava.png');
+  
     this.load.image('rain', 'assets/rain.png');
     this.load.image('snow', 'assets/snowflake-pixel.png');
     this.load.image('fog', 'assets/fog.png');
@@ -244,11 +244,11 @@ var config = {
       musicFlag = !musicFlag;
       console.log(musicFlag);
       if(musicFlag == false) {
-        musicButton.innerHTML = "MUSIC ON";
+        //musicButton.innerHTML = "MUSIC ON";
         bgmusic.pause();
       }
       else {
-        musicButton.innerHTML = "MUSIC OFF";
+       // musicButton.innerHTML = "MUSIC OFF";
         bgmusic.resume();
       }
     })
@@ -256,10 +256,10 @@ var config = {
       soundFlag = !soundFlag;
       console.log(soundFlag);
       if(soundFlag == false) {
-        soundButton.innerHTML = "SOUND ON";
+       // soundButton.innerHTML = "SOUND ON";
       }
       else {
-        soundButton.innerHTML = "SOUND OFF";
+       // soundButton.innerHTML = "SOUND OFF";
       }
     })
 
@@ -438,18 +438,9 @@ var config = {
               otherPlayer.setPosition(playerInfo.x, playerInfo.y);
               var usernameLength = playerInfo.playerUsername.length;
               console.log("length", usernameLength);
-              var offset = 0;
-              if (usernameLength < 5){
-                offset = -10;
-              }
-              else if (usernameLength < 10){
-                offset = usernameLength*2;
-              }
-              else{
-                offset = 12*(usernameLength/5);
-              }
-
-
+              var offset = usernameLength*2.5;
+              console.log(offset);
+              
               otherPlayer.healthbar_red.x = playerInfo.x;
               otherPlayer.healthbar_red.y = playerInfo.y - 32;
               otherPlayer.healthbar_green.x = playerInfo.x;
@@ -596,16 +587,7 @@ var config = {
 
         if (this.player.health > 0) {
           var usernameLength = document.getElementById("nameGame").value.length;
-          var offset = 0;
-          if (usernameLength < 5){
-            offset = -12;
-          }
-          else if (usernameLength < 10){
-            offset = -usernameLength*2;
-          }
-          else{
-            offset = -usernameLength;
-          }
+          var offset = 12.5-usernameLength*2.5;
 
           this.healthbar_green.displayWidth = (this.player.health/100)*100;
           this.healthbar_green.x = this.player.body.position.x + 12;
@@ -613,8 +595,8 @@ var config = {
           this.healthbar_red.x = this.player.body.position.x + 12;
           this.healthbar_red.y = this.player.body.position.y - 20;
 
-          this.usernameText.x = this.player.body.position.x - offset;
-          this.usernameText.y = this.player.body.position.y + 30;
+          this.usernameText.x = this.player.body.position.x + offset;
+          this.usernameText.y = this.player.body.position.y + 24;
         }
 
         if (this.cursors.space.isDown && ammunition > 0 && lastFired == 0 && document.activeElement !== messageText){
@@ -787,7 +769,7 @@ var config = {
       align:'center',
       fontSize: '12px'
     });
-    self.usernameText.setOrigin(0.5,0.5);
+
     self.cameras.main.startFollow(self.player, true,0.5,0.5,0.5,0.5);
   }
 
@@ -806,6 +788,7 @@ var config = {
       align:'center',
       fontSize: '12px'
     });
+
     if (playerInfo.colour == "pink"){
        otherPlayer.setTexture('pinkPlayer');
     }
