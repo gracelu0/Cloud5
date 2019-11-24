@@ -15,21 +15,10 @@ socket.on('numPlayers', function (playerCount) {
 });
 
 var username = document.getElementById("nameGame").value;
-  
-//chat 
+
+//chat
 // When we receive a message
 // it will be like { user: 'username', message: 'text' }
-$("#messageText").keyup(function(event){
-    if(event.keyCode == 90){
-        $("#messageText").val($("#messageText").val()+ 'z');
-    }
-});
-
-$("#messageText").keyup(function(event){
-    if(event.keyCode == 32){
-        $("#messageText").val($("#messageText").val()+' ');
-    }
-});
 
 $('.chatForm').submit(function (e) {
     console.log("sent")

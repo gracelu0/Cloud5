@@ -16,6 +16,7 @@ var pool = new Pool({
 });
 
 
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -50,23 +51,20 @@ app.post('/pregame', (req,res) => {
 var blockGamersFlag = false; 
 
 app.post('/waitForPlayers', (req,res) => {
-  var selectedCharacter = req.body.character;
-  console.log(selectedCharacter);
-  if (!blockGamersFlag)
-    res.render('pages/gameStaging', {character: selectedCharacter});
-  else
-    console.log("players blocked");
+  //var selectedCharacter = req.body.character;
+  //console.log(selectedCharacter);
+  res.render('pages/gameStaging');
 });
 
-var trapSecs = 20; var gameSecs = 20;
+
+var trapSecs = 30; var gameSecs = 120;
 var totalGameTime = trapSecs + gameSecs;
 
 app.post('/game', (req,res) => {
-  blockGamersFlag = true;
-  var selectedCharacter = req.body.character;
-  console.log(blockGamersFlag);
-  console.log(selectedCharacter);
-  res.render('pages/game', {character: selectedCharacter, gameTime: gameSecs, trapTime: trapSecs});
+  // var selectedCharacter = req.body.colorGame;
+  // console.log(selectedCharacter);
+  //res.render('pages/game', {character: selectedCharacter, gameTime: gameSecs, trapTime: trapSecs});
+  res.render('pages/game', {gameTime: gameSecs, trapTime: trapSecs});
 });
 
 app.post('/postgame', (req,res) => {
@@ -268,6 +266,7 @@ app.get('/removeUser/:userID', (req,res) => {
 });
 
 var playerCount = 0;
+var playerAlive = 0;
 var players = {};
 var redBars = {};
 var servBullets = [];
@@ -275,14 +274,15 @@ var servTraps = [];
 
 io.on('connection', function (socket) {
   playerCount++;
-  console.log('a user connected');
+  playerAlive = playerCount;
+  console.log('a user connected. Num of players: ' + playerCount);
   io.sockets.emit('numPlayers', playerCount);
   // create a new player and add it to our players object
   players[socket.id] = {
-    x: 500,
-    y: 500,
-  //x: Math.floor(Math.random() * 700) + 50,
-  //y: Math.floor(Math.random() * 500) + 50,
+    //x: 1400,
+    //y: 1325,
+    x: Math.floor(Math.random() * 326) + 1075,
+    y: Math.floor(Math.random() * 326) + 1000,
     colour: socket.colour,
     playerId: socket.id,
     playerUsername: socket.username
@@ -344,19 +344,30 @@ io.on('connection', function (socket) {
   });
 
   socket.on('playerDied', function (deadPlayer){
+    //console.log("insockect on server: " + deadPlayer.username);
+    console.log("player died. Players alive (unupdated): " + playerAlive )
+    playerAlive--;
+    console.log("player died. Players joined (updated): " + playerAlive );
+      console.log("Players joined: " + playerCount)
+    var username = deadPlayer.username;
+    console.log(username + " was killed");
+    io.sockets.emit('numPlayers', playerAlive);
+    io.emit('died', deadPlayer);
     var counter = 0;
     delete players[deadPlayer.id];
     for(var id in players){
       if(id === deadPlayer.id){
         players.splice(counter, 1);
+
       }
       counter ++;
+
     }
   });
 
   socket.on('disconnect', function () {
     playerCount--;
-    console.log('user disconnected');
+    console.log('user disconnected. Players joined: ' + playerCount);
     for(var i = 0; i < servTraps.length; i++){
       if(servTraps[i].owner == socket.id){
         servTraps.splice(i,1);
@@ -432,4 +443,3 @@ module.exports = {
   playerCount: playerCount,
   app: app,
 }
-
