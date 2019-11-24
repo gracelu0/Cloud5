@@ -48,6 +48,8 @@ app.post('/pregame', (req,res) => {
     res.render('pages/pregame');
 });
 
+var blockGamersFlag = false; 
+
 app.post('/waitForPlayers', (req,res) => {
   //var selectedCharacter = req.body.character;
   //console.log(selectedCharacter);
@@ -66,6 +68,8 @@ app.post('/game', (req,res) => {
 });
 
 app.post('/postgame', (req,res) => {
+    blockGamersFlag = false;
+    console.log(blockGamersFlag);
     res.render('pages/postgame');
 });
 
