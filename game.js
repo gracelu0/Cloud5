@@ -55,7 +55,8 @@ app.post('/waitForPlayers', (req,res) => {
   res.render('pages/gameStaging', {character: selectedCharacter});
 });
 
-var trapSecs = 20; var gameSecs = 60;
+
+var trapSecs = 30; var gameSecs = 120;
 var totalGameTime = trapSecs + gameSecs;
 
 app.post('/game', (req,res) => {
