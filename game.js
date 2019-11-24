@@ -55,7 +55,7 @@ app.post('/waitForPlayers', (req,res) => {
   if (!blockGamersFlag)
     res.render('pages/gameStaging', {character: selectedCharacter});
   else
-    console.log("players blocked")
+    console.log("players blocked");
 });
 
 var trapSecs = 20; var gameSecs = 20;
