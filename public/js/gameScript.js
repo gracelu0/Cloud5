@@ -77,18 +77,10 @@ var config = {
           weatherResponse.weather[0].main == "Haze" ||
           weatherResponse.weather[0].main == "Mist" ||
           weatherResponse.weather[0].main == "Fog"
-          // || weatherResponse.weather[0].main == "Clouds"
           ){
-            weatherButton.removeAttribute("hidden");
-            weatherButton.addEventListener('click', function(){
-              updateWeatherFlag();
-            //   if (weatherButton.innerHTML == "WEATHER ON")
-            //     weatherButton.innerHTML = "WEATHER OFF";
-            //   else
-            //     weatherButton.innerHTML = "WEATHER ON";
-             });
+            weatherButton.removeAttribute("hidden");    
             weatherFlag = true; weatherToggle = true;
-            // weatherButton.innerHTML = "WEATHER OFF";
+            weatherButton.addEventListener('click', updateWeatherFlag);
           }
       return weatherResponse;
   }
@@ -242,7 +234,6 @@ var config = {
 
     musicButton.addEventListener('click', function() {
       musicFlag = !musicFlag;
-      console.log(musicFlag);
       if(musicFlag == false) {
         //musicButton.innerHTML = "MUSIC ON";
         bgmusic.pause();
@@ -254,7 +245,6 @@ var config = {
     })
     soundButton.addEventListener('click', function() {
       soundFlag = !soundFlag;
-      console.log(soundFlag);
       if(soundFlag == false) {
        // soundButton.innerHTML = "SOUND ON";
       }
