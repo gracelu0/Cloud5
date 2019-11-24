@@ -17,7 +17,6 @@ var pool = new Pool({
 
 
 
-
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -50,9 +49,9 @@ app.post('/pregame', (req,res) => {
 });
 
 app.post('/waitForPlayers', (req,res) => {
-  var selectedCharacter = req.body.character;
-  console.log(selectedCharacter);
-  res.render('pages/gameStaging', {character: selectedCharacter});
+  //var selectedCharacter = req.body.character;
+  //console.log(selectedCharacter);
+  res.render('pages/gameStaging');
 });
 
 
@@ -60,9 +59,10 @@ var trapSecs = 30; var gameSecs = 120;
 var totalGameTime = trapSecs + gameSecs;
 
 app.post('/game', (req,res) => {
-  var selectedCharacter = req.body.character;
-  console.log(selectedCharacter);
-  res.render('pages/game', {character: selectedCharacter, gameTime: gameSecs, trapTime: trapSecs});
+  // var selectedCharacter = req.body.colorGame;
+  // console.log(selectedCharacter);
+  //res.render('pages/game', {character: selectedCharacter, gameTime: gameSecs, trapTime: trapSecs});
+  res.render('pages/game', {gameTime: gameSecs, trapTime: trapSecs});
 });
 
 app.post('/postgame', (req,res) => {
@@ -269,7 +269,7 @@ var servTraps = [];
 
 io.on('connection', function (socket) {
   playerCount++;
-  console.log('a user connected');
+  console.log('a user connected. Num of players: ' + playerCount);
   io.sockets.emit('numPlayers', playerCount);
   // create a new player and add it to our players object
   players[socket.id] = {
@@ -338,14 +338,26 @@ io.on('connection', function (socket) {
   });
 
   socket.on('playerDied', function (deadPlayer){
+    //console.log("insockect on server: " + deadPlayer.username);
+    console.log("player died. Players joined: " + playerCount )
+    playerCount--;
+    console.log("player died. Players joined (updated): " + playerCount )
+    var username = deadPlayer.username;
+    console.log(deadPlayer);
+    io.sockets.emit('numPlayers', playerCount);
+    io.emit('died', deadPlayer);
     var counter = 0;
     delete players[deadPlayer.id];
     for(var id in players){
       if(id === deadPlayer.id){
         players.splice(counter, 1);
+
       }
       counter ++;
+
     }
+    console.log("died");
+
   });
 
   socket.on('disconnect', function () {
@@ -426,4 +438,3 @@ module.exports = {
   playerCount: playerCount,
   app: app,
 }
-

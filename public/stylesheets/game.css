@@ -31,7 +31,6 @@ h5{
 }
 
 
-
 #phaser,#toggles{
     width: 60%;
     margin-top: 3%;
@@ -83,7 +82,9 @@ button{
   display: inline-block;
   width: 60px;
   height: 34px;
-  margin: 10px;
+  margin: 8px;
+  margin-bottom: 18px;
+
 }
 
 /* Hide default HTML checkbox */
