@@ -10,7 +10,7 @@ socket.on('numPlayers', function (playerCount) {
         waitMessage.innerHTML = "<h2>Waiting for <b>"+(4-playerCount)+"</b> more players to join...</h2>";
 
     if (playerCount == 4){
-        document.getElementById('gamePage').submit();
+        document.getElementById('gameSubmitBtn').removeAttribute("hidden");
     }
 });
 
