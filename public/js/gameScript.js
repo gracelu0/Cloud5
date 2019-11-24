@@ -136,10 +136,6 @@ var config = {
       percentText.setText(parseInt(value*100) + '%');
     });
 
-    this.load.on('fileprogress', function(value){
-      console.log(file.src);
-    });
-
     this.load.on('complete', function(value){
       console.log('complete');
       progressBar.destroy();
