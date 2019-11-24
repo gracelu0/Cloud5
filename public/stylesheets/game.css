@@ -174,3 +174,9 @@ input:checked + .slider:before {
   top: 0;
   margin: 0.75rem;
 }
+
+#loading{
+  width: 60%;
+  margin: auto;
+  padding-bottom: 40px;
+}
