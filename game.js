@@ -57,21 +57,13 @@ app.post('/waitForPlayers', (req,res) => {
 });
 
 
-var trapSecs = 20; var gameSecs = 20;
-var totalGameTime = trapSecs + gameSecs;
-
-var gameTimer = setInterval(function() {
-  totalGameTime--;
-  io.sockets.emit('timer', { countdown: totalGameTime });
-  if (totalGameTime < 1)
-    clearInterval(gameTimer);
-}, 1000);
+var trapSecs = 10; var gameSecs = 10;
 
 app.post('/game', (req,res) => {
   // var selectedCharacter = req.body.colorGame;
   // console.log(selectedCharacter);
   //res.render('pages/game', {character: selectedCharacter, gameTime: gameSecs, trapTime: trapSecs});
-  res.render('pages/game', {gameTime: gameSecs, trapTime: trapSecs});
+  res.render('pages/game');
 });
 
 app.post('/postgame', (req,res) => {
@@ -282,8 +274,25 @@ var servTraps = [];
 io.on('connection', function (socket) {
   playerCount++;
   playerAlive = playerCount;
-  if (playerCount==2)
+  if (playerCount==4){
     totalGameTime = gameSecs + trapSecs;
+    var trapTimer = setInterval(function() {
+      console.log(totalGameTime);
+      totalGameTime--;
+      io.sockets.emit('timer', { countdown: totalGameTime });
+      if (totalGameTime-trapSecs < 1){
+        clearInterval(trapTimer);
+        var gameTimer = setInterval(function(){
+          console.log(totalGameTime);
+          totalGameTime--;
+          io.sockets.emit('timer', { countdown: totalGameTime });
+          if (totalGameTime < 1){
+            clearInterval(gameTimer);
+          }
+        }, 1000)
+      }
+    }, 1000);
+  }
   console.log('a user connected. Num of players: ' + playerCount);
   io.sockets.emit('numPlayers', playerCount);
   // create a new player and add it to our players object
@@ -386,8 +395,13 @@ io.on('connection', function (socket) {
     delete players[socket.id];
     io.sockets.emit('numPlayers', playerCount);
     io.emit('disconnect', socket.id);
+    if (playerCount==0){
+      if (typeof trapTimer !== "undefined")
+        clearInterval(trapTimer);
+      if (typeof gameTimer !== "undefined")
+        clearInterval(gameTimer);
+    }
   });
-
 });
 
 function gameLoop(){
