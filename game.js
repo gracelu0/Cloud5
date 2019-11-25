@@ -57,19 +57,20 @@ app.post('/waitForPlayers', (req,res) => {
 });
 
 
-var trapSecs = 30; var gameSecs = 120;
-// var totalGameTime = trapSecs + gameSecs;
+var trapSecs = 20; var gameSecs = 20;
+var totalGameTime = trapSecs + gameSecs;
+
+var gameTimer = setInterval(function() {
+  totalGameTime--;
+  io.sockets.emit('timer', { countdown: totalGameTime });
+  if (totalGameTime < 1)
+    clearInterval(gameTimer);
+}, 1000);
 
 app.post('/game', (req,res) => {
   // var selectedCharacter = req.body.colorGame;
   // console.log(selectedCharacter);
   //res.render('pages/game', {character: selectedCharacter, gameTime: gameSecs, trapTime: trapSecs});
-  var gameTimer = setInterval(function() {
-    totalGameTime--;
-    io.sockets.emit('timer', { countdown: totalGameTime });
-    if (totalGameTime < 1)
-      clearInterval(gameTimer);
-  }, 1000);
   res.render('pages/game', {gameTime: gameSecs, trapTime: trapSecs});
 });
 
@@ -281,6 +282,8 @@ var servTraps = [];
 io.on('connection', function (socket) {
   playerCount++;
   playerAlive = playerCount;
+  if (playerCount==2)
+    totalGameTime = gameSecs + trapSecs;
   console.log('a user connected. Num of players: ' + playerCount);
   io.sockets.emit('numPlayers', playerCount);
   // create a new player and add it to our players object
