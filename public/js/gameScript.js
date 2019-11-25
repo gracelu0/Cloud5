@@ -521,6 +521,10 @@ var config = {
 
     this.socket.emit('username',username);
 
+    this.socket.on('timer', function (data) {
+      $('#gameTimer').html(data.countdown);
+    });
+
     bullets = this.physics.add.group({
       classType: Bullet,
       runChildUpdate: true

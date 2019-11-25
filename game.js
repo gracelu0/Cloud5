@@ -58,12 +58,18 @@ app.post('/waitForPlayers', (req,res) => {
 
 
 var trapSecs = 30; var gameSecs = 120;
-var totalGameTime = trapSecs + gameSecs;
+// var totalGameTime = trapSecs + gameSecs;
 
 app.post('/game', (req,res) => {
   // var selectedCharacter = req.body.colorGame;
   // console.log(selectedCharacter);
   //res.render('pages/game', {character: selectedCharacter, gameTime: gameSecs, trapTime: trapSecs});
+  var gameTimer = setInterval(function() {
+    totalGameTime--;
+    io.sockets.emit('timer', { countdown: totalGameTime });
+    if (totalGameTime < 1)
+      clearInterval(gameTimer);
+  }, 1000);
   res.render('pages/game', {gameTime: gameSecs, trapTime: trapSecs});
 });
 
