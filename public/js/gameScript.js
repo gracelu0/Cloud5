@@ -33,6 +33,7 @@ var config = {
   var lastBomb = 0;
   var facing = 1;
   var ammunition = 100;
+  var trapAmmo = 10;
   var x;
   var y;
 
@@ -128,10 +129,6 @@ var config = {
       percentText.setText(parseInt(value*100) + '%');
     });
 
-    this.load.on('fileprogress', function(value){
-      console.log(file.src);
-    });
-
     this.load.on('complete', function(value){
       console.log('complete');
       progressBar.destroy();
@@ -158,7 +155,7 @@ var config = {
     this.load.image('healthbar_red', 'assets/healthbar_red.png');
 
     this.load.image('bulletImg','assets/testBullet.png');
-    this.load.image('bomb','assets/tileLava.png');
+    this.load.image('bomb','assets/mushroom_red.png');
   
     this.load.image('rain', 'assets/rain.png');
     this.load.image('snow', 'assets/snowflake-pixel.png');
@@ -292,6 +289,8 @@ var config = {
     playerCountText.setScrollFactor(0);
     ammoCount = this.add.text(10, 40,"Ammunition Count:" + ' ' + ammunition + "/100",{ fontFamily: 'Neucha', fontSize:'20px' });
     ammoCount.setScrollFactor(0);
+    trapCount = this.add.text(10, 60,"Trap Count:" + ' ' + trapAmmo + "/10",{ fontFamily: 'Neucha', fontSize:'20px' });
+    trapCount.setScrollFactor(0);
 
     //timer
     //this.totalTime = 180;
@@ -571,7 +570,7 @@ var config = {
     camera.setBounds(0,0,map.widthInPixels, map.heightInPixels);
   }
 
-  function update(){
+  function update(time){
     if(this.player){
       if(this.player.health > 0){
         if (this.cursors.up.isDown){
@@ -595,8 +594,6 @@ var config = {
           facing = 4;
         }
 
-
-
         if (this.player.health > 0) {
           var usernameLength = document.getElementById("nameGame").value.length;
           var offset = 12.5-usernameLength*2.5;
@@ -611,7 +608,7 @@ var config = {
           this.usernameText.y = this.player.body.position.y + 24;
         }
 
-        if (this.cursors.space.isDown && ammunition > 0 && lastFired == 0 && document.activeElement !== messageText){
+        if (this.cursors.space.isDown && ammunition > 0 && lastFired == 0 && document.activeElement !== messageText && time/1000 >= 30){
           var bullet = bullets.get();
 
           if(bullet){
@@ -629,14 +626,24 @@ var config = {
           lastFired --;
         }
 
-        if (this.bombButton.isDown && lastBomb == 0 &&  document.activeElement !== messageText){
-          var trap = traps.create(this.player.body.position.x, this.player.body.position.y, 'bomb');
-          trap.body.setImmovable();
-          lastBomb = 30;
-          this.socket.emit('trapSet', { x: this.player.body.position.x, y: this.player.body.position.y });
+        if (this.bombButton.isDown && trapAmmo > 0 && lastBomb == 0 &&  document.activeElement !== messageText && time/1000 < 30){
+          if(!this.physics.overlap(this.player,traps)){
+            var trap = traps.create(this.player.body.position.x, this.player.body.position.y, 'bomb');
+            trap.body.setImmovable();
+            lastBomb = 30;
+            trapAmmo --;
+            trapCount.setText("Trap Count:" + ' ' + trapAmmo + "/10");
+            this.socket.emit('trapSet', { x: this.player.body.position.x, y: this.player.body.position.y });
+          }
         }
         if(lastBomb > 0){
           lastBomb --;
+        }
+
+        if (time/1000 >= 33){
+          traps.getChildren().forEach(child => {
+            child.visible = false;
+          })
         }
 
         this.physics.collide(this.player,collideLayer);
@@ -646,6 +653,7 @@ var config = {
           child.body.immovable = true;
           if(child.health <= 0){
             //this.socket.emit('playerDied', {id:child.playerId, username: child.playerUsername});
+            child.health = -5;
             console.log("player id" + child.playerId);
             console.log("username" + child.playerUsername)
             console.log("in update1");
@@ -835,8 +843,4 @@ var config = {
   playerDeath = function(deadPlayer){
     deadPlayer.destroy();
     deadPlayer = null;
-    //healthbar_red.destroy();
-    //healthbar_green.destroy();
   }
-
-  // var socket = io();
