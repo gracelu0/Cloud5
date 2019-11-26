@@ -283,7 +283,7 @@ io.on('connection', function (socket) {
     var trapTimer = setInterval(function() {
       console.log(totalGameTime);
       totalGameTime--;
-      io.sockets.emit('timer', { countdown: totalGameTime });
+      io.sockets.emit('timer', { countdown: totalGameTime-gameSecs });
       if (totalGameTime-trapSecs < 1){
         clearInterval(trapTimer);
         var gameTimer = setInterval(function(){
@@ -383,7 +383,6 @@ io.on('connection', function (socket) {
 
       }
       counter ++;
-
     }
   });
 
@@ -452,7 +451,6 @@ function gameLoop(){
       }
     }
   }
-
   io.emit('bulletsUpdate', servBullets);
   io.emit('trapsUpdate', servTraps);
 }
