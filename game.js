@@ -12,12 +12,11 @@ const bcrypt = require('bcrypt');
 const { Pool } = require('pg');
 
 var pool = new Pool({
-  connectionString: process.env.DATABASE_URL
+  host: 'localhost',
+  user: 'postgres',
+  password: 'mantiS7326510#',
+  database: 'cloud5'
 });
-
-
-
-
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
@@ -57,7 +56,7 @@ app.post('/waitForPlayers', (req,res) => {
 });
 
 
-var trapSecs = 30; var gameSecs = 120;
+var trapSecs = 5; var gameSecs = 60;
 var totalGameTime = trapSecs + gameSecs;
 
 app.post('/game', (req,res) => {
@@ -91,7 +90,7 @@ app.post('/login', (req, res) => {
                 else{ // result.row[0].usertype == 'Admin'
 
 
-                    var usersQuery=`SELECT userid, username, email, usertype FROM logindb ORDER BY usertype, username`;
+                    var usersQuery=`SELECT username, email, usertype FROM logindb ORDER BY usertype, username`;
                     pool.query(usersQuery, (error, result) =>{
                         if (error)
                             res.end(error);
@@ -268,8 +267,11 @@ var players = {};
 var redBars = {};
 var servBullets = [];
 var servTraps = [];
+var rankings = [];
 
 io.on('connection', function (socket) {
+  rankings = [];
+  console.log(rankings);
   playerCount++;
   console.log('a user connected. Num of players: ' + playerCount);
   io.sockets.emit('numPlayers', playerCount);
@@ -341,11 +343,15 @@ io.on('connection', function (socket) {
 
   socket.on('playerDied', function (deadPlayer){
     //console.log("insockect on server: " + deadPlayer.username);
-    console.log("player died. Players joined: " + playerCount )
+    console.log("player died. Players joined: " + playerCount );
     playerCount--;
-    console.log("player died. Players joined (updated): " + playerCount )
+    console.log("died:" + playerCount);
+    console.log("player died. Players joined (updated): " + playerCount );
     var username = deadPlayer.username;
+    console.log(username);
     console.log(deadPlayer);
+    rankings.push(username);
+    console.log(rankings);
     io.sockets.emit('numPlayers', playerCount);
     io.emit('died', deadPlayer);
     var counter = 0;
@@ -364,6 +370,7 @@ io.on('connection', function (socket) {
 
   socket.on('disconnect', function () {
     playerCount--;
+    console.log("disconnect" + playerCount);
     console.log('user disconnected');
     for(var i = 0; i < servTraps.length; i++){
       if(servTraps[i].owner == socket.id){
