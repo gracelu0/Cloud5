@@ -60,7 +60,7 @@ app.post('/waitForPlayers', (req,res) => {
 });
 
 
-var trapSecs = 5; var gameSecs = 60;
+var trapSecs = 60; var gameSecs = 120;
 var totalGameTime = trapSecs + gameSecs;
 
 app.post('/game', (req,res) => {
@@ -273,11 +273,8 @@ var playerAlive = 0;
 var players = {};
 var servBullets = [];
 var servTraps = [];
-var rankings = [];
 
 io.on('connection', function (socket) {
-  rankings = [];
-  console.log(rankings);
   playerCount++;
   playerAlive = playerCount;
   console.log('a user connected. Num of players: ' + playerCount);

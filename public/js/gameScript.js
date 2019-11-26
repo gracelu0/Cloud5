@@ -36,6 +36,7 @@ var config = {
   var trapAmmo = 10;
   var x;
   var y;
+  var rankings = {};
 
 
   //parameters to control music+sound
@@ -672,6 +673,12 @@ var config = {
         console.log("id in els" + this.player.playerId);
         this.socket.emit('playerDied', {id: this.player.playerId, username: this.player.playerUsername});
         console.log("in update2");
+        for(var i = 0; i < 4; i++) {
+          if(rankings[i] != null) {
+            rankings[i] = this.player.playerUsername;
+          }
+        }
+        console.log(rankings);
         playerDeath(this.player);
         this.healthbar_green.destroy();
         this.healthbar_red.destroy();
