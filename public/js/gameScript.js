@@ -558,7 +558,7 @@ var config = {
     camera.setBounds(0,0,map.widthInPixels, map.heightInPixels);
   }
 
-  function update(){
+  function update(time){
     if(this.player){
       if(this.player.health > 0){
         if (this.cursors.up.isDown){
@@ -582,8 +582,6 @@ var config = {
           facing = 4;
         }
 
-
-
         if (this.player.health > 0) {
           var usernameLength = document.getElementById("nameGame").value.length;
           var offset = 12.5-usernameLength*2.5;
@@ -598,7 +596,7 @@ var config = {
           this.usernameText.y = this.player.body.position.y + 24;
         }
 
-        if (this.cursors.space.isDown && ammunition > 0 && lastFired == 0 && document.activeElement !== messageText){
+        if (this.cursors.space.isDown && ammunition > 0 && lastFired == 0 && document.activeElement !== messageText && time/1000 >= 30){
           var bullet = bullets.get();
 
           if(bullet){
@@ -616,7 +614,7 @@ var config = {
           lastFired --;
         }
 
-        if (this.bombButton.isDown && trapAmmo > 0 && lastBomb == 0 &&  document.activeElement !== messageText){
+        if (this.bombButton.isDown && trapAmmo > 0 && lastBomb == 0 &&  document.activeElement !== messageText && time/1000 < 30){
           if(!this.physics.overlap(this.player,traps)){
             var trap = traps.create(this.player.body.position.x, this.player.body.position.y, 'bomb');
             trap.body.setImmovable();
@@ -628,6 +626,12 @@ var config = {
         }
         if(lastBomb > 0){
           lastBomb --;
+        }
+
+        if (time/1000 >= 33){
+          traps.getChildren().forEach(child => {
+            child.visible = false;
+          })
         }
 
         this.physics.collide(this.player,collideLayer);
