@@ -273,6 +273,7 @@ var playerAlive = 0;
 var players = {};
 var servBullets = [];
 var servTraps = [];
+var servHealthpacks = [];
 
 io.on('connection', function (socket) {
   playerCount++;
@@ -365,6 +366,20 @@ io.on('connection', function (socket) {
     servTraps.push(newTrap);
   });
 
+  socket.on('healthpackSet', function (healthpackInit){
+    var newHealthpack = healthpackInit;
+    newHealthpack.x = healthpackInit.x;
+    newHealthpack.y = healthpackInit.y;
+    servHealthpacks.push(newHealthpack);
+  });
+
+  socket.on('healthpackDespawn', function(){
+    for(var i = 0; i < servHealthpacks.length; i++){
+      servHealthpacks.splice(i,1);
+      i--;
+    }
+  });
+
   socket.on('playerDied', function (deadPlayer){
     //console.log("insockect on server: " + deadPlayer.username);
     console.log("player died. Players alive (unupdated): " + playerAlive )
@@ -451,8 +466,26 @@ function gameLoop(){
       }
     }
   }
+
+  for(var i = 0; i < servHealthpacks.length; i++){
+    var currHealthpack = servHealthpacks[i];
+    if(currHealthpack && servHealthpacks[i]){
+      for(var id in players){
+        var dx = players[id].x - currHealthpack.x;
+        var dy = players[id].y - currHealthpack.y;
+        var dist = Math.sqrt(dx*dx + dy*dy);
+        if(dist < 20){
+          io.emit('healthpackHit',id);
+          servHealthpacks.splice(i,1);
+          i--;
+        }
+      }
+    }
+  }
+
   io.emit('bulletsUpdate', servBullets);
   io.emit('trapsUpdate', servTraps);
+  io.emit('healthpacksUpdate', servHealthpacks);
 }
 
 setInterval(gameLoop, 16);
