@@ -48,11 +48,13 @@ app.post('/pregame', (req,res) => {
     res.render('pages/pregame');
 });
 
-var blockGamersFlag = false; 
+// var blockGamersFlag = false;
+var gameFlag = false;
 
 app.post('/waitForPlayers', (req,res) => {
   //var selectedCharacter = req.body.character;
   //console.log(selectedCharacter);
+  gameFlag = false;
   res.render('pages/gameStaging');
 });
 
@@ -63,12 +65,14 @@ app.post('/game', (req,res) => {
   // var selectedCharacter = req.body.colorGame;
   // console.log(selectedCharacter);
   //res.render('pages/game', {character: selectedCharacter, gameTime: gameSecs, trapTime: trapSecs});
+  gameFlag = true;
   res.render('pages/game');
 });
 
 app.post('/postgame', (req,res) => {
-    blockGamersFlag = false;
-    console.log(blockGamersFlag);
+    // blockGamersFlag = false;
+    // console.log(blockGamersFlag);
+    gameFlag = false;
     res.render('pages/postgame');
 });
 
@@ -274,7 +278,7 @@ var servTraps = [];
 io.on('connection', function (socket) {
   playerCount++;
   playerAlive = playerCount;
-  if (playerCount==4){
+  if (playerCount==4 && gameFlag){
     totalGameTime = gameSecs + trapSecs;
     var trapTimer = setInterval(function() {
       console.log(totalGameTime);
@@ -395,7 +399,7 @@ io.on('connection', function (socket) {
     delete players[socket.id];
     io.sockets.emit('numPlayers', playerCount);
     io.emit('disconnect', socket.id);
-    if (playerCount==0){
+    if (playerCount==0 || !gameFlag){
       if (typeof trapTimer !== "undefined")
         clearInterval(trapTimer);
       if (typeof gameTimer !== "undefined")
