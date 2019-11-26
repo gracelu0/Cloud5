@@ -132,3 +132,13 @@ button:hover{
     color: green;
     font-size: 1.5em;
 }
+
+div{
+    margin: auto;
+    width: 80%;
+}
+
+#blobL,#blobR{
+    display: block;
+    width: 100%;
+}

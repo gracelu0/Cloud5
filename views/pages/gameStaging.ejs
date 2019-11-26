@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr">
     <head>
       <title>Battle Blobs</title>
-      <link rel="stylesheet" href="/stylesheets/chat.css">
+      <link rel="stylesheet" href="/stylesheets/waitingChat.css">
       <link rel="stylesheet" href="/stylesheets/game.css">
       <link href="https://fonts.googleapis.com/css?family=Sniglet:800&display=swap" rel="stylesheet">
       <link href="https://fonts.googleapis.com/css?family=Neucha&display=swap" rel="stylesheet">
@@ -27,18 +27,21 @@
       <script src="https://unpkg.com/socket.io-client@2/dist/socket.io.slim.js"></script>
 
       <h1 align="center">BATTLE BLOBS</h1>
-      <div align="center" id="waitMessage"></div>
+      <div align="center" id="loading">
+        <h2 id="waitMessage"></h2>
+        <img src="/assets/ui/waiting.gif" alt="">
+      </div>
 
       <div id="chatArea">
-        <ul id="messages"></ul>
-      </div>
+          <ul id="messages"></ul>
+        </div>
       <form class = "chatForm">
           <input id = "messageText" type="text" placeholder="Chat with other players while waiting" />
           <button type="submit" id="chatButton">Send</button>
       </form>
 
       <form class="" id="gamePage" action="/game" method="post">
-        <button type="submit" name="button" hidden>Go to game screen</button>
+        <button type="submit" name="button" id="gameSubmitBtn" hidden>Let the Battle Begin!</button>
       </form>
     </body>
 </html>

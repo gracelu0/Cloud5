@@ -7,7 +7,7 @@ var config = {
       default: 'arcade',
       arcade: {
         gravity: {y: 0},
-        debug: true
+        debug: false
       }
     },
     scene: {
@@ -33,6 +33,7 @@ var config = {
   var lastBomb = 0;
   var facing = 1;
   var ammunition = 100;
+  var trapAmmo = 10;
   var x;
   var y;
 
@@ -82,13 +83,13 @@ var config = {
             weatherButton.removeAttribute("hidden");
             weatherButton.addEventListener('click', function(){
               updateWeatherFlag();
-              if (weatherButton.innerHTML == "WEATHER ON")
-                weatherButton.innerHTML = "WEATHER OFF";
-              else
-                weatherButton.innerHTML = "WEATHER ON";
-            });
+            //   if (weatherButton.innerHTML == "WEATHER ON")
+            //     weatherButton.innerHTML = "WEATHER OFF";
+            //   else
+            //     weatherButton.innerHTML = "WEATHER ON";
+             });
             weatherFlag = true; weatherToggle = true;
-            weatherButton.innerHTML = "WEATHER OFF";
+            // weatherButton.innerHTML = "WEATHER OFF";
           }
       return weatherResponse;
   }
@@ -136,10 +137,6 @@ var config = {
       percentText.setText(parseInt(value*100) + '%');
     });
 
-    this.load.on('fileprogress', function(value){
-      console.log(file.src);
-    });
-
     this.load.on('complete', function(value){
       console.log('complete');
       progressBar.destroy();
@@ -166,8 +163,8 @@ var config = {
     this.load.image('healthbar_red', 'assets/healthbar_red.png');
 
     this.load.image('bulletImg','assets/testBullet.png');
-    this.load.image('bomb','assets/bomb.png');
-
+    this.load.image('bomb','assets/mushroom_red.png');
+  
     this.load.image('rain', 'assets/rain.png');
     this.load.image('snow', 'assets/snowflake-pixel.png');
     this.load.image('fog', 'assets/fog.png');
@@ -244,11 +241,11 @@ var config = {
       musicFlag = !musicFlag;
       console.log(musicFlag);
       if(musicFlag == false) {
-        musicButton.innerHTML = "MUSIC ON";
+        //musicButton.innerHTML = "MUSIC ON";
         bgmusic.pause();
       }
       else {
-        musicButton.innerHTML = "MUSIC OFF";
+       // musicButton.innerHTML = "MUSIC OFF";
         bgmusic.resume();
       }
     })
@@ -256,10 +253,10 @@ var config = {
       soundFlag = !soundFlag;
       console.log(soundFlag);
       if(soundFlag == false) {
-        soundButton.innerHTML = "SOUND ON";
+       // soundButton.innerHTML = "SOUND ON";
       }
       else {
-        soundButton.innerHTML = "SOUND OFF";
+       // soundButton.innerHTML = "SOUND OFF";
       }
     })
 
@@ -302,6 +299,8 @@ var config = {
     playerCountText.setScrollFactor(0);
     ammoCount = this.add.text(10, 40,"Ammunition Count:" + ' ' + ammunition + "/100",{ fontFamily: 'Neucha', fontSize:'20px' });
     ammoCount.setScrollFactor(0);
+    trapCount = this.add.text(10, 60,"Trap Count:" + ' ' + trapAmmo + "/10",{ fontFamily: 'Neucha', fontSize:'20px' });
+    trapCount.setScrollFactor(0);
 
     //timer
     //this.totalTime = 180;
@@ -438,18 +437,9 @@ var config = {
               otherPlayer.setPosition(playerInfo.x, playerInfo.y);
               var usernameLength = playerInfo.playerUsername.length;
               console.log("length", usernameLength);
-              var offset = 0;
-              if (usernameLength < 5){
-                offset = -10;
-              }
-              else if (usernameLength < 10){
-                offset = usernameLength*2;
-              }
-              else{
-                offset = 12*(usernameLength/5);
-              }
-
-
+              var offset = usernameLength*2.5;
+              console.log(offset);
+              
               otherPlayer.healthbar_red.x = playerInfo.x;
               otherPlayer.healthbar_red.y = playerInfo.y - 32;
               otherPlayer.healthbar_green.x = playerInfo.x;
@@ -568,7 +558,7 @@ var config = {
     camera.setBounds(0,0,map.widthInPixels, map.heightInPixels);
   }
 
-  function update(){
+  function update(time){
     if(this.player){
       if(this.player.health > 0){
         if (this.cursors.up.isDown){
@@ -592,20 +582,9 @@ var config = {
           facing = 4;
         }
 
-
-
         if (this.player.health > 0) {
           var usernameLength = document.getElementById("nameGame").value.length;
-          var offset = 0;
-          if (usernameLength < 5){
-            offset = -12;
-          }
-          else if (usernameLength < 10){
-            offset = -usernameLength*2;
-          }
-          else{
-            offset = -usernameLength;
-          }
+          var offset = 12.5-usernameLength*2.5;
 
           this.healthbar_green.displayWidth = (this.player.health/100)*100;
           this.healthbar_green.x = this.player.body.position.x + 12;
@@ -613,11 +592,11 @@ var config = {
           this.healthbar_red.x = this.player.body.position.x + 12;
           this.healthbar_red.y = this.player.body.position.y - 20;
 
-          this.usernameText.x = this.player.body.position.x - offset;
-          this.usernameText.y = this.player.body.position.y + 30;
+          this.usernameText.x = this.player.body.position.x + offset;
+          this.usernameText.y = this.player.body.position.y + 24;
         }
 
-        if (this.cursors.space.isDown && ammunition > 0 && lastFired == 0 && document.activeElement !== messageText){
+        if (this.cursors.space.isDown && ammunition > 0 && lastFired == 0 && document.activeElement !== messageText && time/1000 >= 30){
           var bullet = bullets.get();
 
           if(bullet){
@@ -635,14 +614,24 @@ var config = {
           lastFired --;
         }
 
-        if (this.bombButton.isDown && lastBomb == 0 &&  document.activeElement !== messageText){
-          var trap = traps.create(this.player.body.position.x, this.player.body.position.y, 'bomb');
-          trap.body.setImmovable();
-          lastBomb = 30;
-          this.socket.emit('trapSet', { x: this.player.body.position.x, y: this.player.body.position.y });
+        if (this.bombButton.isDown && trapAmmo > 0 && lastBomb == 0 &&  document.activeElement !== messageText && time/1000 < 30){
+          if(!this.physics.overlap(this.player,traps)){
+            var trap = traps.create(this.player.body.position.x, this.player.body.position.y, 'bomb');
+            trap.body.setImmovable();
+            lastBomb = 30;
+            trapAmmo --;
+            trapCount.setText("Trap Count:" + ' ' + trapAmmo + "/10");
+            this.socket.emit('trapSet', { x: this.player.body.position.x, y: this.player.body.position.y });
+          }
         }
         if(lastBomb > 0){
           lastBomb --;
+        }
+
+        if (time/1000 >= 33){
+          traps.getChildren().forEach(child => {
+            child.visible = false;
+          })
         }
 
         this.physics.collide(this.player,collideLayer);
@@ -652,6 +641,7 @@ var config = {
           child.body.immovable = true;
           if(child.health <= 0){
             //this.socket.emit('playerDied', {id:child.playerId, username: child.playerUsername});
+            child.health = -5;
             console.log("player id" + child.playerId);
             console.log("username" + child.playerUsername)
             console.log("in update1");
@@ -787,7 +777,7 @@ var config = {
       align:'center',
       fontSize: '12px'
     });
-    self.usernameText.setOrigin(0.5,0.5);
+
     self.cameras.main.startFollow(self.player, true,0.5,0.5,0.5,0.5);
   }
 
@@ -806,6 +796,7 @@ var config = {
       align:'center',
       fontSize: '12px'
     });
+
     if (playerInfo.colour == "pink"){
        otherPlayer.setTexture('pinkPlayer');
     }
@@ -840,8 +831,4 @@ var config = {
   playerDeath = function(deadPlayer){
     deadPlayer.destroy();
     deadPlayer = null;
-    //healthbar_red.destroy();
-    //healthbar_green.destroy();
   }
-
-  // var socket = io();
