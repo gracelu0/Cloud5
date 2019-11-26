@@ -731,7 +731,7 @@ var config = {
       this.socket.emit('healthpackSet', { x: healthpackX, y: healthpackY });
     }
 
-    if (time/1000 > 200){
+    if (time/1000 >= 150){
       this.socket.emit('healthpackDespawn');
     }
 
