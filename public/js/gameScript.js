@@ -34,6 +34,7 @@ var config = {
   var facing = 1;
   var ammunition = 100;
   var trapAmmo = 10;
+  var healthpackCounter = 0;
   var x;
   var y;
 
@@ -164,6 +165,8 @@ var config = {
 
     this.load.image('bulletImg','assets/testBullet.png');
     this.load.image('bomb','assets/mushroom_red.png');
+    this.load.image('small_health','assets/carrot.png');
+    this.load.image('full_health','assets/carrot_gold.png');
   
     this.load.image('rain', 'assets/rain.png');
     this.load.image('snow', 'assets/snowflake-pixel.png');
@@ -202,7 +205,7 @@ var config = {
       this.setActive(true);
       this.setVisible(true);
     }
-    update(time, delta){
+    update(){
       if(this){
         this.x += this.xSpeed;
         this.y += this.ySpeed;
@@ -397,6 +400,25 @@ var config = {
       }
     });
 
+    this.socket.on('healthpackHit', function(id){
+      if(id === sessionId){
+        self.player.health += 10;
+        if(self.player.health > 100){
+          self.player.health = 100;
+        }
+      }
+      else{
+        self.otherPlayers.getChildren().forEach(function (otherPlayer){
+          if(id === otherPlayer.playerId){
+            otherPlayer.health += 10;
+            if(otherPlayer.health > 100){
+              otherPlayer.health = 100;
+            }
+          }
+        })
+      }
+    });
+
     this.socket.on('bulletsUpdate', function(servBullets){
       var counter = 0;
       bullets.getChildren().forEach(child => {
@@ -428,6 +450,23 @@ var config = {
       })
       for(var i = counter; i < servTraps.length; i++){
         addTraps(self, servTraps[i]);
+      }
+    });
+
+    this.socket.on('healthpacksUpdate', function(servHealthpacks){
+      var counter = 0;
+      healthpacks.getChildren().forEach(child => {
+        if(servHealthpacks[counter]){
+          child.x = servHealthpacks[counter].x;
+          child.y = servHealthpacks[counter].y;
+        }
+        counter++;
+        if(counter > servHealthpacks.length){
+          child.destroy();
+        }
+      })
+      for(var i = counter; i < servHealthpacks.length; i++){
+        addHealthpacks(self, servHealthpacks[i]);
       }
     });
 
@@ -539,7 +578,11 @@ var config = {
 
     traps = this.physics.add.group({
       classType: Phaser.GameObjects.Sprite
-    })
+    });
+
+    healthpacks = this.physics.add.group({
+      classType: Phaser.GameObjects.Sprite
+    });
 
   //   const debugGraphics = this.add.graphics().setAlpha(0.75);
   //   collideLayer.renderDebug(debugGraphics, {
@@ -562,22 +605,22 @@ var config = {
     if(this.player){
       if(this.player.health > 0){
         if (this.cursors.up.isDown){
-          this.player.body.position.y -=4;
+          this.player.body.position.y -=2;
           this.player.flipY = true;
           facing = 1;
         }
         if (this.cursors.down.isDown){
-          this.player.body.position.y +=4;
+          this.player.body.position.y +=2;
           this.player.flipY = false;
           facing = 2;
         }
         if (this.cursors.left.isDown){
-          this.player.body.position.x -=4;
+          this.player.body.position.x -=2;
           this.player.flipX = true;
           facing = 3;
         }
         if (this.cursors.right.isDown){
-          this.player.body.position.x +=4;
+          this.player.body.position.x +=2;
           this.player.flipX = false;
           facing = 4;
         }
@@ -679,43 +722,56 @@ var config = {
       }
     }
 
-      if (weatherFlag && !weatherToggle){
-        updateWeatherToggle();
-        if (currentWeather == "Rain")
-          addRain(rainParticles, map.widthInPixels, map.heightInPixels);
+    if (time/1000 > 45*(healthpackCounter+1)){
+      console.log("ok");
+      healthpackCounter++;
+      var healthpackX = Math.floor(Math.random() * 326) + 1075;
+      var healthpackY = Math.floor(Math.random() * 326) + 1000;
+      var healthpack = healthpacks.create(healthpackX,healthpackY,'small_health');
+      this.socket.emit('healthpackSet', { x: healthpackX, y: healthpackY });
+    }
 
-        else if (currentWeather == "Drizzle")
-          addDrizzle(rainParticles, map.widthInPixels, map.heightInPixels);
+    if (time/1000 > 200){
+      this.socket.emit('healthpackDespawn');
+    }
 
-        else if(currentWeather == "Snow")
-          addSnow(snowParticles, map.widthInPixels, map.heightInPixels);
+    if (weatherFlag && !weatherToggle){
+      updateWeatherToggle();
+      if (currentWeather == "Rain")
+        addRain(rainParticles, map.widthInPixels, map.heightInPixels);
 
-        else if(currentWeather == "Mist")
-          changeAtmos(this, fog, "Misty");
+      else if (currentWeather == "Drizzle")
+        addDrizzle(rainParticles, map.widthInPixels, map.heightInPixels);
 
-        else if(currentWeather == "Haze")
-          changeAtmos(this, fog, "Hazy");
+      else if(currentWeather == "Snow")
+        addSnow(snowParticles, map.widthInPixels, map.heightInPixels);
 
-        else if(currentWeather == "Fog")
-          changeAtmos(this, fog, "foggy");
-      }
+      else if(currentWeather == "Mist")
+        changeAtmos(this, fog, "Misty");
 
-      else if (!weatherFlag && weatherToggle){
-        updateWeatherToggle();
-        if (currentWeather == "Rain")
-          removeRain();
+      else if(currentWeather == "Haze")
+        changeAtmos(this, fog, "Hazy");
 
-        else if (currentWeather == "Drizzle")
-          removeDrizzle();
+      else if(currentWeather == "Fog")
+        changeAtmos(this, fog, "foggy");
+    }
 
-        else if(currentWeather == "Snow")
-          removeSnow();
+    else if (!weatherFlag && weatherToggle){
+      updateWeatherToggle();
+      if (currentWeather == "Rain")
+        removeRain();
 
-        else if(currentWeather == "Mist" ||
-                currentWeather == "Haze" ||
-                currentWeather == "Fog")
-          changeAtmos(this, fog, "Clear");
-      }
+      else if (currentWeather == "Drizzle")
+        removeDrizzle();
+
+      else if(currentWeather == "Snow")
+        removeSnow();
+
+      else if(currentWeather == "Mist" ||
+              currentWeather == "Haze" ||
+              currentWeather == "Fog")
+        changeAtmos(this, fog, "Clear");
+    }
       //timerText.setText(40, 10, 'Timer: ' + formatTime(document.getElementById('trapTime').value));
   }
 
@@ -826,6 +882,11 @@ var config = {
   function addTraps(self, trapInfo){
     const nTrap = self.add.sprite(trapInfo.x, trapInfo.y, 'bomb');
     traps.add(nTrap);
+  }
+
+  function addHealthpacks(self, healthpackInfo){
+    const nHealthpack = self.add.sprite(healthpackInfo.x, healthpackInfo.y, 'small_health');
+    healthpacks.add(nHealthpack);
   }
 
   playerDeath = function(deadPlayer){
