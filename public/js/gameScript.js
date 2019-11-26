@@ -162,7 +162,7 @@ var config = {
     this.load.image('healthbar_red', 'assets/healthbar_red.png');
 
     this.load.image('bulletImg','assets/testBullet.png');
-    this.load.image('bomb','assets/tileLava.png');
+    this.load.image('bomb','assets/mushroom_red.png');
   
     this.load.image('rain', 'assets/rain.png');
     this.load.image('snow', 'assets/snowflake-pixel.png');
