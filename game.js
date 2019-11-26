@@ -59,12 +59,12 @@ app.post('/waitForPlayers', (req,res) => {
 });
 
 
-var trapSecs = 10; var gameSecs = 10;
+var trapSecs = 10; var battleSecs = 10;
 
 app.post('/game', (req,res) => {
   // var selectedCharacter = req.body.colorGame;
   // console.log(selectedCharacter);
-  //res.render('pages/game', {character: selectedCharacter, gameTime: gameSecs, trapTime: trapSecs});
+  //res.render('pages/game', {character: selectedCharacter, gameTime: battleSecs, trapTime: trapSecs});
   gameFlag = true;
   res.render('pages/game');
 });
@@ -279,22 +279,23 @@ io.on('connection', function (socket) {
   playerCount++;
   playerAlive = playerCount;
   if (playerCount==4 && gameFlag){
-    totalGameTime = gameSecs + trapSecs;
+    totalGameTime = battleSecs + trapSecs;
     var trapTimer = setInterval(function() {
-      console.log(totalGameTime);
-      totalGameTime--;
-      io.sockets.emit('timer', { countdown: totalGameTime-gameSecs });
+      io.sockets.emit('trapTimer', { countdown: totalGameTime-battleSecs });
       if (totalGameTime-trapSecs < 1){
+        totalGameTime++;
         clearInterval(trapTimer);
-        var gameTimer = setInterval(function(){
+        var battleTimer = setInterval(function(){
+          io.sockets.emit('battleTimer', { countdown: totalGameTime });
+          if (totalGameTime < 1){
+            clearInterval(battleTimer);
+          }
           console.log(totalGameTime);
           totalGameTime--;
-          io.sockets.emit('timer', { countdown: totalGameTime });
-          if (totalGameTime < 1){
-            clearInterval(gameTimer);
-          }
         }, 1000)
       }
+      console.log(totalGameTime);
+      totalGameTime--;
     }, 1000);
   }
   console.log('a user connected. Num of players: ' + playerCount);
@@ -401,8 +402,8 @@ io.on('connection', function (socket) {
     if (playerCount==0 || !gameFlag){
       if (typeof trapTimer !== "undefined")
         clearInterval(trapTimer);
-      if (typeof gameTimer !== "undefined")
-        clearInterval(gameTimer);
+      if (typeof battleTimer !== "undefined")
+        clearInterval(battleTimer);
     }
   });
 });

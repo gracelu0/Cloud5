@@ -521,8 +521,26 @@ var config = {
 
     this.socket.emit('username',username);
 
-    this.socket.on('timer', function (data) {
-      $('#gameTimer').html(data.countdown);
+    function formatTime(seconds){
+      //Minutes
+      var minutes = Math.floor(seconds/60);
+      //seconds
+      var secondsPart = seconds%60;
+      //add zeros to left of seconds
+      secondsPart = secondsPart.toString().padStart(2,'0');
+      //return formatted time
+      return `${minutes}:${secondsPart}`;
+    }
+
+    this.socket.on('trapTimer', function (data) {
+      $('#gameTimer').html('<h2>Set Traps! Time Remaining: <b>' + formatTime(data.countdown) + '</b></h2>');
+    });
+
+    this.socket.on('battleTimer', function (data) {
+      $('#gameTimer').html('<h2>Battle! Time Remaining: <b>' + formatTime(data.countdown) + '</b></h2>');
+      if (data.countdown == 0){
+        document.getElementById('postGame').submit();
+      }
     });
 
     bullets = this.physics.add.group({
