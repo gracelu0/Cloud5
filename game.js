@@ -48,28 +48,31 @@ app.post('/pregame', (req,res) => {
     res.render('pages/pregame');
 });
 
-var blockGamersFlag = false; 
+// var blockGamersFlag = false;
+var gameFlag = false;
 
 app.post('/waitForPlayers', (req,res) => {
   //var selectedCharacter = req.body.character;
   //console.log(selectedCharacter);
+  gameFlag = false;
   res.render('pages/gameStaging');
 });
 
 
-var trapSecs = 30; var gameSecs = 120;
-var totalGameTime = trapSecs + gameSecs;
+var trapSecs = 30; var battleSecs = 120;
 
 app.post('/game', (req,res) => {
   // var selectedCharacter = req.body.colorGame;
   // console.log(selectedCharacter);
-  //res.render('pages/game', {character: selectedCharacter, gameTime: gameSecs, trapTime: trapSecs});
-  res.render('pages/game', {gameTime: gameSecs, trapTime: trapSecs});
+  //res.render('pages/game', {character: selectedCharacter, gameTime: battleSecs, trapTime: trapSecs});
+  gameFlag = true;
+  res.render('pages/game');
 });
 
 app.post('/postgame', (req,res) => {
-    blockGamersFlag = false;
-    console.log(blockGamersFlag);
+    // blockGamersFlag = false;
+    // console.log(blockGamersFlag);
+    gameFlag = false;
     res.render('pages/postgame');
 });
 
@@ -275,6 +278,26 @@ var servHealthpacks = [];
 io.on('connection', function (socket) {
   playerCount++;
   playerAlive = playerCount;
+  if (playerCount==4 && gameFlag){
+    totalGameTime = battleSecs + trapSecs;
+    var trapTimer = setInterval(function() {
+      io.sockets.emit('trapTimer', { countdown: totalGameTime-battleSecs });
+      if (totalGameTime-trapSecs < 1){
+        totalGameTime++;
+        clearInterval(trapTimer);
+        var battleTimer = setInterval(function(){
+          io.sockets.emit('battleTimer', { countdown: totalGameTime });
+          if (totalGameTime < 1){
+            clearInterval(battleTimer);
+          }
+          console.log(totalGameTime);
+          totalGameTime--;
+        }, 1000)
+      }
+      console.log(totalGameTime);
+      totalGameTime--;
+    }, 1000);
+  }
   console.log('a user connected. Num of players: ' + playerCount);
   io.sockets.emit('numPlayers', playerCount);
   // create a new player and add it to our players object
@@ -390,6 +413,12 @@ io.on('connection', function (socket) {
     delete players[socket.id];
     io.sockets.emit('numPlayers', playerCount);
     io.emit('disconnect', socket.id);
+    if (playerCount==0 || !gameFlag){
+      if (typeof trapTimer !== "undefined")
+        clearInterval(trapTimer);
+      if (typeof battleTimer !== "undefined")
+        clearInterval(battleTimer);
+    }
   });
 });
 
