@@ -401,6 +401,8 @@ io.on('connection', function (socket) {
       }
       counter ++;
     }*/
+    if ((playerAlive==1 || playerAlive==0) && gameFlag)
+          totalGameTime = 0;
   });
 
   socket.on('disconnect', function (){
@@ -417,14 +419,8 @@ io.on('connection', function (socket) {
     io.emit('disconnect', socket.id);
 
     if ((playerCount==1 && gameFlag) ||
-        (playerCount==0 && !gameFlag)){
-      // if (typeof trapTimer !== "undefined")
-      //   clearInterval(trapTimer);
-      // if (typeof battleTimer !== "undefined")
-      //   clearInterval(battleTimer);
-      // if (typeof trapTimer !== "undefined" || typeof battleTimer !== "undefined")
-        totalGameTime = 0;
-    }
+        (playerCount==0 && !gameFlag))
+          totalGameTime = 0;
   });
 });
 
