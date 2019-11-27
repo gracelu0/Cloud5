@@ -17,6 +17,7 @@ var pool = new Pool({
 
 
 
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -38,10 +39,6 @@ app.post('/home', (req,res) => {
 
 app.post('/signUp', (req,res) => {
     res.render('pages/signUp');
-});
-
-app.post('/rules', (req,res) => {
-    res.render('pages/rules');
 });
 
 app.post('/pregame', (req,res) => {
