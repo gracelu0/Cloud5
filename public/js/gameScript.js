@@ -292,7 +292,7 @@ var config = {
     playerCountText.setScrollFactor(0);
     ammoCount = this.add.text(10, 40,"Ammunition left:" + ' ' + ammunition + "/100",{ fontFamily: 'Neucha', fontSize:'20px' });
     ammoCount.setScrollFactor(0);
-    trapCount = this.add.text(10, 60,"Traps left:" + ' ' + trapAmmo + "/10",{ fontFamily: 'Neucha', fontSize:'20px' });
+    trapCount = this.add.text(10, 60,"Mines left:" + ' ' + trapAmmo + "/10",{ fontFamily: 'Neucha', fontSize:'20px' });
     trapCount.setScrollFactor(0);
 
     //timer
@@ -571,7 +571,7 @@ var config = {
     }
 
     this.socket.on('trapTimer', function (data) {
-      $('#gameTimer').html('<h2>Set Traps! Time Remaining: <b>' + formatTime(data.countdown) + '</b></h2>');
+      $('#gameTimer').html('<h2>Set Mines! Time Remaining: <b>' + formatTime(data.countdown) + '</b></h2>');
     });
 
     this.socket.on('battleTimer', function (data) {

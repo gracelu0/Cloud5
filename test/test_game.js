@@ -7,15 +7,14 @@ var chai = require('chai')
     base_url = "http://localhost:5000";
 
 describe('server access', () =>{
-    describe("GET /", ()=>{
-        it("returns status code 200", (done)=>{
-            request.get(base_url,(err,res,body)=>{
-                assert.equal(200, res.statusCode);
-                done();
+    it("returns status code 200", (done)=>{
+        request.get(base_url,(err,res,body)=>{
+            assert.equal(200, res.statusCode);
+            done();
             });
-        });
     });
 });
+
 
 var players = require('../game.js').players;
 var playerCount = require('../game.js').playerCount;
@@ -30,3 +29,20 @@ describe('player count', ()=>{
         assert.equal(Object.keys(players).length, playerCount);
     });
 });
+
+//socket.io testing
+var io = require('socket.io-client')
+var socketURL = "http://localhost:5000";
+var options = {
+    transports: ['websocket'],
+    'force new connection': true
+};
+
+describe("Socket-Server", function () {
+    it('user connected', function (done) {
+      var client = io(socketURL);
+      client.on('connect', function (data) {
+        done();
+      });
+    });
+  });

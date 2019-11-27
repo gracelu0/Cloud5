@@ -11,16 +11,11 @@ const bcrypt = require('bcrypt');
 
 const { Pool } = require('pg');
 
-// var pool = new Pool({
-//   connectionString: process.env.DATABASE_URL
-// });
-
 var pool = new Pool({
-  user: 'graceluo',
-  password: 'tokicorgi',
-  host: 'localhost',
-  database: 'cloud5'
+  connectionString: process.env.DATABASE_URL
 });
+
+
 
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -44,10 +39,6 @@ app.post('/home', (req,res) => {
 
 app.post('/signUp', (req,res) => {
     res.render('pages/signUp');
-});
-
-app.post('/rules', (req,res) => {
-    res.render('pages/rules');
 });
 
 app.post('/pregame', (req,res) => {
