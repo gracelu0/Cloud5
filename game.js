@@ -282,7 +282,7 @@ io.on('connection', function (socket) {
     totalGameTime = battleSecs + trapSecs;
     var trapTimer = setInterval(function() {
       io.sockets.emit('trapTimer', { countdown: totalGameTime-battleSecs });
-      if (totalGameTime-trapSecs < 1){
+      if (totalGameTime-battleSecs < 1){
         totalGameTime++;
         clearInterval(trapTimer);
         var battleTimer = setInterval(function(){
