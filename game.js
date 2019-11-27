@@ -403,7 +403,7 @@ io.on('connection', function (socket) {
     }*/
   });
 
-  socket.on('disconnect', function () {
+  socket.on('disconnect', function (){
     playerCount--;
     console.log('user disconnected. Players joined: ' + playerCount);
     for(var i = 0; i < servTraps.length; i++){
@@ -416,7 +416,8 @@ io.on('connection', function (socket) {
     io.sockets.emit('numPlayers', playerCount);
     io.emit('disconnect', socket.id);
 
-    if (playerCount==0 || !gameFlag){
+    if ((playerCount==1 && gameFlag) ||
+        (playerCount==0 && !gameFlag)){
       // if (typeof trapTimer !== "undefined")
       //   clearInterval(trapTimer);
       // if (typeof battleTimer !== "undefined")
