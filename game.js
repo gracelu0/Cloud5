@@ -73,6 +73,7 @@ app.post('/postgame', (req,res) => {
     // blockGamersFlag = false;
     // console.log(blockGamersFlag);
     gameFlag = false;
+    console.log(gameFlag);
     res.render('pages/postgame');
 });
 
@@ -274,6 +275,7 @@ var players = {};
 var servBullets = [];
 var servTraps = [];
 var servHealthpacks = [];
+var totalGameTime;
 
 io.on('connection', function (socket) {
   playerCount++;
@@ -298,6 +300,7 @@ io.on('connection', function (socket) {
       totalGameTime--;
     }, 1000);
   }
+
   console.log('a user connected. Num of players: ' + playerCount);
   io.sockets.emit('numPlayers', playerCount);
   // create a new player and add it to our players object
@@ -412,11 +415,14 @@ io.on('connection', function (socket) {
     delete players[socket.id];
     io.sockets.emit('numPlayers', playerCount);
     io.emit('disconnect', socket.id);
+
     if (playerCount==0 || !gameFlag){
-      if (typeof trapTimer !== "undefined")
-        clearInterval(trapTimer);
-      if (typeof battleTimer !== "undefined")
-        clearInterval(battleTimer);
+      // if (typeof trapTimer !== "undefined")
+      //   clearInterval(trapTimer);
+      // if (typeof battleTimer !== "undefined")
+      //   clearInterval(battleTimer);
+      // if (typeof trapTimer !== "undefined" || typeof battleTimer !== "undefined")
+        totalGameTime = 0;
     }
   });
 });
