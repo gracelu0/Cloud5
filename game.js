@@ -381,7 +381,6 @@ io.on('connection', function (socket) {
   });
 
   socket.on('playerDied', function (deadPlayer){
-    //console.log("insockect on server: " + deadPlayer.username);
     console.log("player died. Players alive (unupdated): " + playerAlive )
     playerAlive--;
     console.log("player died. Players joined (updated): " + playerAlive );
