@@ -281,7 +281,7 @@ io.on('connection', function (socket) {
     totalGameTime = battleSecs + trapSecs;
     var trapTimer = setInterval(function() {
       io.sockets.emit('trapTimer', { countdown: totalGameTime-battleSecs });
-      if (totalGameTime-trapSecs < 1){
+      if (totalGameTime-battleSecs < 1){
         totalGameTime++;
         clearInterval(trapTimer);
         var battleTimer = setInterval(function(){
@@ -366,7 +366,6 @@ io.on('connection', function (socket) {
   });
 
   socket.on('playerDied', function (deadPlayer){
-    //console.log("insockect on server: " + deadPlayer.username);
     console.log("player died. Players alive (unupdated): " + playerAlive )
     playerAlive--;
     console.log("player died. Players joined (updated): " + playerAlive );
