@@ -273,10 +273,14 @@ var playerAlive = 0;
 var players = {};
 var servBullets = [];
 var servTraps = [];
+var rankings = [];
+var isDraw = 0;
 
 io.on('connection', function (socket) {
   playerCount++;
   playerAlive = playerCount;
+  //Empty rankings array
+  rankings = [];
   console.log('a user connected. Num of players: ' + playerCount);
   io.sockets.emit('numPlayers', playerCount);
   // create a new player and add it to our players object
@@ -353,6 +357,9 @@ io.on('connection', function (socket) {
     console.log("Players joined: " + playerCount)
     var username = deadPlayer.username;
     console.log(username + " was killed");
+    //Push dead player username to rankings array
+    rankings.push(username);
+    console.log(rankings);
     io.sockets.emit('numPlayers', playerAlive);
     io.emit('died', deadPlayer);
     var counter = 0;
@@ -369,6 +376,16 @@ io.on('connection', function (socket) {
   socket.on('disconnect', function () {
     playerCount--;
     console.log('user disconnected. Players joined: ' + playerCount);
+    var username = socket.username;
+    for(var i = 0; i < 4; i++) {
+      if(!(rankings[i] != null)) {
+        if(rankings[i] !== username) {
+          rankings.push(username);
+          isDraw += 1;
+        }
+      }
+    }
+    console.log(rankings);
     for(var i = 0; i < servTraps.length; i++){
       if(servTraps[i].owner == socket.id){
         servTraps.splice(i,1);
