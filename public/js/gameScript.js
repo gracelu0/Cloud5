@@ -651,7 +651,7 @@ var config = {
           this.usernameText.y = this.player.body.position.y + 24;
         }
 
-        if (this.cursors.space.isDown && ammunition > 0 && lastFired == 0 && document.activeElement !== messageText && time/1000 >= 30){
+        if (this.cursors.space.isDown && ammunition > 0 && lastFired == 0 && document.activeElement !== messageText && time/1000 >= 32){
           var bullet = bullets.get();
 
           if(bullet){
@@ -669,7 +669,7 @@ var config = {
           lastFired --;
         }
 
-        if (this.bombButton.isDown && trapAmmo > 0 && lastBomb == 0 &&  document.activeElement !== messageText && time/1000 < 30){
+        if (this.bombButton.isDown && trapAmmo > 0 && lastBomb == 0 &&  document.activeElement !== messageText && time/1000 < 32){
           if(!this.physics.overlap(this.player,traps)){
             var trap = traps.create(this.player.body.position.x, this.player.body.position.y, 'bomb');
             trap.body.setImmovable();
@@ -683,7 +683,7 @@ var config = {
           lastBomb --;
         }
 
-        if (time/1000 >= 33){
+        if (time/1000 >= 32){
           traps.getChildren().forEach(child => {
             child.visible = false;
           })
