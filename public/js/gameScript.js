@@ -290,9 +290,9 @@ var config = {
     //display text
     playerCountText = this.add.text(10,20,'',{ fontFamily: 'Neucha', fontSize:'20px' });
     playerCountText.setScrollFactor(0);
-    ammoCount = this.add.text(10, 40,"Ammunition Count:" + ' ' + ammunition + "/100",{ fontFamily: 'Neucha', fontSize:'20px' });
+    ammoCount = this.add.text(10, 40,"Ammunition left:" + ' ' + ammunition + "/100",{ fontFamily: 'Neucha', fontSize:'20px' });
     ammoCount.setScrollFactor(0);
-    trapCount = this.add.text(10, 60,"Trap Count:" + ' ' + trapAmmo + "/10",{ fontFamily: 'Neucha', fontSize:'20px' });
+    trapCount = this.add.text(10, 60,"Mines left:" + ' ' + trapAmmo + "/10",{ fontFamily: 'Neucha', fontSize:'20px' });
     trapCount.setScrollFactor(0);
 
     //timer
@@ -571,7 +571,7 @@ var config = {
     }
 
     this.socket.on('trapTimer', function (data) {
-      $('#gameTimer').html('<h2>Set Traps! Time Remaining: <b>' + formatTime(data.countdown) + '</b></h2>');
+      $('#gameTimer').html('<h2>Set Mines! Time Remaining: <b>' + formatTime(data.countdown) + '</b></h2>');
     });
 
     this.socket.on('battleTimer', function (data) {
@@ -651,7 +651,7 @@ var config = {
           this.usernameText.y = this.player.body.position.y + 24;
         }
 
-        if (this.cursors.space.isDown && ammunition > 0 && lastFired == 0 && document.activeElement !== messageText && time/1000 >= 30){
+        if (this.cursors.space.isDown && ammunition > 0 && lastFired == 0 && document.activeElement !== messageText && time/1000 >= 32){
           var bullet = bullets.get();
 
           if(bullet){
@@ -669,7 +669,7 @@ var config = {
           lastFired --;
         }
 
-        if (this.bombButton.isDown && trapAmmo > 0 && lastBomb == 0 &&  document.activeElement !== messageText && time/1000 < 30){
+        if (this.bombButton.isDown && trapAmmo > 0 && lastBomb == 0 &&  document.activeElement !== messageText && time/1000 < 32){
           if(!this.physics.overlap(this.player,traps)){
             var trap = traps.create(this.player.body.position.x, this.player.body.position.y, 'bomb');
             trap.body.setImmovable();
@@ -683,7 +683,7 @@ var config = {
           lastBomb --;
         }
 
-        if (time/1000 >= 33){
+        if (time/1000 >= 32){
           traps.getChildren().forEach(child => {
             child.visible = false;
           })

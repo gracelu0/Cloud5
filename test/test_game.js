@@ -3,45 +3,18 @@ var chai = require('chai')
     , assert = chai.assert
     , should = chai.should();
 
-var game = require('../game').app;
-var request = require('supertest');
-
-//set up data to pass to login method
-const userCredentials = {
-    username: 'mojo123',
-    password: '12345'
-}
-
-//login user
-var authenticatedUser = request.agent(game);
-
-describe('login', ()=>{
-    it("user can log in", (done)=>{
-        authenticatedUser
-            .post('/login')
-            .send(userCredentials)
-            .end((err,res)=>{
-                expect(res.statusCode).to.equal(200);
-                expect('Location', '/admin');
-                done();
-            });
-    });
-});
-
-
-var req = require('request'),
+    var request = require('request'),
     base_url = "http://localhost:5000";
 
 describe('server access', () =>{
-    describe("GET /", ()=>{
-        it("returns status code 200", (done)=>{
-            req.get(base_url,(err,res,body)=>{
-                assert.equal(200, res.statusCode);
-                done();
+    it("returns status code 200", (done)=>{
+        request.get(base_url,(err,res,body)=>{
+            assert.equal(200, res.statusCode);
+            done();
             });
-        });
     });
 });
+
 
 var players = require('../game.js').players;
 var playerCount = require('../game.js').playerCount;
@@ -56,3 +29,20 @@ describe('player count', ()=>{
         assert.equal(Object.keys(players).length, playerCount);
     });
 });
+
+//socket.io testing
+var io = require('socket.io-client')
+var socketURL = "http://localhost:5000";
+var options = {
+    transports: ['websocket'],
+    'force new connection': true
+};
+
+describe("Socket-Server", function () {
+    it('user connected', function (done) {
+      var client = io(socketURL);
+      client.on('connect', function (data) {
+        done();
+      });
+    });
+  });
