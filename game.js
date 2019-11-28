@@ -281,6 +281,7 @@ io.on('connection', function (socket) {
   playerAlive = playerCount;
   //Empty rankings array
   rankings = [];
+  isDraw = 0;
   console.log('a user connected. Num of players: ' + playerCount);
   io.sockets.emit('numPlayers', playerCount);
   // create a new player and add it to our players object
@@ -375,6 +376,7 @@ io.on('connection', function (socket) {
 
   socket.on('disconnect', function () {
     playerCount--;
+    playerAlive--;
     console.log('user disconnected. Players joined: ' + playerCount);
     var username = socket.username;
     for(var i = 0; i < 4; i++) {
@@ -382,6 +384,7 @@ io.on('connection', function (socket) {
         if(rankings[i] !== username) {
           rankings.push(username);
           isDraw += 1;
+          console.log("isDraw: " + isDraw);
         }
       }
     }
