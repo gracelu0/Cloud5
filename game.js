@@ -48,13 +48,11 @@ app.post('/pregame', (req,res) => {
     res.render('pages/pregame');
 });
 
-// var blockGamersFlag = false;
 var gameFlag = false;
 
 app.post('/waitForPlayers', (req,res) => {
   //var selectedCharacter = req.body.character;
   //console.log(selectedCharacter);
-  gameFlag = false;
   res.render('pages/gameStaging');
 });
 
@@ -65,16 +63,13 @@ app.post('/game', (req,res) => {
   // var selectedCharacter = req.body.colorGame;
   // console.log(selectedCharacter);
   //res.render('pages/game', {character: selectedCharacter, gameTime: battleSecs, trapTime: trapSecs});
-  gameFlag = true;
+  if (!gameFlag)
+    gameFlag = true;
   res.render('pages/game');
 });
 
 app.post('/postgame', (req,res) => {
-    // blockGamersFlag = false;
-    // console.log(blockGamersFlag);
-    gameFlag = false;
-    console.log(gameFlag);
-    res.render('pages/postgame');
+  res.render('pages/postgame');
 });
 
 app.post('/logout', (req,res) =>{
@@ -291,6 +286,8 @@ io.on('connection', function (socket) {
           io.sockets.emit('battleTimer', { countdown: totalGameTime });
           if (totalGameTime < 1){
             clearInterval(battleTimer);
+            gameFlag = false;
+            console.log(gameFlag);
           }
           console.log(totalGameTime);
           totalGameTime--;
@@ -384,10 +381,10 @@ io.on('connection', function (socket) {
   });
 
   socket.on('playerDied', function (deadPlayer){
-    console.log("player died. Players alive (unupdated): " + playerAlive )
+    // console.log("player died. Players alive (unupdated): " + playerAlive );
     playerAlive--;
-    console.log("player died. Players joined (updated): " + playerAlive );
-    console.log("Players joined: " + playerCount)
+    // console.log("player died. Players joined (updated): " + playerAlive );
+    // console.log("Players joined: " + playerCount)
     var username = deadPlayer.username;
     console.log(username + " was killed");
     io.sockets.emit('numPlayers', playerAlive);
@@ -401,12 +398,14 @@ io.on('connection', function (socket) {
       }
       counter ++;
     }*/
-    if ((playerAlive==1 || playerAlive==0) && gameFlag)
+    if ((playerAlive==1 || !playerAlive) && gameFlag)
           totalGameTime = 0;
   });
 
   socket.on('disconnect', function (){
     playerCount--;
+    if (playerAlive > playerCount)
+      playerAlive--;
     console.log('user disconnected. Players joined: ' + playerCount);
     for(var i = 0; i < servTraps.length; i++){
       if(servTraps[i].owner == socket.id){
