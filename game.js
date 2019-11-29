@@ -10,6 +10,11 @@ var io = require('socket.io').listen(server);
 const bcrypt = require('bcrypt');
 
 const { Pool } = require('pg');
+var pool = new Pool({
+  connectionString: "postgres://postgres:shimarov6929@localhost/cloud5"
+  //connectionString: process.env.DATABASE_URL
+});
+
 
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -43,7 +48,7 @@ app.post('/pregame', (req,res) => {
     res.render('pages/pregame');
 });
 
-var blockGamersFlag = false; 
+var blockGamersFlag = false;
 
 app.post('/waitForPlayers', (req,res) => {
   //var selectedCharacter = req.body.character;
@@ -265,14 +270,14 @@ var playerAlive = 0;
 var players = {};
 var servBullets = [];
 var servTraps = [];
-var rankings = [];
+//var rankings = [];
 var isDraw = 0;
 
 io.on('connection', function (socket) {
   playerCount++;
   playerAlive = playerCount;
   //Empty rankings array
-  rankings = [];
+  //rankings = [];
   isDraw = 0;
   console.log('a user connected. Num of players: ' + playerCount);
   io.sockets.emit('numPlayers', playerCount);
@@ -351,9 +356,12 @@ io.on('connection', function (socket) {
     var username = deadPlayer.username;
     console.log(username + " was killed");
     //Push dead player username to rankings array
-    rankings.push(username);
-    console.log(rankings);
+    //rankings.push(username);
+    //console.log(rankings);
     io.sockets.emit('numPlayers', playerAlive);
+    //emit dead player username to client for rankings
+    io.emit('rankings', username);
+    console.log("dead player is emitted to client for rankings")
     io.emit('died', deadPlayer);
     var counter = 0;
     delete players[deadPlayer.id];
@@ -371,16 +379,18 @@ io.on('connection', function (socket) {
     playerAlive--;
     console.log('user disconnected. Players joined: ' + playerCount);
     var username = socket.username;
-    for(var i = 0; i < 4; i++) {
-      if(!(rankings[i] != null)) {
-        if(rankings[i] !== username) {
-          rankings.push(username);
-          isDraw += 1;
-          console.log("isDraw: " + isDraw);
-        }
-      }
-    }
-    console.log(rankings);
+    io.emit('rankings', username);
+    console.log("disconnect player is emitted for rankings");
+    // for(var i = 0; i < 4; i++) {
+    //   if(!(rankings[i] != null)) {
+    //     if(rankings[i] !== username) {
+    //       rankings.push(username);
+    //       isDraw += 1;
+    //       console.log("isDraw: " + isDraw);
+    //     }
+    //   }
+    // }
+    //console.log(rankings);
     for(var i = 0; i < servTraps.length; i++){
       if(servTraps[i].owner == socket.id){
         servTraps.splice(i,1);

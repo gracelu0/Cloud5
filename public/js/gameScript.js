@@ -36,7 +36,7 @@ var config = {
   var trapAmmo = 10;
   var x;
   var y;
-
+  var rankings = [];
 
   //parameters to control music+sound
   var bgmusic;
@@ -164,7 +164,7 @@ var config = {
 
     this.load.image('bulletImg','assets/testBullet.png');
     this.load.image('bomb','assets/mushroom_red.png');
-  
+
     this.load.image('rain', 'assets/rain.png');
     this.load.image('snow', 'assets/snowflake-pixel.png');
     this.load.image('fog', 'assets/fog.png');
@@ -334,6 +334,7 @@ var config = {
       });
 
     this.socket.on('connect', () => {
+      rankings = [];
       sessionId = this.socket.id;
     });
 
@@ -439,7 +440,7 @@ var config = {
               console.log("length", usernameLength);
               var offset = usernameLength*2.5;
               console.log(offset);
-              
+
               otherPlayer.healthbar_red.x = playerInfo.x;
               otherPlayer.healthbar_red.y = playerInfo.y - 32;
               otherPlayer.healthbar_green.x = playerInfo.x;
@@ -527,6 +528,12 @@ var config = {
       console.log(deadPlayer.username);
       $('#messages').append($('<li>').html('<b>' + deadPlayer.username + ' was killed!</b>'));
     });
+
+    this.socket.on('rankings', function(username){
+      console.log("rankigs username" + username);
+      rankings.push(username);
+      console.log(rankings);
+    })
 
     this.socket.emit('username',username);
 
