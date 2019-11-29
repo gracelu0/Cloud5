@@ -45,4 +45,31 @@ describe("Socket-Server", function () {
         done();
       });
     });
+
+    it('socket tests', ()=>{
+        function test_movement(client){
+            client.on('playerMoved', (data)=>{
+                assert.isNumber(data.x);
+                assert.isNumber(data.y);
+            })
+        }
+
+        function tests(client){
+            test_movement(client);
+    
+        }
+
+
+        var client1 = io(socketURL);
+        var client2 = io(socketURL);
+        tests(client1);
+        tests(client2);
+    });
+
+
+
+   
+
+
+
   });
