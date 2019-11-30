@@ -22,13 +22,15 @@ describe('players', ()=>{
     it('object', ()=>{
         expect(players).to.be.an('object');
     });
-});
 
-describe('player count', ()=>{
     it('player count is same as players length',()=>{
         assert.equal(Object.keys(players).length, playerCount);
     });
+
+
 });
+
+
 
 //socket.io testing
 var io = require('socket.io-client')
@@ -39,12 +41,22 @@ var options = {
 };
 
 describe("Socket-Server", function () {
-    it('user connected', function (done) {
-      var client = io(socketURL);
-      client.on('connect', function (data) {
+    var client1, client2;
+    it('should connect users', function (done) {
+        var client1 = io(socketURL);
+        var client2 = io(socketURL);
+      
+      client1.on('connect', function (data) {
+          client1.emit('playerMoved')
+
+        client1.disconnect();
         done();
       });
     });
+
+    it('should broadcast new player to all players', function(done){
+
+    })
 
     it('socket tests', ()=>{
         function test_movement(client){
@@ -54,11 +66,16 @@ describe("Socket-Server", function () {
             })
         }
 
+        function test_playerHit(client){
+            client.on('playerHit', (id)=>{
+                assert.isAtLeast(players[id].health,0);
+            })
+        }
+
         function tests(client){
             test_movement(client);
     
         }
-
 
         var client1 = io(socketURL);
         var client2 = io(socketURL);
