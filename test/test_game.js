@@ -12,22 +12,69 @@ base_url = "http://localhost:5000";
 var app = require('../game.js').app;
 var Browser = require('zombie');
 
-describe('server access', () =>{
+describe('user tests', () =>{
     it("returns status code 200", (done)=>{
         request.get(base_url,(err,res,body)=>{
             assert.equal(200, res.statusCode);
             done();
             });
     });
+    describe('login', ()=>{
+        it('should load login page initially', (done)=>{
+            chai.request(app)
+                .get('/')
+                .end(function(err, res){
+                    res.should.have.status(200);
+                    done();
+                });
+        });
+    
+        it('should allow successful login if username and password exist', (done)=>{
+            chai.request(app)
+                .post('/signUpForm')
+                .send({'username': 'mojo123', 'password':'12345'})
+                .end(function(err, res){
+                    res.body.should.be.a('object');
+                    res.should.have.status(200);
+                    done();
+                });
+        });
+    });
 
-    it('should load login page', (done)=>{
+    describe('sign up', ()=>{
+        it('should proceed to confirmation page if all fields completed correctly', (done)=>{
+            chai.request(app)
+                .post('/signUpForm')
+                .send({'username': 'test', 'password':'123', 'confirmPassword':'123','email':'grace.r.luo@gmail.com'})
+                .end(function(err, res){
+                    res.body.should.be.a('object');
+                    res.should.have.status(200);
+                    done();
+                });
+        });
+    
+        it('should not signup successfully if passwords do not match', (done)=>{
+            chai.request(app)
+                .post('/signUpForm')
+                .send({'username': 'test', 'password':'123', 'confirmPassword':'1234','email':'grace.r.luo@gmail.com'})
+                .end(function(err, res){
+                    res.body.should.be.a('object');
+                    res.should.have.status(200);
+                    done();
+                });
+        });
+    })
+    
+    it('should log user out when logout button clicked and user confirms', (done)=>{
         chai.request(app)
-            .get('/')
+            .post('/logout')
             .end(function(err, res){
                 res.should.have.status(200);
                 done();
             });
     });
+
+
 
 });
 
@@ -52,7 +99,7 @@ describe('login page', function() {
             browser.pressButton('signInBtn',done);
         });
 
-        it('login should be successful', function(){
+        it('should allow successful login if username and password exist', function(){
             browser.assert.success();
         })
     });
@@ -66,58 +113,34 @@ describe('login page', function() {
         browser.visit('http://localhost:5000/',done);
     });
 
-    describe('incorrect password', function(){
+    describe('signup', function(){
+        before(function(done){
+            browser.pressButton('button[name="signUpBtn"]').then(function(){
+                assert.ok(browser.success);
+                assert.equal(browser.text('h1'),'SIGN UP');
+                browser.fill('input[name="username"]', 'mojo321');
+                browser.fill('input[name="password"]', '123');
+                browser.fill('input[name="confirmPassword"]', '123');
+                browser.fill('input[name="email"]', 'grace.r.luo@gmail.com');
+                
+            }).then(done,done);
+        });
+    })
+
+
+    describe('admin login', function(){
         before(function(done){
             browser.fill('input[name="username"]', 'mojo123');
-            browser.fill('input[name="pwd"]', 'wrongpwd');
+            browser.fill('input[name="pwd"]', '12345');
             browser.pressButton('button[name="signInBtn"]', done);
         });
 
-        it('login should fail', function(){
+        it('should show admin view page if usertype is Admin', function(){
             browser.assert.success();
+            assert.equal(browser.text('h2'),'ADMIN VIEW')
         })
     })
 });
-
-describe('signup page', function() {
-    const browser = new Browser();
-
-    before(function(done) {
-        browser.visit('http://localhost:5000/',done);
-    });
-
-
-    describe('submit empty form', function(){
-
-
-        // it('should refuse empty submissions', function(){
-        //     if (error) return done(error);
-        //     browser.assert.success();
-        // })
-    })
-});
-
-    // req = require('supertest')(base_url),
-    // superagent = require('superagent');
-
-    //     describe('Data', function () {
-
-    //         it('should return status OK (200)', function(done) {
-
-    //             req.post('/login')
-    //                 .type('form')
-    //                 .send({username:"mojo123",password:"123"})
-    //                 .end(function(err, res) {
-    //                     if (err) {
-    //                         throw err;
-    //                     }
-    //                     assert.ok(res);
-    //                     assert.ok(res.body);
-    //                     assert.equal(res.status, 200);
-    //                     done();
-    //         });
-    //     });
-    // });
 
 var players = require('../game.js').players;
 var playerCount = require('../game.js').playerCount;
@@ -126,7 +149,7 @@ describe('players', ()=>{
         expect(players).to.be.an('object');
     });
 
-    it('player count is same as players length',()=>{
+    it('should have player count the same as number of players joined',()=>{
         assert.equal(Object.keys(players).length, playerCount);
     });
 
