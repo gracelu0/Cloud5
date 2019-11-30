@@ -3,6 +3,9 @@ var chai = require('chai')
     , assert = chai.assert
     , should = chai.should();
 
+var chaiHttp = require('chai-http');
+chai.use(chaiHttp);
+
 var request = require('request'),
 base_url = "http://localhost:5000";
 
@@ -16,15 +19,31 @@ describe('server access', () =>{
             done();
             });
     });
+
+    it('should load login page', (done)=>{
+        chai.request(app)
+            .get('/')
+            .end(function(err, res){
+                res.should.have.status(200);
+                done();
+            });
+    });
+
 });
 
 
 describe('login page', function() {
-    const browser = new Browser();
+    const browser = new Browser({site:'http://localhost:5000/' });
+    before(function(){
+    })
 
     before(function(done) {
-        browser.visit('http://localhost:5000/',done);
+        browser.visit('/',done);
     });
+
+    it('should show login form', function(){
+        assert.ok(browser.success);
+    })
 
     describe('submits login form', function(){
         before(function(done){
@@ -51,12 +70,30 @@ describe('login page', function() {
         before(function(done){
             browser.fill('input[name="username"]', 'mojo123');
             browser.fill('input[name="pwd"]', 'wrongpwd');
-            browser.pressButton('signInBtn', done);
+            browser.pressButton('button[name="signInBtn"]', done);
         });
 
         it('login should fail', function(){
             browser.assert.success();
         })
+    })
+});
+
+describe('signup page', function() {
+    const browser = new Browser();
+
+    before(function(done) {
+        browser.visit('http://localhost:5000/',done);
+    });
+
+
+    describe('submit empty form', function(){
+
+
+        // it('should refuse empty submissions', function(){
+        //     if (error) return done(error);
+        //     browser.assert.success();
+        // })
     })
 });
 
@@ -148,11 +185,5 @@ describe("Socket-Server", function () {
         tests(client1);
         tests(client2);
     });
-
-
-
-   
-
-
 
   });
