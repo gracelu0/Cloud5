@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <link rel="stylesheet" href="/stylesheets/pregame.css">
+    <link href="https://fonts.googleapis.com/css?family=Neucha&display=swap" rel="stylesheet">
+    <meta charset="utf-8">
+    <title>Game In Progress...</title>
+    <link rel="icon" href="/assets/alienPink.png">
+  </head>
+  <body>
+    <% include ../partials/logout.ejs %>
+
+    <h2 align="center">Hi, Blobster! Thanks for joining Battle Blobs!</h2>
+    <h4 align="center" id="gameInProgressMessage"></h2>
+    <input id="refreshTimer" value="<%= refreshTimeEst %>" hidden>
+
+    <script type="text/javascript">
+        var refreshSecs = document.getElementById('refreshTimer').value;
+        var gipMessage = document.getElementById('gameInProgressMessage');
+        gipMessage.innerHTML = "A game is currently in progress... Please click the button below to join a new game in approximately <b>"
+          +formatMinutes(refreshSecs)+" minutes</b> and <b>"+formatSeconds(refreshSecs)+" seconds</b>";
+
+        function formatMinutes(seconds){
+          var minutes = Math.floor(seconds/60);
+          return `${minutes}`
+        }
+
+        function formatSeconds(seconds){
+          var secondsPart = seconds%60;
+          return `${secondsPart}`
+        }
+    </script>
+
+    <img id="pointingFinger" src="/assets/pointingFinger.png" height= "150" width="150" alt="">
+
+    <form align="center" class="" action="/pregame" method="post">
+      <button type="submit" name="button">Attempt To Join A New Game!</button>
+    </form>
+  </body>
+</html>

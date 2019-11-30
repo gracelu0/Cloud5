@@ -37,11 +37,14 @@ app.post('/signUp', (req,res) => {
   res.render('pages/signUp');
 });
 
-app.post('/pregame', (req,res) => {
-  res.render('pages/pregame');
-});
-
 var gameFlag = false;
+
+app.post('/pregame', (req,res) => {
+  if (!gameFlag)
+    res.render('pages/pregame');
+  else
+    res.render('pages/gip', {refreshTimeEst: totalGameTime});
+});
 
 app.post('/waitForPlayers', (req,res) => {
   res.render('pages/gameStaging');
@@ -272,6 +275,7 @@ var players = {};
 var servBullets = [];
 var servTraps = [];
 var servHealthpacks = [];
+var trapSecs = 30; var battleSecs = 120;
 var totalGameTime;
 
 io.on('connection', function (socket) {
