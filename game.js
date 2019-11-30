@@ -259,8 +259,7 @@ var players = {};
 var servBullets = [];
 var servTraps = [];
 var servHealthpacks = [];
-// var trapSecs = 30; var battleSecs = 120;
-var trapSecs = 240; var battleSecs = 480;
+var trapSecs = 30; var battleSecs = 120;
 var totalGameTime;
 
 io.on('connection', function (socket) {
