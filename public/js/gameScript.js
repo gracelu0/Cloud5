@@ -602,7 +602,6 @@ var config = {
 
     //set player movement input
     this.cursors = this.input.keyboard.createCursorKeys();
-    this.bombButton = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
 
     camera = this.cameras.main;
 
@@ -666,7 +665,7 @@ var config = {
           lastFired --;
         }
 
-        if (this.bombButton.isDown && trapAmmo > 0 && lastBomb == 0 &&  document.activeElement !== messageText && time/1000 < 30){
+        if (this.cursors.space.isDown && trapAmmo > 0 && lastBomb == 0 &&  document.activeElement !== messageText && time/1000 < 30){
           if(!this.physics.overlap(this.player,traps)){
             var trap = traps.create(this.player.body.position.x, this.player.body.position.y, 'bomb');
             trap.body.setImmovable();
