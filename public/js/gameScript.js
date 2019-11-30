@@ -157,6 +157,7 @@ var config = {
 
     this.load.image('bulletImg','assets/testBullet.png');
     this.load.image('bomb','assets/mushroom_red.png');
+    this.load.image('deactivated_mine','assets/deactivatedMine.png')
     this.load.image('small_health','assets/carrot.png');
     this.load.image('full_health','assets/carrot_gold.png');
   
@@ -362,12 +363,13 @@ var config = {
         self.otherPlayers.getChildren().forEach(function (otherPlayer){
           if(id === otherPlayer.playerId){
             otherPlayer.health -= 10;
+
           }
         })
       }
     });
 
-    this.socket.on('trapHit', function(id){
+    this.socket.on('trapHit', function(id, trapX, trapY){
       if(id === sessionId){
         self.player.health -= 10;
       }
@@ -378,6 +380,7 @@ var config = {
           }
         })
       }
+      addDeactivatedTraps(self,trapX,trapY);
     });
 
     this.socket.on('healthpackHit', function(id){
@@ -582,6 +585,10 @@ var config = {
       classType: Phaser.GameObjects.Sprite
     });
 
+    deactivated = this.physics.add.group({
+      classType: Phaser.GameObjects.Sprite
+    });
+
     healthpacks = this.physics.add.group({
       classType: Phaser.GameObjects.Sprite
     });
@@ -641,7 +648,7 @@ var config = {
           this.usernameText.y = this.player.body.position.y + 24;
         }
 
-        if (this.cursors.space.isDown && ammunition > 0 && lastFired == 0 && document.activeElement !== messageText && time/1000 >= 32){
+        if (this.cursors.space.isDown && ammunition > 0 && lastFired == 0 && document.activeElement !== messageText && time/1000 >= 30){
           var bullet = bullets.get();
 
           if(bullet){
@@ -659,7 +666,7 @@ var config = {
           lastFired --;
         }
 
-        if (this.bombButton.isDown && trapAmmo > 0 && lastBomb == 0 &&  document.activeElement !== messageText && time/1000 < 32){
+        if (this.bombButton.isDown && trapAmmo > 0 && lastBomb == 0 &&  document.activeElement !== messageText && time/1000 < 30){
           if(!this.physics.overlap(this.player,traps)){
             var trap = traps.create(this.player.body.position.x, this.player.body.position.y, 'bomb');
             trap.body.setImmovable();
@@ -673,7 +680,7 @@ var config = {
           lastBomb --;
         }
 
-        if (time/1000 >= 32){
+        if (time/1000 >= 30){
           traps.getChildren().forEach(child => {
             child.visible = false;
           })
@@ -884,6 +891,11 @@ var config = {
   function addTraps(self, trapInfo){
     const nTrap = self.add.sprite(trapInfo.x, trapInfo.y, 'bomb');
     traps.add(nTrap);
+  }
+
+  function addDeactivatedTraps(self, deactivatedX, deactivatedY){
+    const nDeactivated = self.add.sprite(deactivatedX, deactivatedY, 'deactivated_mine');
+    deactivated.add(nDeactivated);
   }
 
   function addHealthpacks(self, healthpackInfo){
