@@ -10,14 +10,28 @@
   <body>
     <% include ../partials/logout.ejs %>
 
-    <h2 align="center" id="gameInProgressMessage"></h2>
+    <h2 align="center">Hi, Blobster! Thanks for joining Battle Blobs!</h2>
+    <h4 align="center" id="gameInProgressMessage"></h2>
     <input id="refreshTimer" value="<%= refreshTimeEst %>" hidden>
 
     <script type="text/javascript">
         var refreshSecs = document.getElementById('refreshTimer').value;
         var gipMessage = document.getElementById('gameInProgressMessage');
-        gipMessage.innerHTML = "A game is currently in progress... Please click the button below to join a new game in approximately <b>"+refreshSecs+"</b> seconds";
+        gipMessage.innerHTML = "A game is currently in progress... Please click the button below to join a new game in approximately <b>"
+          +formatMinutes(refreshSecs)+" minutes</b> and <b>"+formatSeconds(refreshSecs)+" seconds</b>";
+
+        function formatMinutes(seconds){
+          var minutes = Math.floor(seconds/60);
+          return `${minutes}`
+        }
+
+        function formatSeconds(seconds){
+          var secondsPart = seconds%60;
+          return `${secondsPart}`
+        }
     </script>
+
+    <img id="pointingFinger" src="/assets/pointingFinger.png" height= "150" width="150" alt="">
 
     <form align="center" class="" action="/pregame" method="post">
       <button type="submit" name="button">Attempt To Join A New Game!</button>

@@ -15,9 +15,6 @@ var pool = new Pool({
   connectionString: process.env.DATABASE_URL
 });
 
-
-
-
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -262,7 +259,8 @@ var players = {};
 var servBullets = [];
 var servTraps = [];
 var servHealthpacks = [];
-var trapSecs = 30; var battleSecs = 120;
+// var trapSecs = 30; var battleSecs = 120;
+var trapSecs = 240; var battleSecs = 480;
 var totalGameTime;
 
 io.on('connection', function (socket) {
