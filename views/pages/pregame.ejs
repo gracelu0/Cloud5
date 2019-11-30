@@ -9,13 +9,7 @@
     <script src="js/setColor.js" defer></script>
   </head>
   <body>
-      <div align="right" id="logoutDiv">
-          <form class="" action="/logout" method="post" onsubmit="return confirm('Are you sure you want to logout?')">
-            <button type="submit" id="logout">Logout</button>
-          </form>
-      </div>
-
-
+    <% include ../partials/logout.ejs %>
     <% if ( typeof message != 'undefined' && message.length > 0) { %>
     <p class="successMessage"><%= message %></p>
     <% } %>

@@ -48,18 +48,12 @@ app.post('/pregame', (req,res) => {
 var gameFlag = false;
 
 app.post('/waitForPlayers', (req,res) => {
-  //var selectedCharacter = req.body.character;
-  //console.log(selectedCharacter);
   res.render('pages/gameStaging');
 });
-
 
 var trapSecs = 30; var battleSecs = 120;
 
 app.post('/game', (req,res) => {
-  // var selectedCharacter = req.body.colorGame;
-  // console.log(selectedCharacter);
-  //res.render('pages/game', {character: selectedCharacter, gameTime: battleSecs, trapTime: trapSecs});
   if (!gameFlag)
     gameFlag = true;
   res.render('pages/game');
