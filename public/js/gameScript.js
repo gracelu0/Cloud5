@@ -530,7 +530,7 @@ var config = {
     });
 
     this.socket.on('rankings', function(username){
-      console.log("rankigs username" + username);
+      console.log("rankings username: " + username);
       rankings.push(username);
       console.log(rankings);
     })
