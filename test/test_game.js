@@ -3,8 +3,11 @@ var chai = require('chai')
     , assert = chai.assert
     , should = chai.should();
 
-    var request = require('request'),
-    base_url = "http://localhost:5000";
+var request = require('request'),
+base_url = "http://localhost:5000";
+
+var app = require('../game.js').app;
+var Browser = require('zombie');
 
 describe('server access', () =>{
     it("returns status code 200", (done)=>{
@@ -15,6 +18,69 @@ describe('server access', () =>{
     });
 });
 
+
+describe('login page', function() {
+    const browser = new Browser();
+
+    before(function(done) {
+        browser.visit('http://localhost:5000/',done);
+    });
+
+    describe('submits login form', function(){
+        before(function(done){
+            browser.fill('input[name="username"]', 'mojo123');
+            browser.fill('input[name="pwd"]', '12345')
+            browser.pressButton('signInBtn',done);
+        });
+
+        it('login should be successful', function(){
+            browser.assert.success();
+        })
+    });
+
+});
+
+describe('login page', function() {
+    const browser = new Browser();
+
+    before(function(done) {
+        browser.visit('http://localhost:5000/',done);
+    });
+
+    describe('incorrect password', function(){
+        before(function(done){
+            browser.fill('input[name="username"]', 'mojo123');
+            browser.fill('input[name="pwd"]', 'wrongpwd');
+            browser.pressButton('signInBtn', done);
+        });
+
+        it('login should fail', function(){
+            browser.assert.success();
+        })
+    })
+});
+
+    // req = require('supertest')(base_url),
+    // superagent = require('superagent');
+
+    //     describe('Data', function () {
+
+    //         it('should return status OK (200)', function(done) {
+
+    //             req.post('/login')
+    //                 .type('form')
+    //                 .send({username:"mojo123",password:"123"})
+    //                 .end(function(err, res) {
+    //                     if (err) {
+    //                         throw err;
+    //                     }
+    //                     assert.ok(res);
+    //                     assert.ok(res.body);
+    //                     assert.equal(res.status, 200);
+    //                     done();
+    //         });
+    //     });
+    // });
 
 var players = require('../game.js').players;
 var playerCount = require('../game.js').playerCount;
@@ -54,9 +120,9 @@ describe("Socket-Server", function () {
       });
     });
 
-    it('should broadcast new player to all players', function(done){
+    // it('should broadcast new player to all players', function(done){
 
-    })
+    // })
 
     it('socket tests', ()=>{
         function test_movement(client){
