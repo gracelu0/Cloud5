@@ -5,14 +5,14 @@ socket.on('numPlayers', function (playerCount) {
     var waitMessage = document.getElementById('waitMessage');
     
     if (playerCount == 4){
-        var gameSubmitSecs = 0.5;
+        var gameSubmitSecs = 0.005;
         var timer = setInterval(function() {
-            if (gameSubmitSecs < 0.5){
+            if (gameSubmitSecs < 0.005){
               clearInterval(timer);
               document.getElementById('gamePage').submit();
             }
             gameSubmitSecs--;
-        }, 500);
+        }, 5);
     }
     else if (playerCount==3)
         waitMessage.innerHTML = "<h2>Waiting for <b>"+(4-playerCount)+"</b> more player to join...</h2>";
