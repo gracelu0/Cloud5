@@ -426,8 +426,10 @@ io.on('connection', function (socket) {
       }
     }
     if(ranking.length == 4) {
-      console.log("disconnect player is emitted for rankings");
-      io.emit('rankings', ranking[i]);
+      for(var i = 0; i < 4; i++) {
+        console.log("disconnect player is emitted for rankings");
+        io.emit('rankings', ranking[i]);
+      }
     }
 
     for(var i = 0; i < servTraps.length; i++){
