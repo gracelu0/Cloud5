@@ -538,10 +538,10 @@ var config = {
       // var insertRank1 = localStorage.setItem( "rank1", rankings);
       rankings.push(username);
       console.log("RANKINGS LIST " + rankings);
-      var insertRank1 = localStorage.setItem( "rank1", rankings[0] );
-      var insertRank2 = localStorage.setItem( "rank2", rankings[1] );
-      var insertRank3 = localStorage.setItem( "rank3", rankings[2] );
-      var insertRank4 = localStorage.setItem( "rank4", rankings[3] );
+      var insertRank1 = localStorage.setItem( "rank1", rankings[3] );
+      var insertRank2 = localStorage.setItem( "rank2", rankings[2] );
+      var insertRank3 = localStorage.setItem( "rank3", rankings[1] );
+      var insertRank4 = localStorage.setItem( "rank4", rankings[0] );
     });
 
     this.socket.emit('username',username);
