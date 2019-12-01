@@ -13,7 +13,8 @@ const bcrypt = require('bcrypt');
 const { Pool } = require('pg');
 
 var pool = new Pool({
-  connectionString: process.env.DATABASE_URL
+  //connectionString: process.env.DATABASE_URL
+  connectionString: "postgres://postgres:shimarov6929@localhost/cloud5"
 });
 
 
@@ -314,7 +315,7 @@ io.on('connection', function (socket) {
       totalGameTime--;
     }, 1000);
   }
-  
+
   io.sockets.emit('numPlayers', playerCount);
   // create a new player and add it to our players object
   players[socket.id] = {
@@ -400,7 +401,7 @@ io.on('connection', function (socket) {
     //Push dead player username to rankings array
     ranking.push(username);
     console.log(ranking);
-    
+
     io.sockets.emit('numPlayers', playerAlive);
     //emit dead player username to client for rankings
     io.emit('rankings', username);
@@ -418,7 +419,7 @@ io.on('connection', function (socket) {
     if (playerAlive > playerCount)
       playerAlive--;
     var username = socket.username;
-    if(!ranking.includes(username)) {
+    if((!ranking.includes(username)) && (username != null)) {
       for(var i = 0; i < 4; i++) {
         if(ranking[i] == null) {
           isDraw++;
