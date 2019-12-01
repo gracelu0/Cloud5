@@ -12,8 +12,7 @@ const bcrypt = require('bcrypt');
 const { Pool } = require('pg');
 
 var pool = new Pool({
-  //connectionString: process.env.DATABASE_URL
-  connectionString: "postgres://postgres:shimarov6929@localhost/cloud5"
+  connectionString: process.env.DATABASE_URL
 });
 
 
@@ -401,7 +400,7 @@ io.on('connection', function (socket) {
     io.sockets.emit('numPlayers', playerAlive);
     //emit dead player username to client for rankings
     // io.emit('rankings', username);
-    console.log("dead player is emitted to client for rankings")
+    //console.log("dead player is emitted to client for rankings")
     io.emit('died', deadPlayer);
     delete players[deadPlayer.id];
 
@@ -415,7 +414,7 @@ io.on('connection', function (socket) {
     if (playerAlive > playerCount)
       playerAlive--;
     var username = socket.username;
-    if((!ranking.includes(username)) && (username != null)) {
+    if((!ranking.includes("hello")) && (username != null)) {
       for(var i = 0; i < 4; i++) {
         if(ranking[i] == null) {
           isDraw++;
@@ -425,11 +424,12 @@ io.on('connection', function (socket) {
         }
       }
     }
-    if(ranking.length == 4) {
-      for(var i = 0; i < 4; i++) {
-        console.log("disconnect player is emitted for rankings");
-        io.emit('rankings', ranking[i]);
-      }
+    var emitRankings = true;
+    if(ranking.length == 4 && emitRankings) {
+      console.log("emitted for rankings");
+      console.log(ranking);
+      io.emit('rankings', ranking);
+      emitRankings = false;
     }
 
     for(var i = 0; i < servTraps.length; i++){
