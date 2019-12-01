@@ -566,7 +566,14 @@ var config = {
     this.socket.on('battleTimer', function (data) {
       $('#gameTimer').html('<h2>Battle! Time Remaining: <b>' + formatTime(data.countdown) + '</b></h2>');
       if (data.countdown == 0){
-        document.getElementById('postGame').submit();
+          var delaySecs = 5;
+          var delayTimer = setinterval(function(){
+              if (delaySecs < 1){
+                  clear (delayTimer);
+                  document.getElementById('postGame').submit();
+              }
+              delaySecs--;
+          }, 1000);
       }
     });
 
