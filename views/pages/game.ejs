@@ -17,16 +17,9 @@
       <input type="text" id="nameGame" value="" hidden>
       <input type="text" id="colorGame" value="" hidden>
       <script src="/socket.io/socket.io.js"></script>
-
-      <div align="right" id="logoutDiv">
-          <form class="" action="/logout" method="post" onsubmit="return confirm('Are you sure you want to logout?')">
-            <button type="submit" id="logout">Logout</button>
-          </form>
-      </div>
-
+      <% include ../partials/logout.ejs %>
       <script src="//cdn.jsdelivr.net/npm/phaser@3.3.0/dist/phaser.min.js"></script>
       <script src="js/gameScript.js" defer></script>
-      <script src="js/weatherConfig.js" defer></script>
       <!-- Include jquery, cookies, socket.io (client-side) and your own code -->
       <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
       <script src="https://unpkg.com/cookie_js@1.2.2/cookie.min.js"></script>
@@ -53,21 +46,32 @@
           <button type="button" class="collapsible" id="controlsBtn"><i class="material-icons">help_outline</i> Controls</button>
           <div id="controls" class="content">
             <figure>
-                <img src="/assets/keyz.png" height= "40" width="40" id="spacebar" alt="">
-                <figcaption id="movement">Set mines</figcaption>
-            </figure>
-            <figure>
               <img src="/assets/arrowkeys.png" height="60" width= "100" id="arrowkeys">
               <figcaption id="movement">Move</figcaption>
-          </figure>
-          <figure>
-            <img src="/assets/spacebar.png" height= "40" width="80" id="spacebar" alt="">
-            <figcaption id="movement">Attack!</figcaption>
-        </figure>
-          <figure>
-            <img src="/assets/esc.png" height= "50" width="50" id="spacebar" alt="">
-            <figcaption id="movement">Exit chat</figcaption>
-        </figure>
+            </figure>
+            <figure>
+              <img src="/assets/spacebar.png" height= "40" width="80" id="spacebar" alt="">
+              <figcaption id="shoot">Action Button, Use To:</figcaption>
+              <figcaption id="shoot">Set traps before 30 seconds!</figcaption>
+              <figcaption id="shoot">Shoot bullets after 30 seconds!</figcaption>
+            </figure>
+            <figure>
+              <img src="/assets/esc.png" height= "50" width="50" id="spacebar" alt="">
+              <figcaption id="exit">Exit chat</figcaption>
+            </figure>
+            <figure>
+              <img src="/assets/carrot.png" height= "50" width="50" id="spacebar" alt="">
+              <figcaption id="carrot">Boost health (to a maximum of 100)</figcaption>
+            </figure>
+            <figure>
+              <img src="/assets/mushroom_red.png" height = "40" width = "80" id="spacebar" alt = "">
+              <figcaption id="shoot">Active Mine</figcaption>
+            </figure>
+            <figure>
+              <img src="/assets/deactivatedMine.png" height = "40" width = "80" id="spacebar" alt = "">
+              <figcaption id="shoot">Deactivated Mine</figcaption>
+            </figure>
+            <figure>
           </div>
           
       </div>
@@ -105,43 +109,6 @@
 
       <form class="" id="postGame" action="/postgame" method="post">
         <button type="submit" name="button" hidden>Go to postgame screen</button>
-        <input id="trapTime" value="<%= trapTime %>" hidden>
-        <input id="gameTime" value="<%= gameTime %>"hidden>
       </form>
-      <script type="text/javascript">
-        var trapSecs = document.getElementById('trapTime').value;
-        var gamePlaySecs = document.getElementById('gameTime').value;
-        var timer;
-
-        timer = setInterval(function() {
-          var element = document.getElementById('gameTimer');
-          element.innerHTML = "<h2>Set Traps! Time Remaining: <b>"+formatTime(trapSecs)+"</b></h2>";
-          if(trapSecs < 1){
-              clearInterval(timer);
-              timer = setInterval(function() {
-                var element = document.getElementById('gameTimer');
-                element.innerHTML = "<h2>Battle! Time Remaining: <b>"+formatTime(gamePlaySecs)+"</b></h2>";
-                if (gamePlaySecs < 1){
-                  clearInterval(timer);
-                  document.getElementById('postGame').submit();
-                }
-                gamePlaySecs--;
-            }, 1000);
-          }
-          trapSecs--;
-        }, 1000)
-
-        function formatTime(seconds){
-          //Minutes
-          var minutes = Math.floor(seconds/60);
-          //seconds
-          var secondsPart = seconds%60;
-          //add zeros to left of seconds
-          secondsPart = secondsPart.toString().padStart(2,'0');
-          //return formatted time
-          return `${minutes}:${secondsPart}`;
-        }
-      </script>
-
     </body>
 </html>

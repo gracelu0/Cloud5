@@ -34,6 +34,7 @@ var config = {
   var facing = 1;
   var ammunition = 100;
   var trapAmmo = 10;
+  var healthpackCounter = 0;
   var x;
   var y;
   //var rankings;
@@ -79,18 +80,10 @@ var config = {
           weatherResponse.weather[0].main == "Haze" ||
           weatherResponse.weather[0].main == "Mist" ||
           weatherResponse.weather[0].main == "Fog"
-          // || weatherResponse.weather[0].main == "Clouds"
           ){
-            weatherButton.removeAttribute("hidden");
-            weatherButton.addEventListener('click', function(){
-              updateWeatherFlag();
-            //   if (weatherButton.innerHTML == "WEATHER ON")
-            //     weatherButton.innerHTML = "WEATHER OFF";
-            //   else
-            //     weatherButton.innerHTML = "WEATHER ON";
-             });
+            weatherButton.removeAttribute("hidden");    
             weatherFlag = true; weatherToggle = true;
-            // weatherButton.innerHTML = "WEATHER OFF";
+            weatherButton.addEventListener('click', updateWeatherFlag);
           }
       return weatherResponse;
   }
@@ -165,6 +158,9 @@ var config = {
 
     this.load.image('bulletImg','assets/testBullet.png');
     this.load.image('bomb','assets/mushroom_red.png');
+    this.load.image('deactivated_mine','assets/deactivatedMine.png')
+    this.load.image('small_health','assets/carrot.png');
+    this.load.image('full_health','assets/carrot_gold.png');
 
     this.load.image('rain', 'assets/rain.png');
     this.load.image('snow', 'assets/snowflake-pixel.png');
@@ -203,7 +199,7 @@ var config = {
       this.setActive(true);
       this.setVisible(true);
     }
-    update(time, delta){
+    update(){
       if(this){
         this.x += this.xSpeed;
         this.y += this.ySpeed;
@@ -240,25 +236,13 @@ var config = {
 
     musicButton.addEventListener('click', function() {
       musicFlag = !musicFlag;
-      console.log(musicFlag);
-      if(musicFlag == false) {
-        //musicButton.innerHTML = "MUSIC ON";
+      if(musicFlag == false) 
         bgmusic.pause();
-      }
-      else {
-       // musicButton.innerHTML = "MUSIC OFF";
+      else 
         bgmusic.resume();
-      }
     })
     soundButton.addEventListener('click', function() {
       soundFlag = !soundFlag;
-      console.log(soundFlag);
-      if(soundFlag == false) {
-       // soundButton.innerHTML = "SOUND ON";
-      }
-      else {
-       // soundButton.innerHTML = "SOUND OFF";
-      }
     })
 
     //weather
@@ -298,9 +282,9 @@ var config = {
     //display text
     playerCountText = this.add.text(10,20,'',{ fontFamily: 'Neucha', fontSize:'20px' });
     playerCountText.setScrollFactor(0);
-    ammoCount = this.add.text(10, 40,"Ammunition Count:" + ' ' + ammunition + "/100",{ fontFamily: 'Neucha', fontSize:'20px' });
+    ammoCount = this.add.text(10, 40,"Ammunition left:" + ' ' + ammunition + "/100",{ fontFamily: 'Neucha', fontSize:'20px' });
     ammoCount.setScrollFactor(0);
-    trapCount = this.add.text(10, 60,"Trap Count:" + ' ' + trapAmmo + "/10",{ fontFamily: 'Neucha', fontSize:'20px' });
+    trapCount = this.add.text(10, 60,"Mines left:" + ' ' + trapAmmo + "/10",{ fontFamily: 'Neucha', fontSize:'20px' });
     trapCount.setScrollFactor(0);
 
     //timer
@@ -381,12 +365,13 @@ var config = {
         self.otherPlayers.getChildren().forEach(function (otherPlayer){
           if(id === otherPlayer.playerId){
             otherPlayer.health -= 10;
+
           }
         })
       }
     });
 
-    this.socket.on('trapHit', function(id){
+    this.socket.on('trapHit', function(id, trapX, trapY){
       if(id === sessionId){
         self.player.health -= 10;
       }
@@ -394,6 +379,26 @@ var config = {
         self.otherPlayers.getChildren().forEach(function (otherPlayer){
           if(id === otherPlayer.playerId){
             otherPlayer.health -= 10;
+          }
+        })
+      }
+      addDeactivatedTraps(self,trapX,trapY);
+    });
+
+    this.socket.on('healthpackHit', function(id){
+      if(id === sessionId){
+        self.player.health += 10;
+        if(self.player.health > 100){
+          self.player.health = 100;
+        }
+      }
+      else{
+        self.otherPlayers.getChildren().forEach(function (otherPlayer){
+          if(id === otherPlayer.playerId){
+            otherPlayer.health += 10;
+            if(otherPlayer.health > 100){
+              otherPlayer.health = 100;
+            }
           }
         })
       }
@@ -430,6 +435,23 @@ var config = {
       })
       for(var i = counter; i < servTraps.length; i++){
         addTraps(self, servTraps[i]);
+      }
+    });
+
+    this.socket.on('healthpacksUpdate', function(servHealthpacks){
+      var counter = 0;
+      healthpacks.getChildren().forEach(child => {
+        if(servHealthpacks[counter]){
+          child.x = servHealthpacks[counter].x;
+          child.y = servHealthpacks[counter].y;
+        }
+        counter++;
+        if(counter > servHealthpacks.length){
+          child.destroy();
+        }
+      })
+      for(var i = counter; i < servHealthpacks.length; i++){
+        addHealthpacks(self, servHealthpacks[i]);
       }
     });
 
@@ -544,6 +566,28 @@ var config = {
 
     this.socket.emit('username',username);
 
+    function formatTime(seconds){
+      //Minutes
+      var minutes = Math.floor(seconds/60);
+      //seconds
+      var secondsPart = seconds%60;
+      //add zeros to left of seconds
+      secondsPart = secondsPart.toString().padStart(2,'0');
+      //return formatted time
+      return `${minutes}:${secondsPart}`;
+    }
+
+    this.socket.on('trapTimer', function (data) {
+      $('#gameTimer').html('<h2>Set Mines! Time Remaining: <b>' + formatTime(data.countdown) + '</b></h2>');
+    });
+
+    this.socket.on('battleTimer', function (data) {
+      $('#gameTimer').html('<h2>Battle! Time Remaining: <b>' + formatTime(data.countdown) + '</b></h2>');
+      if (data.countdown == 0){
+        document.getElementById('postGame').submit();
+      }
+    });
+
     bullets = this.physics.add.group({
       classType: Bullet,
       runChildUpdate: true
@@ -553,7 +597,15 @@ var config = {
 
     traps = this.physics.add.group({
       classType: Phaser.GameObjects.Sprite
-    })
+    });
+
+    deactivated = this.physics.add.group({
+      classType: Phaser.GameObjects.Sprite
+    });
+
+    healthpacks = this.physics.add.group({
+      classType: Phaser.GameObjects.Sprite
+    });
 
   //   const debugGraphics = this.add.graphics().setAlpha(0.75);
   //   collideLayer.renderDebug(debugGraphics, {
@@ -564,7 +616,6 @@ var config = {
 
     //set player movement input
     this.cursors = this.input.keyboard.createCursorKeys();
-    this.bombButton = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
 
     camera = this.cameras.main;
 
@@ -576,22 +627,22 @@ var config = {
     if(this.player){
       if(this.player.health > 0){
         if (this.cursors.up.isDown){
-          this.player.body.position.y -=4;
+          this.player.body.position.y -=2;
           this.player.flipY = true;
           facing = 1;
         }
         if (this.cursors.down.isDown){
-          this.player.body.position.y +=4;
+          this.player.body.position.y +=2;
           this.player.flipY = false;
           facing = 2;
         }
         if (this.cursors.left.isDown){
-          this.player.body.position.x -=4;
+          this.player.body.position.x -=2;
           this.player.flipX = true;
           facing = 3;
         }
         if (this.cursors.right.isDown){
-          this.player.body.position.x +=4;
+          this.player.body.position.x +=2;
           this.player.flipX = false;
           facing = 4;
         }
@@ -628,7 +679,7 @@ var config = {
           lastFired --;
         }
 
-        if (this.bombButton.isDown && trapAmmo > 0 && lastBomb == 0 &&  document.activeElement !== messageText && time/1000 < 30){
+        if (this.cursors.space.isDown && trapAmmo > 0 && lastBomb == 0 &&  document.activeElement !== messageText && time/1000 < 30){
           if(!this.physics.overlap(this.player,traps)){
             var trap = traps.create(this.player.body.position.x, this.player.body.position.y, 'bomb');
             trap.body.setImmovable();
@@ -642,7 +693,7 @@ var config = {
           lastBomb --;
         }
 
-        if (time/1000 >= 33){
+        if (time/1000 >= 30){
           traps.getChildren().forEach(child => {
             child.visible = false;
           })
@@ -693,43 +744,56 @@ var config = {
       }
     }
 
-      if (weatherFlag && !weatherToggle){
-        updateWeatherToggle();
-        if (currentWeather == "Rain")
-          addRain(rainParticles, map.widthInPixels, map.heightInPixels);
+    if (time/1000 > 45*(healthpackCounter+1)){
+      console.log("ok");
+      healthpackCounter++;
+      var healthpackX = Math.floor(Math.random() * 326) + 1075;
+      var healthpackY = Math.floor(Math.random() * 326) + 1000;
+      var healthpack = healthpacks.create(healthpackX,healthpackY,'small_health');
+      this.socket.emit('healthpackSet', { x: healthpackX, y: healthpackY });
+    }
 
-        else if (currentWeather == "Drizzle")
-          addDrizzle(rainParticles, map.widthInPixels, map.heightInPixels);
+    if (time/1000 >= 150){
+      this.socket.emit('healthpackDespawn');
+    }
 
-        else if(currentWeather == "Snow")
-          addSnow(snowParticles, map.widthInPixels, map.heightInPixels);
+    if (weatherFlag && !weatherToggle){
+      updateWeatherToggle();
+      if (currentWeather == "Rain")
+        addRain(rainParticles, map.widthInPixels, map.heightInPixels);
 
-        else if(currentWeather == "Mist")
-          changeAtmos(this, fog, "Misty");
+      else if (currentWeather == "Drizzle")
+        addDrizzle(rainParticles, map.widthInPixels, map.heightInPixels);
 
-        else if(currentWeather == "Haze")
-          changeAtmos(this, fog, "Hazy");
+      else if(currentWeather == "Snow")
+        addSnow(snowParticles, map.widthInPixels, map.heightInPixels);
 
-        else if(currentWeather == "Fog")
-          changeAtmos(this, fog, "foggy");
-      }
+      else if(currentWeather == "Mist")
+        changeAtmos(this, fog, "Misty");
 
-      else if (!weatherFlag && weatherToggle){
-        updateWeatherToggle();
-        if (currentWeather == "Rain")
-          removeRain();
+      else if(currentWeather == "Haze")
+        changeAtmos(this, fog, "Hazy");
 
-        else if (currentWeather == "Drizzle")
-          removeDrizzle();
+      else if(currentWeather == "Fog")
+        changeAtmos(this, fog, "foggy");
+    }
 
-        else if(currentWeather == "Snow")
-          removeSnow();
+    else if (!weatherFlag && weatherToggle){
+      updateWeatherToggle();
+      if (currentWeather == "Rain")
+        removeRain();
 
-        else if(currentWeather == "Mist" ||
-                currentWeather == "Haze" ||
-                currentWeather == "Fog")
-          changeAtmos(this, fog, "Clear");
-      }
+      else if (currentWeather == "Drizzle")
+        removeDrizzle();
+
+      else if(currentWeather == "Snow")
+        removeSnow();
+
+      else if(currentWeather == "Mist" ||
+              currentWeather == "Haze" ||
+              currentWeather == "Fog")
+        changeAtmos(this, fog, "Clear");
+    }
       //timerText.setText(40, 10, 'Timer: ' + formatTime(document.getElementById('trapTime').value));
   }
 
@@ -842,7 +906,110 @@ var config = {
     traps.add(nTrap);
   }
 
+  function addDeactivatedTraps(self, deactivatedX, deactivatedY){
+    const nDeactivated = self.add.sprite(deactivatedX, deactivatedY, 'deactivated_mine');
+    deactivated.add(nDeactivated);
+  }
+
+  function addHealthpacks(self, healthpackInfo){
+    const nHealthpack = self.add.sprite(healthpackInfo.x, healthpackInfo.y, 'small_health');
+    healthpacks.add(nHealthpack);
+  }
+
   playerDeath = function(deadPlayer){
     deadPlayer.destroy();
     deadPlayer = null;
   }
+
+// Weather Config
+var rainEmitter;
+var drizzleEmitter;
+var snowEmitter;
+
+function addRain(rainParticles, mapWidth, mapHeight){
+    var maxSpeedY = 600;
+    var maxLifeSpan = mapHeight/maxSpeedY * 1000;
+    rainEmitter = rainParticles.createEmitter({
+        x: { min: 0, max: mapWidth },
+        y: 0,
+        lifespan: maxLifeSpan,
+        cycle: true,
+        speedX: { min: -50, max: 0 },
+        speedY: { min: 300, max: maxSpeedY },
+        scale: 1.25,
+        quantity: 6,
+        on: true,
+        blendMode: 'NORMAL',
+    });
+}
+
+function removeRain(){
+    rainEmitter.on = false;
+}
+
+function addDrizzle(rainParticles, mapWidth, mapHeight){
+    var maxSpeedY = 1800;
+    var maxLifeSpan = mapHeight/maxSpeedY * 1000;
+    drizzleEmitter = rainParticles.createEmitter({
+        x: { min: 0, max: mapWidth },
+        y: 0,
+        lifespan: maxLifeSpan,
+        speedX: { min: -50, max: 0 },
+        speedY: { min: 1200, max: maxSpeedY },
+        scale: .5,
+        quantity: 15,
+        on: true,
+        blendMode: 'NORMAL'
+    });
+}
+
+function removeDrizzle(){
+    drizzleEmitter.on = false;
+}
+
+function addSnow(snowParticles, mapWidth, mapHeight){
+    var maxSpeedY = 400;
+    var maxLifeSpan = mapHeight/maxSpeedY * 1000;
+    snowEmitter = snowParticles.createEmitter({
+        x: { min: 0, max: mapWidth },
+        y: 0,
+        lifespan: maxLifeSpan,
+        speedX: { min: -100, max: 5 },
+        speedY: { min: 200, max: maxSpeedY },
+        scale: .75,
+        quantity: 4,
+        on: true,
+        blendMode: 'NORMAL'
+    });
+}
+
+function removeSnow(){
+    snowEmitter.on = false;
+}
+
+function changeAtmos(gameObj, fog, atmosMode){
+    var alphaMax;
+    if (atmosMode == "foggy")
+        alphaMax=.5;
+    if (atmosMode == "Misty")
+        alphaMax=.4;
+    if (atmosMode == "Hazy")
+        alphaMax=.2;
+    if (atmosMode == "Clear")
+        alphaMax=0; 
+    gameObj.tweens.add({
+        targets: fog,
+        alpha: { value: alphaMax, duration: 5000, ease: 'Power1' },
+        repeat: 0,
+    });
+
+    gameObj.tweens.add({
+        targets: fog,
+        x: 1400,
+        ease: 'linear',
+        duration: 2000,
+        delay: 0,
+        repeat: Infinity,
+        yoyo: true
+    });
+}
