@@ -6,6 +6,12 @@
       <meta charset="utf-8">
     <title>Postgame</title>
     <link rel="icon" href="/assets/alienPink.png">
+
+    <!-- Include jquery, cookies, socket.io (client-side) and your own code -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://unpkg.com/cookie_js@1.2.2/cookie.min.js"></script>
+    <script src="https://unpkg.com/socket.io-client@2/dist/socket.io.slim.js"></script>
+    <script src="js/rankings.js" defer></script>
   </head>
   <body>
     <div align="right" id="logoutDiv">
@@ -16,7 +22,12 @@
 
     <h1 align="center">POSTGAME SCREEN</h1>
     <h2 align="center">GAME OVER</h2>
-    <div id="rankings"></div>
+    <div id="rankings">
+      <ol>
+      </ol>
+
+    </div>
+
     <form class="" action="/home" method="post">
       <button type="submit" name="button">Go Home</button>
     </form>

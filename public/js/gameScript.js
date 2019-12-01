@@ -36,6 +36,7 @@ var config = {
   var trapAmmo = 10;
   var x;
   var y;
+  //var rankings;
   var rankings = [];
 
   //parameters to control music+sound
@@ -530,10 +531,16 @@ var config = {
     });
 
     this.socket.on('rankings', function(username){
-      console.log("rankings username: " + username);
+      // console.log("rankings username: " + username);
+      // rankings = rankings + ' ' + username;
+      // var insertRank1 = localStorage.setItem( "rank1", rankings);
       rankings.push(username);
-      console.log(rankings);
-    })
+      console.log("RANKINGS LIST " + rankings);
+      var insertRank1 = localStorage.setItem( "rank1", rankings[0] );
+      var insertRank2 = localStorage.setItem( "rank2", rankings[1] );
+      var insertRank3 = localStorage.setItem( "rank3", rankings[2] );
+      var insertRank4 = localStorage.setItem( "rank4", rankings[3] );
+    });
 
     this.socket.emit('username',username);
 

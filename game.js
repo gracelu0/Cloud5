@@ -12,7 +12,8 @@ const bcrypt = require('bcrypt');
 const { Pool } = require('pg');
 
 var pool = new Pool({
-  connectionString: process.env.DATABASE_URL
+  //connectionString: process.env.DATABASE_URL
+  connectionString: "postgres://postgres:shimarov6929@localhost/cloud5"
 });
 
 
@@ -56,7 +57,7 @@ app.post('/waitForPlayers', (req,res) => {
 });
 
 
-var trapSecs = 60; var gameSecs = 120;
+var trapSecs = 10; var gameSecs = 30;
 var totalGameTime = trapSecs + gameSecs;
 
 app.post('/game', (req,res) => {
