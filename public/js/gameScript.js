@@ -150,11 +150,12 @@ var config = {
     this.load.image('yellowPlayer','assets/alienYellow.png');
     this.load.image('bluePlayer','assets/alienBlue.png');
     this.load.image('beigePlayer','assets/alienBeige.png');
+    this.load.image('invisiblePlayer','assets/invisible.png');
 
     this.load.image('healthbar_green', 'assets/healthbar_green.png');
     this.load.image('healthbar_red', 'assets/healthbar_red.png');
 
-    this.load.image('bulletImg','assets/testBullet.png');
+    this.load.image('bulletImg','assets/bullet.png');
     this.load.image('bomb','assets/mushroom_red.png');
     this.load.image('deactivated_mine','assets/deactivatedMine.png')
     this.load.image('small_health','assets/carrot.png');
@@ -289,6 +290,7 @@ var config = {
     this.socket = io();
     this.otherPlayers = this.physics.add.group();
     this.redBars = this.physics.add.group(); 
+    this.invisiblePlayer = this.physics.add.sprite(500, 500,'invisiblePlayer').setOrigin(0.5, 0.5);
 
     this.socket.on('numPlayers', (playerCount) =>{
         playerCountText.setText([
@@ -438,9 +440,9 @@ var config = {
             if (playerInfo.playerId === otherPlayer.playerId) {
               otherPlayer.setPosition(playerInfo.x, playerInfo.y);
               var usernameLength = playerInfo.playerUsername.length;
-              console.log("length", usernameLength);
+              //console.log("length", usernameLength);
               var offset = usernameLength*2.5;
-              console.log(offset);
+              //console.log(offset);
 
               otherPlayer.healthbar_red.x = playerInfo.x;
               otherPlayer.healthbar_red.y = playerInfo.y - 32;
@@ -712,6 +714,7 @@ var config = {
       }
       else if(this.player.health == 0){
         this.player.health = -5;
+
         console.log("username in else" + this.player.playerUsername);
         console.log("id in else" + this.player.playerId);
         this.socket.emit('playerDied', {id: this.player.playerId, username: this.player.playerUsername});
@@ -720,8 +723,26 @@ var config = {
         this.healthbar_green.destroy();
         this.healthbar_red.destroy();
         this.usernameText.destroy();
+
+    }
+    else{
+      
+      camera.startFollow(this.invisiblePlayer);
+
+      if (this.cursors.up.isDown){
+        this.invisiblePlayer.body.position.y -=4;
+      }
+      if (this.cursors.down.isDown){
+        this.invisiblePlayer.body.position.y +=4;
+      }
+      if (this.cursors.left.isDown){
+        this.invisiblePlayer.body.position.x -=4;
+      }
+      if (this.cursors.right.isDown){
+        this.invisiblePlayer.body.position.x +=4;
       }
     }
+
 
     if (time/1000 > 45*(healthpackCounter+1)){
       console.log("ok");
@@ -774,11 +795,12 @@ var config = {
         changeAtmos(this, fog, "Clear");
     }
   }
+}
 
   function addPlayer(self, playerInfo) {
     var username = document.getElementById("nameGame").value;
     playerInfo.playerUsername = username;
-    console.log(username.length);
+    //console.log(username.length);
     var selected = document.getElementById("colorGame").value;
     console.log("color selected " + selected);
     playerInfo.colour = selected;
