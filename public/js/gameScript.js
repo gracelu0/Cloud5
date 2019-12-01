@@ -42,6 +42,7 @@ var config = {
   //parameters to control music+sound
   var bgmusic;
   var shootSound;
+  var pop;
   var musicFlag = true;
   var soundFlag = true;
 
@@ -167,6 +168,7 @@ var config = {
 
     this.load.audio('bgmusic', 'assets/audio/bgmusic.mp3');
     this.load.audio('shootSound', 'assets/audio/shoot.mp3');
+    this.load.audio('pop', 'assets/audio/pop.mp3');
   }
 
   class Bullet extends Phaser.Physics.Arcade.Sprite{
@@ -225,6 +227,7 @@ var config = {
     //music
     shootSound = this.sound.add('shootSound');
     bgmusic = this.sound.add('bgmusic');
+    pop = this.sound.add('pop');
 
     if(game.sound.context.state === 'suspended') {
       game.sound.context.resume();
@@ -706,6 +709,9 @@ var config = {
         this.otherPlayers.getChildren().forEach(child => {
           child.body.immovable = true;
           if(child.health <= 0){
+            if(soundFlag == true) {
+              pop.play();
+            }
             //this.socket.emit('playerDied', {id:child.playerId, username: child.playerUsername});
             child.health = -5;
             console.log("player id" + child.playerId);
@@ -733,6 +739,9 @@ var config = {
         }
       }
       else if(this.player.health == 0){
+        if(soundFlag == true) {
+          pop.play();
+        }
         this.player.health = -5;
         console.log("username in els" + this.player.playerUsername);
         console.log("id in els" + this.player.playerId);
