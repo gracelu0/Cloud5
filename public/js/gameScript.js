@@ -569,7 +569,7 @@ var config = {
           var delaySecs = 5;
           var delayTimer = setInterval(function(){
               if (delaySecs < 1){
-                  clear (delayTimer);
+                  clearInterval(delayTimer);
                   document.getElementById('postGame').submit();
               }
               delaySecs--;
