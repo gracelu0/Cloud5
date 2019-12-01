@@ -414,7 +414,7 @@ io.on('connection', function (socket) {
     if (playerAlive > playerCount)
       playerAlive--;
     var username = socket.username;
-    if((!ranking.includes("hello")) && (username != null)) {
+    if((!ranking.includes(username)) && (username != null)) {
       for(var i = 0; i < 4; i++) {
         if(ranking[i] == null) {
           isDraw++;
