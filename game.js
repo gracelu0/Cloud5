@@ -45,12 +45,16 @@ app.post('/signUp', (req,res) => {
 });
 
 var gameFlag = false;
+var blockPlayersFlag = false;
 
 app.post('/pregame', (req,res) => {
-  if (!gameFlag)
+  if (!gameFlag && !blockPlayersFlag){
+    console.log(blockPlayersFlag)
     res.render('pages/pregame');
+  }
   else{
-    assert.deepStrictEqual(gameFlag, true);
+    assert.deepStrictEqual(blockPlayersFlag, true);
+    console.log(blockPlayersFlag)
     res.render('pages/gip', {refreshTimeEst: totalGameTime});
   }
 });
@@ -298,26 +302,30 @@ io.on('connection', function (socket) {
   console.log('a user connected. Num of players: ' + playerCount);
 
 
-  if (playerCount == 4 && gameFlag){
-    totalGameTime = battleSecs + trapSecs;
-    var trapTimer = setInterval(function() {
-      io.sockets.emit('trapTimer', { countdown: totalGameTime-battleSecs });
+  if (playerCount == 4){
+    blockPlayersFlag = true;
+    if (gameFlag){
+      totalGameTime = battleSecs + trapSecs;
+      var trapTimer = setInterval(function() {
+        io.sockets.emit('trapTimer', { countdown: totalGameTime-battleSecs });
 
-      if (totalGameTime-battleSecs < 1){
-        totalGameTime++;
-        clearInterval(trapTimer);
-        var battleTimer = setInterval(function(){
-          io.sockets.emit('battleTimer', { countdown: totalGameTime });
+        if (totalGameTime-battleSecs < 1){
+          totalGameTime++;
+          clearInterval(trapTimer);
+          var battleTimer = setInterval(function(){
+            io.sockets.emit('battleTimer', { countdown: totalGameTime });
 
-          if (totalGameTime < 1){
-            clearInterval(battleTimer);
-            gameFlag = false;
-          }
-          totalGameTime--;
-        }, 1000)
-      }
-      totalGameTime--;
-    }, 1000);
+            if (totalGameTime < 1){
+              clearInterval(battleTimer);
+              gameFlag = false;
+              blockPlayersFlag = false;
+            }
+            totalGameTime--;
+          }, 1000)
+        }
+        totalGameTime--;
+      }, 1000);
+    }
   }
 
   io.sockets.emit('numPlayers', playerCount);

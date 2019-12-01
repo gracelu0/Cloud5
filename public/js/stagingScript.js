@@ -1,18 +1,20 @@
 var socket = io();
 
 socket.on('numPlayers', function (playerCount) {
-    console.log(playerCount);
     var waitMessage = document.getElementById('waitMessage');
     
-    if (playerCount == 4){
-        var gameSubmitSecs = 0.005;
+    if (playerCount > 4)
+        document.getElementById('forcePregame').submit();
+    
+    else if (playerCount == 4){
+        var gameSubmitSecs = 0.05;
         var timer = setInterval(function() {
-            if (gameSubmitSecs < 0.005){
+            if (gameSubmitSecs < 0.05){
               clearInterval(timer);
               document.getElementById('gamePage').submit();
             }
             gameSubmitSecs--;
-        }, 5);
+        }, 50);
     }
     else if (playerCount==3)
         waitMessage.innerHTML = "<h2>Waiting for <b>"+(4-playerCount)+"</b> more player to join...</h2>";
