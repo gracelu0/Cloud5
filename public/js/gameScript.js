@@ -37,8 +37,6 @@ var config = {
   var healthpackCounter = 0;
   var x;
   var y;
-  //var rankings;
-  var rankings = [];
 
   //parameters to control music+sound
   var bgmusic;
@@ -532,13 +530,12 @@ var config = {
       $('#messages').append($('<li>').html('<b>' + deadPlayer.username + ' was killed!</b>'));
     });
 
-    this.socket.on('rankings', function(username){
+    this.socket.on('rankings', function(rankings){
       // console.log("rankings username: " + username);
       // rankings = rankings + ' ' + username;
       // var insertRank1 = localStorage.setItem( "rank1", rankings);
-      rankings.push(username);
-      console.log("RANKINGS LIST " + rankings);
-      if(rankings.length == 4) {
+      console.log("client side: " + rankings);
+      if(!rankings.includes(null) && !rankings.includes(undefined)) {
         var insertRank1 = localStorage.setItem( "rank1", rankings[3] );
         var insertRank2 = localStorage.setItem( "rank2", rankings[2] );
         var insertRank3 = localStorage.setItem( "rank3", rankings[1] );
