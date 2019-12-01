@@ -38,7 +38,6 @@ $('.chatForm').submit(function (e) {
     console.log(username);
     // Send the message to the server
     self.socket.emit('message', {
-        //user: cookie.get('user') || 'Anonymous',
         user: username,
         message: message
     });
@@ -53,5 +52,3 @@ socket.on('message', function (data) {
     $('#messages').append($('<li>').text(data.user + ': ' + data.message));
 
 });
-
-// socket.emit('username',username);

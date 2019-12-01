@@ -226,9 +226,8 @@ var config = {
     shootSound = this.sound.add('shootSound');
     bgmusic = this.sound.add('bgmusic');
 
-    if(game.sound.context.state === 'suspended') {
+    if(game.sound.context.state === 'suspended')
       game.sound.context.resume();
-    }
 
     bgmusic.play();
     bgmusic.loop = true;
@@ -239,10 +238,10 @@ var config = {
         bgmusic.pause();
       else 
         bgmusic.resume();
-    })
+    });
     soundButton.addEventListener('click', function() {
       soundFlag = !soundFlag;
-    })
+    });
 
     //weather
     rainParticles = this.add.particles('rain');
@@ -286,30 +285,11 @@ var config = {
     trapCount = this.add.text(10, 60,"Mines left:" + ' ' + trapAmmo + "/10",{ fontFamily: 'Neucha', fontSize:'20px' });
     trapCount.setScrollFactor(0);
 
-    //timer
-    //this.totalTime = 180;
-
-    //timerText = this.add.text(10, 450, 'Countdown: ' + formatTime(this.totalTime));
-    // console.log(document.getElementById('trapTime').value);
-    // timerText = this.add.text(40, 40, 'Timer: ' + formatTime(document.getElementById('trapTime').value));
-
-    // timedEvent = this.time.addEvent({
-    //   delay: 1000,
-    //   callback: timer,
-    //   callbackScope: this,
-    //   loop: true
-    // });
-
-
     var self = this;
     var sessionId;
     this.socket = io();
     this.otherPlayers = this.physics.add.group();
-    this.redBars = this.physics.add.group();
-
-    //character selection
-    // var selected = document.getElementById("colorGame").value;
-    // console.log("color selected " + selected);
+    this.redBars = this.physics.add.group(); 
 
     this.socket.on('numPlayers', (playerCount) =>{
         playerCountText.setText([
@@ -593,13 +573,6 @@ var config = {
       classType: Phaser.GameObjects.Sprite
     });
 
-  //   const debugGraphics = this.add.graphics().setAlpha(0.75);
-  //   collideLayer.renderDebug(debugGraphics, {
-  //     tileColor: null, // Color of non-colliding tiles
-  //     collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
-  //     faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
-  //   });
-
     //set player movement input
     this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -719,8 +692,8 @@ var config = {
       }
       else if(this.player.health == 0){
         this.player.health = -5;
-        console.log("username in els" + this.player.playerUsername);
-        console.log("id in els" + this.player.playerId);
+        console.log("username in else" + this.player.playerUsername);
+        console.log("id in else" + this.player.playerId);
         this.socket.emit('playerDied', {id: this.player.playerId, username: this.player.playerUsername});
         console.log("in update2");
         playerDeath(this.player);
@@ -780,24 +753,7 @@ var config = {
               currentWeather == "Fog")
         changeAtmos(this, fog, "Clear");
     }
-      //timerText.setText(40, 10, 'Timer: ' + formatTime(document.getElementById('trapTime').value));
   }
-
-  // function formatTime(seconds){
-  //   //Minutes
-  //   var minutes = Math.floor(seconds/60);
-  //   //seconds
-  //   var secondsPart = seconds%60;
-  //   //add zeros to left of seconds
-  //   secondsPart = secondsPart.toString().padStart(2,'0');
-  //   //return formatted time
-  //   return `${minutes}:${secondsPart}`;
-  // }
-
-  // function timer(){
-  //   this.totalTime-=1;
-  //   timerText.setText('Countdown: '+formatTime(this.totalTime));
-  // }
 
   function addPlayer(self, playerInfo) {
     var username = document.getElementById("nameGame").value;

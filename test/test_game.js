@@ -152,8 +152,6 @@ describe('players', ()=>{
     it('should have player count the same as number of players joined',()=>{
         assert.equal(Object.keys(players).length, playerCount);
     });
-
-
 });
 
 
@@ -209,4 +207,4 @@ describe("Socket-Server", function () {
         tests(client2);
     });
 
-  });
+});
