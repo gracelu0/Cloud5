@@ -158,10 +158,9 @@ var options = {
 };
 
 describe("Socket-Server", function () {
-    var client1, client2;
+    var client1;
     it('should connect users', function (done) {
         var client1 = io(socketURL);
-        var client2 = io(socketURL);
       
       client1.on('connect', function (data) {
           client1.emit('playerMoved')
@@ -171,33 +170,69 @@ describe("Socket-Server", function () {
       });
     });
 
-    // it('should broadcast new player to all players', function(done){
-
-    // })
-
-    it('socket tests', ()=>{
-        function test_movement(client){
-            client.on('playerMoved', (data)=>{
-                assert.isNumber(data.x);
-                assert.isNumber(data.y);
-            })
-        }
-
-        function test_playerHit(client){
-            client.on('playerHit', (id)=>{
-                assert.isAtLeast(players[id].health,0);
-            })
-        }
-
-        function tests(client){
-            test_movement(client);
+    describe("socket tests", function(){
+        it('should get coordinates of player position', ()=>{
+            function test_movement(client){
+                client.on('playerMoved', (data)=>{
+                    assert.isNumber(data.x);
+                    assert.isNumber(data.y);
+                });
+                client.disconnect();
+            }
     
-        }
+            function tests(client){
+                test_movement(client);
+        
+            }
+    
+            var client1 = io.connect(socketURL, options);
+            var client2 = io.connect(socketURL, options);
+            tests(client1);
+            tests(client2);
+        });
 
-        var client1 = io(socketURL);
-        var client2 = io(socketURL);
-        tests(client1);
-        tests(client2);
+        it('should decrease player health if player is still alive and hit by bullet', ()=>{
+            function test_playerHit(client){
+                client.on('playerHit', (id)=>{
+                    assert.isAtLeast(players[id].health,0);
+                });
+                client.disconnect();
+            }
+
+            function tests(client){
+                test_playerHit(client);
+        
+            }
+
+            var client1 = io.connect(socketURL, options);
+            var client2 = io.connect(socketURL, options);
+            tests(client1);
+            tests(client2);
+
+
+        });
+
+        var player1 = {'username': 'test1', 'colour': 'pink'}
+        var player2 = {'username': 'test2', 'colour': 'blue'}
+
+        it('should broadcast new player to all players', ()=>{
+           var client1 = io.connect(socketURL, options);
+
+           client1.on('connect', function(data){
+               client1.emit('username', player1);
+
+                var client2 = io.connect(socketURL, options);
+
+                client2.on('connect', function(data){
+                    client2.emit('username', player2);
+                });
+
+           })
+
+        });
+
     });
+    
 
   });
+

@@ -15,12 +15,7 @@ var pool = new Pool({
   connectionString: process.env.DATABASE_URL
 });
 
-// var pool = new Pool({
-//   user: 'graceluo',
-//   password: 'tokicorgi',
-//   host: 'localhost',
-//   database: 'cloud5'
-// });
+
 
 
 app.use(express.static(path.join(__dirname, 'public')));
