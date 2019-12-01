@@ -37,6 +37,7 @@ var config = {
   var healthpackCounter = 0;
   var x;
   var y;
+  var storeRankings = true;
 
   //parameters to control music+sound
   var bgmusic;
@@ -537,11 +538,12 @@ var config = {
       // rankings = rankings + ' ' + username;
       // var insertRank1 = localStorage.setItem( "rank1", rankings);
       console.log("client side: " + rankings);
-      if(!rankings.includes(null) && !rankings.includes(undefined)) {
+      if(!rankings.includes(null) && !rankings.includes(undefined) && storeRankings) {
         var insertRank1 = localStorage.setItem( "rank1", rankings[3] );
         var insertRank2 = localStorage.setItem( "rank2", rankings[2] );
         var insertRank3 = localStorage.setItem( "rank3", rankings[1] );
         var insertRank4 = localStorage.setItem( "rank4", rankings[0] );
+        storeRankings = false;
       }
     });
 
