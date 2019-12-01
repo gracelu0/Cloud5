@@ -403,7 +403,7 @@ io.on('connection', function (socket) {
 
     io.sockets.emit('numPlayers', playerAlive);
     //emit dead player username to client for rankings
-    io.emit('rankings', username);
+    // io.emit('rankings', username);
     console.log("dead player is emitted to client for rankings")
     io.emit('died', deadPlayer);
     delete players[deadPlayer.id];
@@ -424,10 +424,14 @@ io.on('connection', function (socket) {
           isDraw++;
           ranking.push(username);
           console.log(ranking);
-          console.log("disconnect player is emitted for rankings");
-          io.emit('rankings', username);
           break;
         }
+      }
+    }
+    if(ranking.length == 4) {
+      for(var i = 0; i < 4; i++) {
+        console.log("disconnect player is emitted for rankings");
+        io.emit('rankings', ranking[i]);
       }
     }
 
