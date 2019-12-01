@@ -424,12 +424,10 @@ io.on('connection', function (socket) {
         }
       }
     }
-    var emitRankings = true;
     if(ranking.length == 4 && emitRankings) {
       console.log("emitted for rankings");
       console.log(ranking);
       io.emit('rankings', ranking);
-      emitRankings = false;
     }
 
     for(var i = 0; i < servTraps.length; i++){
