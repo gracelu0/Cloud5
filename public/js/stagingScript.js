@@ -14,8 +14,10 @@ socket.on('numPlayers', function (playerCount) {
             gameSubmitSecs--;
         }, 500);
     }
-    else
+    else if (playerCount==3)
         waitMessage.innerHTML = "<h2>Waiting for <b>"+(4-playerCount)+"</b> more player to join...</h2>";
+    else
+        waitMessage.innerHTML = "<h2>Waiting for <b>"+(4-playerCount)+"</b> more players to join...</h2>";
 });
 
 var username = document.getElementById("nameGame").value;
@@ -35,7 +37,6 @@ $('.chatForm').submit(function (e) {
     console.log(username);
     // Send the message to the server
     self.socket.emit('message', {
-        //user: cookie.get('user') || 'Anonymous',
         user: username,
         message: message
     });
@@ -50,5 +51,3 @@ socket.on('message', function (data) {
     $('#messages').append($('<li>').text(data.user + ': ' + data.message));
 
 });
-
-// socket.emit('username',username);

@@ -3,6 +3,7 @@ const path = require('path');
 const nodemailer = require('nodemailer');
 const randomstring = require('randomstring');
 const PORT = process.env.PORT || 5000
+const assert = require('assert');
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io').listen(server);
@@ -43,8 +44,10 @@ var gameFlag = false;
 app.post('/pregame', (req,res) => {
   if (!gameFlag)
     res.render('pages/pregame');
-  else
+  else{
+    assert.deepStrictEqual(gameFlag, true);
     res.render('pages/gip', {refreshTimeEst: totalGameTime});
+  }
 });
 
 app.post('/waitForPlayers', (req,res) => {
@@ -58,6 +61,7 @@ app.post('/game', (req,res) => {
 });
 
 app.post('/postgame', (req,res) => {
+  assert.deepStrictEqual(gameFlag, false)
   res.render('pages/postgame');
 });
 
