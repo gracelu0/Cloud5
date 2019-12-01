@@ -32,6 +32,7 @@ describe('user tests', () =>{
         it('should allow successful login if username and password exist', (done)=>{
             chai.request(app)
                 .post('/signUpForm')
+                .type('form')
                 .send({'username': 'mojo123', 'password':'12345'})
                 .end(function(err, res){
                     res.body.should.be.a('object');
@@ -56,7 +57,8 @@ describe('user tests', () =>{
         it('should not signup successfully if passwords do not match', (done)=>{
             chai.request(app)
                 .post('/signUpForm')
-                .send({'username': 'test', 'password':'123', 'confirmPassword':'1234','email':'grace.r.luo@gmail.com'})
+                .type('form')
+                .send({username: 'test', password:'123', confirmPassword:'1234',email:'grace.r.luo@gmail.com'})
                 .end(function(err, res){
                     res.body.should.be.a('object');
                     res.should.have.status(200);
@@ -64,47 +66,50 @@ describe('user tests', () =>{
                 });
         });
     })
+
+    describe('logout', ()=>{
+        it('should log user out when logout button clicked and user confirms', (done)=>{
+            chai.request(app)
+                .post('/logout')
+                .end(function(err, res){
+                    res.should.have.status(200);
+                    done();
+                });
+        });
+    });
     
-    it('should log user out when logout button clicked and user confirms', (done)=>{
-        chai.request(app)
-            .post('/logout')
-            .end(function(err, res){
-                res.should.have.status(200);
-                done();
-            });
-    });
-
-
-
-});
-
-
-describe('login page', function() {
-    const browser = new Browser({site:'http://localhost:5000/' });
-    before(function(){
-    })
-
-    before(function(done) {
-        browser.visit('/',done);
-    });
-
-    it('should show login form', function(){
-        assert.ok(browser.success);
-    })
-
-    describe('submits login form', function(){
-        before(function(done){
-            browser.fill('input[name="username"]', 'mojo123');
-            browser.fill('input[name="pwd"]', '12345')
-            browser.pressButton('signInBtn',done);
+    describe('change password', ()=>{
+        it('should direct user to confirmation page if user exists and new password entered', (done)=>{
+            chai.request(app)
+                .post('/forgotPwdAction')
+                .send({'name':'mojo123', 'newPwd': 'abc'})
+                .end(function(err, res){
+                    if (err){
+                        throw err;
+                    }
+                    res.should.have.status(200);
+                    done();
+                });
         });
 
-        it('should allow successful login if username and password exist', function(){
-            browser.assert.success();
-        })
-    });
+        it('should send error message if user does not exist and changes password', (done)=>{
+            chai.request(app)
+                .post('/forgotPwdAction')
+                .send({'name':'nonexistent', 'newPwd': 'abc'})
+                .end(function(err, res){
+                    if (err){
+                        throw err;
+                    }
+                    res.should.have.status(200);
+                    done();
+                });
+        });
+    })
+    
+
 
 });
+
 
 describe('login page', function() {
     const browser = new Browser();
@@ -112,21 +117,6 @@ describe('login page', function() {
     before(function(done) {
         browser.visit('http://localhost:5000/',done);
     });
-
-    describe('signup', function(){
-        before(function(done){
-            browser.pressButton('button[name="signUpBtn"]').then(function(){
-                assert.ok(browser.success);
-                assert.equal(browser.text('h1'),'SIGN UP');
-                browser.fill('input[name="username"]', 'mojo321');
-                browser.fill('input[name="password"]', '123');
-                browser.fill('input[name="confirmPassword"]', '123');
-                browser.fill('input[name="email"]', 'grace.r.luo@gmail.com');
-                
-            }).then(done,done);
-        });
-    })
-
 
     describe('admin login', function(){
         before(function(done){
@@ -141,6 +131,7 @@ describe('login page', function() {
         })
     })
 });
+
 
 var players = require('../game.js').players;
 var playerCount = require('../game.js').playerCount;
