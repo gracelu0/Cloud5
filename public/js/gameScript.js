@@ -567,7 +567,7 @@ var config = {
       $('#gameTimer').html('<h2>Battle! Time Remaining: <b>' + formatTime(data.countdown) + '</b></h2>');
       if (data.countdown == 0){
           var delaySecs = 5;
-          var delayTimer = setinterval(function(){
+          var delayTimer = setInterval(function(){
               if (delaySecs < 1){
                   clear (delayTimer);
                   document.getElementById('postGame').submit();
