@@ -37,7 +37,8 @@ var config = {
   var healthpackCounter = 0;
   var x;
   var y;
-
+  //var rankings;
+  var rankings = [];
 
   //parameters to control music+sound
   var bgmusic;
@@ -160,7 +161,7 @@ var config = {
     this.load.image('deactivated_mine','assets/deactivatedMine.png')
     this.load.image('small_health','assets/carrot.png');
     this.load.image('full_health','assets/carrot_gold.png');
-  
+
     this.load.image('rain', 'assets/rain.png');
     this.load.image('snow', 'assets/snowflake-pixel.png');
     this.load.image('fog', 'assets/fog.png');
@@ -298,6 +299,7 @@ var config = {
       });
 
     this.socket.on('connect', () => {
+      rankings = [];
       sessionId = this.socket.id;
     });
 
@@ -441,7 +443,7 @@ var config = {
               console.log("length", usernameLength);
               var offset = usernameLength*2.5;
               console.log(offset);
-              
+
               otherPlayer.healthbar_red.x = playerInfo.x;
               otherPlayer.healthbar_red.y = playerInfo.y - 32;
               otherPlayer.healthbar_green.x = playerInfo.x;
@@ -528,6 +530,18 @@ var config = {
       console.log("died");
       console.log(deadPlayer.username);
       $('#messages').append($('<li>').html('<b>' + deadPlayer.username + ' was killed!</b>'));
+    });
+
+    this.socket.on('rankings', function(username){
+      // console.log("rankings username: " + username);
+      // rankings = rankings + ' ' + username;
+      // var insertRank1 = localStorage.setItem( "rank1", rankings);
+      rankings.push(username);
+      console.log("RANKINGS LIST " + rankings);
+      var insertRank1 = localStorage.setItem( "rank1", rankings[0] );
+      var insertRank2 = localStorage.setItem( "rank2", rankings[1] );
+      var insertRank3 = localStorage.setItem( "rank3", rankings[2] );
+      var insertRank4 = localStorage.setItem( "rank4", rankings[3] );
     });
 
     this.socket.emit('username',username);
