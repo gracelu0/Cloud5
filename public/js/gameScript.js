@@ -37,7 +37,8 @@ var config = {
   var healthpackCounter = 0;
   var x;
   var y;
-
+  //var rankings;
+  var rankings = [];
 
   //parameters to control music+sound
   var bgmusic;
@@ -160,7 +161,7 @@ var config = {
     this.load.image('deactivated_mine','assets/deactivatedMine.png')
     this.load.image('small_health','assets/carrot.png');
     this.load.image('full_health','assets/carrot_gold.png');
-  
+
     this.load.image('rain', 'assets/rain.png');
     this.load.image('snow', 'assets/snowflake-pixel.png');
     this.load.image('fog', 'assets/fog.png');
@@ -226,9 +227,8 @@ var config = {
     shootSound = this.sound.add('shootSound');
     bgmusic = this.sound.add('bgmusic');
 
-    if(game.sound.context.state === 'suspended') {
+    if(game.sound.context.state === 'suspended')
       game.sound.context.resume();
-    }
 
     bgmusic.play();
     bgmusic.loop = true;
@@ -239,10 +239,10 @@ var config = {
         bgmusic.pause();
       else 
         bgmusic.resume();
-    })
+    });
     soundButton.addEventListener('click', function() {
       soundFlag = !soundFlag;
-    })
+    });
 
     //weather
     rainParticles = this.add.particles('rain');
@@ -286,30 +286,11 @@ var config = {
     trapCount = this.add.text(10, 60,"Mines left:" + ' ' + trapAmmo + "/10",{ fontFamily: 'Neucha', fontSize:'20px' });
     trapCount.setScrollFactor(0);
 
-    //timer
-    //this.totalTime = 180;
-
-    //timerText = this.add.text(10, 450, 'Countdown: ' + formatTime(this.totalTime));
-    // console.log(document.getElementById('trapTime').value);
-    // timerText = this.add.text(40, 40, 'Timer: ' + formatTime(document.getElementById('trapTime').value));
-
-    // timedEvent = this.time.addEvent({
-    //   delay: 1000,
-    //   callback: timer,
-    //   callbackScope: this,
-    //   loop: true
-    // });
-
-
     var self = this;
     var sessionId;
     this.socket = io();
     this.otherPlayers = this.physics.add.group();
-    this.redBars = this.physics.add.group();
-
-    //character selection
-    // var selected = document.getElementById("colorGame").value;
-    // console.log("color selected " + selected);
+    this.redBars = this.physics.add.group(); 
 
     this.socket.on('numPlayers', (playerCount) =>{
         playerCountText.setText([
@@ -318,6 +299,7 @@ var config = {
       });
 
     this.socket.on('connect', () => {
+      rankings = [];
       sessionId = this.socket.id;
     });
 
@@ -461,7 +443,7 @@ var config = {
               console.log("length", usernameLength);
               var offset = usernameLength*2.5;
               console.log(offset);
-              
+
               otherPlayer.healthbar_red.x = playerInfo.x;
               otherPlayer.healthbar_red.y = playerInfo.y - 32;
               otherPlayer.healthbar_green.x = playerInfo.x;
@@ -550,6 +532,18 @@ var config = {
       $('#messages').append($('<li>').html('<b>' + deadPlayer.username + ' was killed!</b>'));
     });
 
+    this.socket.on('rankings', function(username){
+      // console.log("rankings username: " + username);
+      // rankings = rankings + ' ' + username;
+      // var insertRank1 = localStorage.setItem( "rank1", rankings);
+      rankings.push(username);
+      console.log("RANKINGS LIST " + rankings);
+      var insertRank1 = localStorage.setItem( "rank1", rankings[0] );
+      var insertRank2 = localStorage.setItem( "rank2", rankings[1] );
+      var insertRank3 = localStorage.setItem( "rank3", rankings[2] );
+      var insertRank4 = localStorage.setItem( "rank4", rankings[3] );
+    });
+
     this.socket.emit('username',username);
 
     function formatTime(seconds){
@@ -592,13 +586,6 @@ var config = {
     healthpacks = this.physics.add.group({
       classType: Phaser.GameObjects.Sprite
     });
-
-  //   const debugGraphics = this.add.graphics().setAlpha(0.75);
-  //   collideLayer.renderDebug(debugGraphics, {
-  //     tileColor: null, // Color of non-colliding tiles
-  //     collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
-  //     faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
-  //   });
 
     //set player movement input
     this.cursors = this.input.keyboard.createCursorKeys();
@@ -719,8 +706,8 @@ var config = {
       }
       else if(this.player.health == 0){
         this.player.health = -5;
-        console.log("username in els" + this.player.playerUsername);
-        console.log("id in els" + this.player.playerId);
+        console.log("username in else" + this.player.playerUsername);
+        console.log("id in else" + this.player.playerId);
         this.socket.emit('playerDied', {id: this.player.playerId, username: this.player.playerUsername});
         console.log("in update2");
         playerDeath(this.player);
@@ -780,24 +767,7 @@ var config = {
               currentWeather == "Fog")
         changeAtmos(this, fog, "Clear");
     }
-      //timerText.setText(40, 10, 'Timer: ' + formatTime(document.getElementById('trapTime').value));
   }
-
-  // function formatTime(seconds){
-  //   //Minutes
-  //   var minutes = Math.floor(seconds/60);
-  //   //seconds
-  //   var secondsPart = seconds%60;
-  //   //add zeros to left of seconds
-  //   secondsPart = secondsPart.toString().padStart(2,'0');
-  //   //return formatted time
-  //   return `${minutes}:${secondsPart}`;
-  // }
-
-  // function timer(){
-  //   this.totalTime-=1;
-  //   timerText.setText('Countdown: '+formatTime(this.totalTime));
-  // }
 
   function addPlayer(self, playerInfo) {
     var username = document.getElementById("nameGame").value;

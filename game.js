@@ -3,6 +3,7 @@ const path = require('path');
 const nodemailer = require('nodemailer');
 const randomstring = require('randomstring');
 const PORT = process.env.PORT || 5000
+const assert = require('assert');
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io').listen(server);
@@ -14,8 +15,6 @@ const { Pool } = require('pg');
 var pool = new Pool({
   connectionString: process.env.DATABASE_URL
 });
-
-
 
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -45,15 +44,15 @@ var gameFlag = false;
 app.post('/pregame', (req,res) => {
   if (!gameFlag)
     res.render('pages/pregame');
-  else
+  else{
+    assert.deepStrictEqual(gameFlag, true);
     res.render('pages/gip', {refreshTimeEst: totalGameTime});
+  }
 });
 
 app.post('/waitForPlayers', (req,res) => {
   res.render('pages/gameStaging');
 });
-
-var trapSecs = 30; var battleSecs = 120;
 
 app.post('/game', (req,res) => {
   if (!gameFlag)
@@ -62,6 +61,7 @@ app.post('/game', (req,res) => {
 });
 
 app.post('/postgame', (req,res) => {
+  assert.deepStrictEqual(gameFlag, false)
   res.render('pages/postgame');
 });
 
@@ -280,10 +280,18 @@ var servTraps = [];
 var servHealthpacks = [];
 var trapSecs = 30; var battleSecs = 120;
 var totalGameTime;
+var ranking = [];
+var isDraw = 0;
 
 io.on('connection', function (socket) {
   playerCount++;
   playerAlive = playerCount;
+
+  //Empty rankings array
+  ranking = [];
+  isDraw = 0;
+  console.log('a user connected. Num of players: ' + playerCount);
+
 
   if (playerCount == 4 && gameFlag){
     totalGameTime = battleSecs + trapSecs;
@@ -306,7 +314,7 @@ io.on('connection', function (socket) {
       totalGameTime--;
     }, 1000);
   }
-
+  
   io.sockets.emit('numPlayers', playerCount);
   // create a new player and add it to our players object
   players[socket.id] = {
@@ -387,7 +395,16 @@ io.on('connection', function (socket) {
 
   socket.on('playerDied', function (deadPlayer){
     playerAlive--;
+    var username = deadPlayer.username;
+    console.log(username + " was killed");
+    //Push dead player username to rankings array
+    ranking.push(username);
+    console.log(ranking);
+    
     io.sockets.emit('numPlayers', playerAlive);
+    //emit dead player username to client for rankings
+    io.emit('rankings', username);
+    console.log("dead player is emitted to client for rankings")
     io.emit('died', deadPlayer);
     delete players[deadPlayer.id];
 
@@ -398,9 +415,19 @@ io.on('connection', function (socket) {
 
   socket.on('disconnect', function (){
     playerCount--;
-
-    if (playerAlive > playerCount){
+    if (playerAlive > playerCount)
       playerAlive--;
+    var username = socket.username;
+    if(!ranking.includes(username)) {
+      for(var i = 0; i < 4; i++) {
+        if(ranking[i] == null) {
+          ranking.push(username);
+          console.log(ranking);
+          console.log("disconnect player is emitted for rankings");
+          io.emit('rankings', username);
+          break;
+        }
+      }
     }
 
     for(var i = 0; i < servTraps.length; i++){

@@ -3,22 +3,21 @@ var socket = io();
 socket.on('numPlayers', function (playerCount) {
     console.log(playerCount);
     var waitMessage = document.getElementById('waitMessage');
-
-    if (playerCount == 3)
-        waitMessage.innerHTML = "<h2>Waiting for <b>"+(4-playerCount)+"</b> more player to join...</h2>";
-    else
-        waitMessage.innerHTML = "<h2>Waiting for <b>"+(4-playerCount)+"</b> more players to join...</h2>";
-
+    
     if (playerCount == 4){
-        var gameSubmitSecs = 0.5;
+        var gameSubmitSecs = 0.005;
         var timer = setInterval(function() {
-            if (gameSubmitSecs < 0.5){
+            if (gameSubmitSecs < 0.005){
               clearInterval(timer);
               document.getElementById('gamePage').submit();
             }
             gameSubmitSecs--;
-        }, 500);
+        }, 5);
     }
+    else if (playerCount==3)
+        waitMessage.innerHTML = "<h2>Waiting for <b>"+(4-playerCount)+"</b> more player to join...</h2>";
+    else
+        waitMessage.innerHTML = "<h2>Waiting for <b>"+(4-playerCount)+"</b> more players to join...</h2>";
 });
 
 var username = document.getElementById("nameGame").value;
@@ -38,7 +37,6 @@ $('.chatForm').submit(function (e) {
     console.log(username);
     // Send the message to the server
     self.socket.emit('message', {
-        //user: cookie.get('user') || 'Anonymous',
         user: username,
         message: message
     });
@@ -53,5 +51,3 @@ socket.on('message', function (data) {
     $('#messages').append($('<li>').text(data.user + ': ' + data.message));
 
 });
-
-// socket.emit('username',username);
