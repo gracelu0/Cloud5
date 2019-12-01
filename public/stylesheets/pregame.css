@@ -11,7 +11,7 @@ body, html{
 }
 
 
-h2,p,h3{
+h2,p,h3,h4,b{
     font-family: 'Neucha', cursive;
 }
 h2{
@@ -20,8 +20,18 @@ h2{
 h3{
     font-size: 30pt;
 }
+
+h4{
+    font-size: 20pt;
+}
+
 p{
     font-size: 25pt;
+}
+
+b{
+    font-size: 30pt;
+    color: crimson;
 }
 
 [type=radio]{
@@ -42,6 +52,12 @@ p{
 
 [type=radio]:hover + img{
     opacity: 0.8;
+}
+
+#pointingFinger{
+    position: absolute;
+    bottom: 125px;
+    left: 45%
 }
 
 button{
