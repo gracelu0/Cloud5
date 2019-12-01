@@ -23,53 +23,42 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.get('/', (req, res) => {
-    res.render('pages/login');
+  res.render('pages/login');
 });
 
 app.get("/forgotPwd", function (req, res) {
   res.render("pages/forgotPwd");
 });
 
-
 app.post('/home', (req,res) => {
-    res.render('pages/home');
+  res.render('pages/home');
 });
 
 app.post('/signUp', (req,res) => {
-    res.render('pages/signUp');
+  res.render('pages/signUp');
 });
 
-app.post('/rules', (req,res) => {
-    res.render('pages/rules');
-});
+var gameFlag = false;
 
 app.post('/pregame', (req,res) => {
+  if (!gameFlag)
     res.render('pages/pregame');
+  else
+    res.render('pages/gip', {refreshTimeEst: totalGameTime});
 });
 
-var blockGamersFlag = false;
-
 app.post('/waitForPlayers', (req,res) => {
-  //var selectedCharacter = req.body.character;
-  //console.log(selectedCharacter);
   res.render('pages/gameStaging');
 });
 
-
-var trapSecs = 60; var gameSecs = 120;
-var totalGameTime = trapSecs + gameSecs;
-
 app.post('/game', (req,res) => {
-  // var selectedCharacter = req.body.colorGame;
-  // console.log(selectedCharacter);
-  //res.render('pages/game', {character: selectedCharacter, gameTime: gameSecs, trapTime: trapSecs});
-  res.render('pages/game', {gameTime: gameSecs, trapTime: trapSecs});
+  if (!gameFlag)
+    gameFlag = true;
+  res.render('pages/game');
 });
 
 app.post('/postgame', (req,res) => {
-    blockGamersFlag = false;
-    console.log(blockGamersFlag);
-    res.render('pages/postgame');
+  res.render('pages/postgame');
 });
 
 app.post('/logout', (req,res) =>{
@@ -77,36 +66,40 @@ app.post('/logout', (req,res) =>{
 })
 
 app.post('/login', (req, res) => {
-    var userID = req.body.username;
-    var userpwd = req.body.pwd;
-    var loginQuery = `SELECT * FROM logindb WHERE username='${userID}'`;
-    pool.query(loginQuery, async (error, result) => {
-        if (error)
-            res.end(error);
-        if (result.rows.length === 0)
-            res.render('pages/login', {loginMessage: 'Username entered does not match any accounts! Please sign up for a new account below.'});
+  var userID = req.body.username;
+  var userpwd = req.body.pwd;
+  var loginQuery = `SELECT * FROM logindb WHERE username='${userID}'`;
+  pool.query(loginQuery, async (error, result) => {
+
+    if (error)
+      res.end(error);
+
+    if (result.rows.length === 0)
+      res.render('pages/login', {loginMessage: 'Username entered does not match any accounts! Please sign up for a new account below.'});
+    else{
+
+      if(await bcrypt.compare(userpwd, result.rows[0].password)){
+
+        if ((result.rows[0].usertype == 'User'))
+            res.render('pages/home', {message: 'Successfully logged in!'});
         else{
-            if(await bcrypt.compare(userpwd, result.rows[0].password)){
-                if ((result.rows[0].usertype == 'User'))
-                    res.render('pages/home', {message: 'Successfully logged in!'});
-                else{ // result.row[0].usertype == 'Admin'
 
+            var usersQuery=`SELECT userid, username, email, usertype FROM logindb ORDER BY usertype, username`;
+            pool.query(usersQuery, (error, result) =>{
 
-                    var usersQuery=`SELECT userid, username, email, usertype FROM logindb ORDER BY usertype, username`;
-                    pool.query(usersQuery, (error, result) =>{
-                        if (error)
-                            res.end(error);
-                        var allUsers = {'rows': result.rows};
-                        res.render('pages/admin', allUsers);
-                    });
-                }
-            }
-            else
-                res.render('pages/login', {loginMessage: 'Password entered is incorrect! Please try again.'});
+                if (error)
+                    res.end(error);
+                var allUsers = {'rows': result.rows};
+                res.render('pages/admin', allUsers);
+            });
         }
-    });
+      }
+      else{
+        res.render('pages/login', {loginMessage: 'Password entered is incorrect! Please try again.'});
+      }
+    }
+  });
 });
-
 
 app.post('/signUpForm', async (req,res) => {
     var insertUsername = req.body.username;
@@ -121,8 +114,10 @@ app.post('/signUpForm', async (req,res) => {
     else{
       getAllquery =  `SELECT * FROM logindb WHERE username='${insertUsername}'`;
       pool.query(getAllquery, (error, result) => {
+
         if(error)
           res.end(error);
+
         if (result.rows.length === 0){
           let transporter  = nodemailer.createTransport({
             host: 'smtp.gmail.com',
@@ -144,7 +139,6 @@ app.post('/signUpForm', async (req,res) => {
             if (error){
               return console.log(error);
             }
-            console.log('Message %s sent: %s', info.messageId, info.response);
           });
           res.render('pages/mailConfirm', {insertUsername, insertPassword, insertEmail, mailCode});
         }
@@ -163,17 +157,20 @@ app.post('/mailCodeForm', async(req,res) => {
   var codeInput = req.body.mailCodeInput;
   const salt = await bcrypt.genSalt();
   const insertPassword = await bcrypt.hash(pwd, salt);
+
   if(codeInput === mailCode){
     var insertquery = `INSERT INTO logindb(username, password, email, confirmation_code) VALUES ('${insertUsername}', '${insertPassword}', '${insertEmail}', '${mailCode}');`;
     pool.query(insertquery, (error, result) => {
-        if(error)
+
+        if(error){
           res.end(error);
+        }
     res.render('pages/login',{signupMessage: 'Account created!'});
     });
   }
   else{
     res.render('pages/mailConfirm', {confirmationErr: 'Wrong confirmation code', insertUsername, insertPassword, insertEmail, mailCode});
-    }
+  }
 });
 
 app.post('/forgotPwdAction', (req,res) => {
@@ -183,46 +180,48 @@ app.post('/forgotPwdAction', (req,res) => {
   const forgotPwdCode = randomstring.generate(20);
   var loginQuery = `SELECT * FROM logindb WHERE username='${name}'`;
   pool.query(loginQuery, async (error, result) => {
-      if (error)
-          res.end(error);
-      if (result.rows.length === 0)
-          res.render('pages/forgotPwd', {loginMessage: 'Username entered does not match any accounts! Please try again.'});
-      else{
-        var getMailQuery=`SELECT email FROM logindb WHERE username = '${name}'`;
-        pool.query(getMailQuery, (error, result) => {
-            if (error)
-                res.end(error);
-              console.log(result.rows[0].email);
-              let transporter  = nodemailer.createTransport({
-                host: 'smtp.gmail.com',
-                port: 465,
-                secure: true,
-                auth: {
-                  user: 'cloud5sfu@gmail.com',
-                  pass: 'cmpt276cloud5'
-                }
-              });
-              console.log(result.rows[0].email);
-              console.log(name);
-              let mailOptions = {
-                from: '"Cloud5" cloud5sfu@gmail.com',
-                to: result.rows[0].email,
-                subject: "Change password",
-                text: "Your confirmation code for changing your password: " + forgotPwdCode
-              };
 
-              transporter.sendMail(mailOptions, (error, info) => {
-                if (error){
-                  return console.log(error);
-                }
-                console.log('Message %s sent: %s', info.messageId, info.response);
-              });
-              res.render("pages/forgotPwdConfirmation", {forgotPwdCode, name, newPwd});
-            });
+    if (error)
+      res.end(error);
+
+    if (result.rows.length === 0)
+      res.render('pages/forgotPwd', {loginMessage: 'Username entered does not match any accounts! Please try again.'});
+    else{
+      var getMailQuery=`SELECT email FROM logindb WHERE username = '${name}'`;
+      pool.query(getMailQuery, (error, result) => {
+
+        if (error){
+          res.end(error);
+        }
+
+        let transporter  = nodemailer.createTransport({
+          host: 'smtp.gmail.com',
+          port: 465,
+          secure: true,
+          auth: {
+            user: 'cloud5sfu@gmail.com',
+            pass: 'cmpt276cloud5'
           }
         });
-});
 
+        let mailOptions = {
+          from: '"Cloud5" cloud5sfu@gmail.com',
+          to: result.rows[0].email,
+          subject: "Change password",
+          text: "Your confirmation code for changing your password: " + forgotPwdCode
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+
+          if (error){
+            return console.log(error);
+          }
+        });
+        res.render("pages/forgotPwdConfirmation", {forgotPwdCode, name, newPwd});
+      });
+    }
+  });
+});
 
 app.post('/forgotPwdConfirmationAction', async (req,res) => {
   var name = req.body.name;
@@ -231,14 +230,17 @@ app.post('/forgotPwdConfirmationAction', async (req,res) => {
   var codeInput = req.body.forgotPwdCodeInput;
   const salt = await bcrypt.genSalt();
   const hashedNewPwd = await bcrypt.hash(newPwd, salt);
+
   if (forgotPwdCode === codeInput){
     var forgotPwd = `UPDATE logindb SET password = '${hashedNewPwd}' WHERE username = '${name}'`
     pool.query(forgotPwd, (error, result) => {
-      if (error)
+
+      if (error){
        res.end(error);
+      }
     res.render('pages/login',{forgotMessage: 'Password changed!'});
-  });
-}
+    });
+  }
   else{
     res.render('pages/forgotPwdConfirmation', {confirmationErr: 'Wrong confirmation code', name, newPwd, forgotPwdCode});
   }
@@ -246,22 +248,24 @@ app.post('/forgotPwdConfirmationAction', async (req,res) => {
 
 
 app.get('/removeUser/:userID', (req,res) => {
-    var deleteUserQuery=`DELETE FROM logindb WHERE userid = ${req.params.userID}`;
+  var deleteUserQuery=`DELETE FROM logindb WHERE userid = ${req.params.userID}`;
+  pool.query(deleteUserQuery, (error, result) => {
 
-    pool.query(deleteUserQuery, (error, result) => {
-        if (error)
-            res.end(error);
+    if (error){
+      res.end(error);
+    }
 
-        var usersQuery=`SELECT userid, username, email, usertype FROM logindb ORDER BY usertype, username`;
+    var usersQuery=`SELECT userid, username, email, usertype FROM logindb ORDER BY usertype, username`;
+    pool.query(usersQuery, (error, result) => {
 
-        pool.query(usersQuery, (error, result) => {
-            if (error)
-                res.end(error);
+      if (error){
+        res.end(error);
+      }
 
-            var allUsers = {'rows': result.rows};
-            res.render('pages/admin', allUsers);
-        });
+      var allUsers = {'rows': result.rows};
+      res.render('pages/admin', allUsers);
     });
+  });
 });
 
 var playerCount = 0;
@@ -269,16 +273,44 @@ var playerAlive = 0;
 var players = {};
 var servBullets = [];
 var servTraps = [];
+var servHealthpacks = [];
+var trapSecs = 30; var battleSecs = 120;
+var totalGameTime;
 var ranking = [];
 var isDraw = 0;
 
 io.on('connection', function (socket) {
   playerCount++;
   playerAlive = playerCount;
+
   //Empty rankings array
   ranking = [];
   isDraw = 0;
   console.log('a user connected. Num of players: ' + playerCount);
+
+
+  if (playerCount == 4 && gameFlag){
+    totalGameTime = battleSecs + trapSecs;
+    var trapTimer = setInterval(function() {
+      io.sockets.emit('trapTimer', { countdown: totalGameTime-battleSecs });
+
+      if (totalGameTime-battleSecs < 1){
+        totalGameTime++;
+        clearInterval(trapTimer);
+        var battleTimer = setInterval(function(){
+          io.sockets.emit('battleTimer', { countdown: totalGameTime });
+
+          if (totalGameTime < 1){
+            clearInterval(battleTimer);
+            gameFlag = false;
+          }
+          totalGameTime--;
+        }, 1000)
+      }
+      totalGameTime--;
+    }, 1000);
+  }
+  
   io.sockets.emit('numPlayers', playerCount);
   // create a new player and add it to our players object
   players[socket.id] = {
@@ -315,11 +347,8 @@ io.on('connection', function (socket) {
   });
 
   socket.on('message', function(data){
-    console.log("catched")
-    console.log(data);
     io.emit('message', data);
   });
-
 
   socket.on('bulletFire', function (bulletInit) {
     var newBullet = bulletInit;
@@ -346,37 +375,44 @@ io.on('connection', function (socket) {
     servTraps.push(newTrap);
   });
 
+  socket.on('healthpackSet', function (healthpackInit){
+    var newHealthpack = healthpackInit;
+    newHealthpack.x = healthpackInit.x;
+    newHealthpack.y = healthpackInit.y;
+    servHealthpacks.push(newHealthpack);
+  });
+
+  socket.on('healthpackDespawn', function(){
+    for(var i = 0; i < servHealthpacks.length; i++){
+      servHealthpacks.splice(i,1);
+      i--;
+    }
+  });
+
   socket.on('playerDied', function (deadPlayer){
-    //console.log("insockect on server: " + deadPlayer.username);
-    console.log("player died. Players alive (unupdated): " + playerAlive )
     playerAlive--;
-    console.log("player died. Players joined (updated): " + playerAlive );
-    console.log("Players joined: " + playerCount)
     var username = deadPlayer.username;
     console.log(username + " was killed");
     //Push dead player username to rankings array
     ranking.push(username);
     console.log(ranking);
+    
     io.sockets.emit('numPlayers', playerAlive);
     //emit dead player username to client for rankings
     io.emit('rankings', username);
     console.log("dead player is emitted to client for rankings")
     io.emit('died', deadPlayer);
-    var counter = 0;
     delete players[deadPlayer.id];
-    /*for(var id in players){
-      if(id === deadPlayer.id){
-        players.splice(counter, 1);
 
-      }
-      counter ++;
-    }*/
+    if ((playerAlive==1 || !playerAlive) && gameFlag){
+      totalGameTime = 0;
+    }
   });
 
-  socket.on('disconnect', function () {
+  socket.on('disconnect', function (){
     playerCount--;
-    playerAlive--;
-    console.log('user disconnected. Players joined: ' + playerCount);
+    if (playerAlive > playerCount)
+      playerAlive--;
     var username = socket.username;
     if(!ranking.includes(username)) {
       for(var i = 0; i < 4; i++) {
@@ -389,7 +425,9 @@ io.on('connection', function (socket) {
         }
       }
     }
+
     for(var i = 0; i < servTraps.length; i++){
+
       if(servTraps[i].owner == socket.id){
         servTraps.splice(i,1);
         i--;
@@ -398,8 +436,11 @@ io.on('connection', function (socket) {
     delete players[socket.id];
     io.sockets.emit('numPlayers', playerCount);
     io.emit('disconnect', socket.id);
-  });
 
+    if ((playerCount==1 && gameFlag) || (playerCount==0 && !gameFlag)){
+      totalGameTime = 0;
+    }
+  });
 });
 
 function gameLoop(){
@@ -438,7 +479,7 @@ function gameLoop(){
           var dy = players[id].y - currTrap.y;
           var dist = Math.sqrt(dx*dx + dy*dy);
           if(dist < 20){
-            io.emit('trapHit', id);
+            io.emit('trapHit', id, currTrap.x, currTrap.y);
             servTraps.splice(i,1);
             i--;
           }
@@ -447,8 +488,25 @@ function gameLoop(){
     }
   }
 
+  for(var i = 0; i < servHealthpacks.length; i++){
+    var currHealthpack = servHealthpacks[i];
+    if(currHealthpack && servHealthpacks[i]){
+      for(var id in players){
+        var dx = players[id].x - currHealthpack.x;
+        var dy = players[id].y - currHealthpack.y;
+        var dist = Math.sqrt(dx*dx + dy*dy);
+        if(dist < 20){
+          io.emit('healthpackHit',id);
+          servHealthpacks.splice(i,1);
+          i--;
+        }
+      }
+    }
+  }
+
   io.emit('bulletsUpdate', servBullets);
   io.emit('trapsUpdate', servTraps);
+  io.emit('healthpacksUpdate', servHealthpacks);
 }
 
 setInterval(gameLoop, 16);
@@ -456,7 +514,6 @@ setInterval(gameLoop, 16);
 if(!module.parent){
   server.listen(PORT, () => console.log(`Listening on ${ PORT }`));
 }
-
 
 //testing
 module.exports = {
