@@ -424,7 +424,7 @@ io.on('connection', function (socket) {
         }
       }
     }
-    if(ranking.length == 4 && emitRankings) {
+    if(ranking.length == 4) {
       console.log("emitted for rankings");
       console.log(ranking);
       io.emit('rankings', ranking);
