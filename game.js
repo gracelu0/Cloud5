@@ -381,6 +381,7 @@ io.on('connection', function (socket) {
     if(!ranking.includes(username)) {
       for(var i = 0; i < 4; i++) {
         if(ranking[i] == null) {
+          isDraw++;
           ranking.push(username);
           console.log(ranking);
           console.log("disconnect player is emitted for rankings");
