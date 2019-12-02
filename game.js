@@ -285,7 +285,7 @@ var aliveIds = [];
 var servBullets = [];
 var servTraps = [];
 var servHealthpacks = [];
-var trapSecs = 20; var battleSecs = 20;
+var trapSecs = 30; var battleSecs = 120;
 var totalGameTime; timerFlag = false;
 var ranking = [];
 var rankingFlag = true;
@@ -445,8 +445,6 @@ io.on('connection', function (socket) {
 
     io.sockets.emit('numPlayers', playerAlive);
     //emit dead player username to client for rankings
-    // io.emit('rankings', username);
-    //console.log("dead player is emitted to client for rankings")
     io.emit('died', deadPlayer);
     delete players[deadPlayer.id];
     console.log(totalGameTime);
