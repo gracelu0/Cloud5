@@ -285,11 +285,16 @@ var config = {
     ammoCount.setScrollFactor(0);
     trapCount = this.add.text(10, 60,"Mines left:" + ' ' + trapAmmo + "/10",{ fontFamily: 'Neucha', fontSize:'20px' });
     trapCount.setScrollFactor(0);
-    gameover = this.add.text(300, 300,"",{ fontFamily: 'Neucha', fontSize:'20px' });
-    rank1 = this.add.text(300, 400,"",{ fontFamily: 'Neucha', fontSize:'20px' });
-    rank2 = this.add.text(300, 430,"",{ fontFamily: 'Neucha', fontSize:'20px' });
-    rank3 = this.add.text(300, 460,"",{ fontFamily: 'Neucha', fontSize:'20px' });
-    rank4 = this.add.text(300, 490,"",{ fontFamily: 'Neucha', fontSize:'20px' });
+    gameover = this.add.text(300, 300,"",{ fontFamily: 'Neucha', fontSize:'30px' });
+    rank1 = this.add.text(300, 400,"",{ fontFamily: 'Neucha', fontSize:'30px' });
+    rank2 = this.add.text(300, 440,"",{ fontFamily: 'Neucha', fontSize:'30px' });
+    rank3 = this.add.text(300, 480,"",{ fontFamily: 'Neucha', fontSize:'30px' });
+    rank4 = this.add.text(300, 520,"",{ fontFamily: 'Neucha', fontSize:'30px' });
+    gameover.setScrollFactor(0);
+    rank1.setScrollFactor(0);
+    rank2.setScrollFactor(0);
+    rank3.setScrollFactor(0);
+    rank4.setScrollFactor(0);
     
 
     var self = this;
@@ -548,16 +553,16 @@ var config = {
         'Game is Over!',
       ]);
       rank1.setText([
-        'First place:' + rankings[3],
+        'First place: ' + rankings[3],
       ])
       rank2.setText([
-        'Second place:' + rankings[2],
+        'Second place: ' + rankings[2],
       ])
       rank3.setText([
-        'Third place:' + rankings[1],
+        'Third place: ' + rankings[1],
       ])
       rank4.setText([
-        'Fourth place:' + rankings[0],
+        'Fourth place: ' + rankings[0],
       ])
     });
 
@@ -742,7 +747,6 @@ var config = {
 
     }
     else{
-      
       camera.startFollow(this.invisiblePlayer);
 
       if (this.cursors.up.isDown){
@@ -758,6 +762,8 @@ var config = {
         this.invisiblePlayer.body.position.x +=4;
       }
     }
+
+
 
 
     if (time/1000 > 45*(healthpackCounter+1)){
