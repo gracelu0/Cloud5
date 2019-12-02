@@ -42,16 +42,15 @@ app.post('/signUp', (req,res) => {
 
 var gameFlag = false;
 var blockPlayersFlag = false;
+var rankingViewSecs = 10;
 
 app.post('/pregame', (req,res) => {
   if (!gameFlag && !blockPlayersFlag){
-    console.log(blockPlayersFlag)
     res.render('pages/pregame');
   }
   else{
     assert.deepStrictEqual(blockPlayersFlag, true);
-    console.log(blockPlayersFlag)
-    res.render('pages/gip', {refreshTimeEst: totalGameTime});
+    res.render('pages/gip', {refreshTimeEst: totalGameTime + rankingViewSecs});
   }
 });
 
@@ -289,6 +288,7 @@ var servHealthpacks = [];
 var trapSecs = 30; var battleSecs = 120;
 var totalGameTime;
 var ranking = [];
+var rankingFlag = true;
 var isDraw = 0;
 
 io.on('connection', function (socket) {
@@ -314,7 +314,27 @@ io.on('connection', function (socket) {
           var battleTimer = setInterval(function(){
             io.sockets.emit('battleTimer', { countdown: totalGameTime });
 
-            if (totalGameTime < 1){
+            if(totalGameTime <= 1 && rankingFlag == true){
+              rankingFlag = false;
+              totalGameTime = 10;
+              for(var i = 0; i < ranking.length; i ++){
+                const removed = ranking[i];
+                aliveIds.splice(aliveIds.indexOf(removed), 1);
+              }
+              var tie = '';
+              for(var j = 0; j < aliveIds.length; j ++){
+                console.log(tie);
+                tie += aliveIds[j];
+                if(j !== (aliveIds.length - 1)){
+                  tie += ', ';
+                  ranking.push(' ');
+                }
+              }
+              ranking.push(tie);
+              io.emit('rankings', ranking);
+            }
+
+            if (totalGameTime < 1 && rankingFlag == false){
               clearInterval(battleTimer);
               gameFlag = false;
               blockPlayersFlag = false;
@@ -420,9 +440,10 @@ io.on('connection', function (socket) {
     //console.log("dead player is emitted to client for rankings")
     io.emit('died', deadPlayer);
     delete players[deadPlayer.id];
+    console.log(totalGameTime);
 
     if ((playerAlive==1 || !playerAlive) && gameFlag){
-      totalGameTime = 0;
+      totalGameTime = rankingViewSecs;
       for(var i = 0; i < 3; i ++){
         const removed = ranking[i];
         aliveIds.splice(aliveIds.indexOf(removed), 1);
@@ -430,6 +451,7 @@ io.on('connection', function (socket) {
       ranking.push(aliveIds[0]);
       io.emit('rankings', ranking);
     }
+    
   });
 
   socket.on('disconnect', function (){
@@ -447,10 +469,12 @@ io.on('connection', function (socket) {
     io.sockets.emit('numPlayers', playerCount);
     io.emit('disconnect', socket.id);
 
-    if ((playerCount==1 && gameFlag) || (playerCount==0 && !gameFlag)){
-      totalGameTime = 0;
+    if (playerCount==1 && gameFlag){
+      totalGameTime = rankingViewSecs;
       io.emit('rankings', ranking);
     }
+    else if(playerCount==0 && !gameFlag)
+      totalGameTime = 0;
   });
 });
 
