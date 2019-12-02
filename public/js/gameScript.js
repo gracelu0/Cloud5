@@ -285,11 +285,11 @@ var config = {
     ammoCount.setScrollFactor(0);
     trapCount = this.add.text(10, 60,"Mines left:" + ' ' + trapAmmo + "/10",{ fontFamily: 'Neucha', fontSize:'20px' });
     trapCount.setScrollFactor(0);
-    gameover = this.add.text(300, 300,"",{ fontFamily: 'Neucha', fontSize:'30px' });
-    rank1 = this.add.text(300, 400,"",{ fontFamily: 'Neucha', fontSize:'30px' });
-    rank2 = this.add.text(300, 440,"",{ fontFamily: 'Neucha', fontSize:'30px' });
-    rank3 = this.add.text(300, 480,"",{ fontFamily: 'Neucha', fontSize:'30px' });
-    rank4 = this.add.text(300, 520,"",{ fontFamily: 'Neucha', fontSize:'30px' });
+    gameover = this.add.text(400, 50,"",{ fontFamily: 'Neucha', fontSize:'50px' });
+    rank1 = this.add.text(350, 200,"",{ fontFamily: 'Neucha', fontSize:'40px' });
+    rank2 = this.add.text(350, 250,"",{ fontFamily: 'Neucha', fontSize:'40px' });
+    rank3 = this.add.text(350, 300,"",{ fontFamily: 'Neucha', fontSize:'40px' });
+    rank4 = this.add.text(350, 350,"",{ fontFamily: 'Neucha', fontSize:'40px' });
     gameover.setScrollFactor(0);
     rank1.setScrollFactor(0);
     rank2.setScrollFactor(0);
@@ -550,7 +550,7 @@ var config = {
       // var insertRank1 = localStorage.setItem( "rank1", rankings);
       console.log("client side: " + rankings);
       gameover.setText([
-        'Game is Over!',
+        'Game Over!',
       ]);
       rank1.setText([
         'First place: ' + rankings[3],
