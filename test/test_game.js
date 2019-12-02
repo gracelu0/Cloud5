@@ -11,6 +11,7 @@ base_url = "http://localhost:5000";
 
 var app = require('../game.js').app;
 var Browser = require('zombie');
+var agent = chai.request.agent(app);
 
 describe('user tests', () =>{
     it("returns status code 200", (done)=>{
@@ -19,6 +20,8 @@ describe('user tests', () =>{
             done();
             });
     });
+    
+
     describe('login', ()=>{
         it('should load login page initially', (done)=>{
             chai.request(app)
@@ -31,10 +34,20 @@ describe('user tests', () =>{
     
         it('should allow successful login if username and password exist', (done)=>{
             chai.request(app)
-                .post('/signUpForm')
+                .post('/login')
                 .type('form')
-                .send({'username': 'mojo123', 'password':'12345'})
+                .send({'username': 'mojo123', 'pwd':'12345'})
                 .end(function(err, res){
+                    it('should delete a single user on /removeUser/:userID',(done)=>{
+                        const userID = 'grass';
+                        chai.request(app)
+                            .get(`/removeUser/${userID}`)
+                            .end(function(error,response){
+                                response.body.should.be.a('object');
+                                response.should.have.status(200);
+                                done();
+                            })
+                    })
                     res.body.should.be.a('object');
                     res.should.have.status(200);
                     done();
@@ -128,13 +141,19 @@ describe('login page', function() {
         it('should show admin view page if usertype is Admin', function(){
             browser.assert.success();
             assert.equal(browser.text('h2'),'ADMIN VIEW')
-        })
-    })
+        });
+
+    });
+
 });
 
 
 var players = require('../game.js').players;
 var playerCount = require('../game.js').playerCount;
+var servTraps =  require('../game.js').servTraps;
+var servBullets =  require('../game.js').servBullets;
+var servHealthpacks =  require('../game.js').servHealthpacks;
+
 describe('players', ()=>{
     it('object', ()=>{
         expect(players).to.be.an('object');
@@ -144,7 +163,6 @@ describe('players', ()=>{
         assert.equal(Object.keys(players).length, playerCount);
     });
 });
-
 
 
 //socket.io testing
@@ -207,7 +225,6 @@ describe("Socket-Server", function () {
             tests(client1);
             tests(client2);
 
-
         });
 
         var player1 = {'username': 'test1', 'colour': 'pink'}
@@ -224,10 +241,84 @@ describe("Socket-Server", function () {
                 client2.on('connect', function(data){
                     client2.emit('username', player2);
                 });
+            
+                client2.disconnect();
 
            })
-
+           client1.disconnect();
+           
         });
+
+        it('should emit username to all players', ()=>{
+            var client1 = io.connect(socketURL, options);
+ 
+            client1.on('connect', function(data){
+                client1.emit('username', player1);
+                client1.emit('updateColour',player1);
+ 
+                 var client2 = io.connect(socketURL, options);
+ 
+                 client2.on('connect', function(data){
+                     client2.emit('username', player2);
+                     client2.emit('updateColour',player2);
+                 });
+                 client2.disconnect();
+            });
+            client1.disconnect();
+            
+ 
+         });
+
+         it('should emit selected character to all players', ()=>{
+            var client1 = io.connect(socketURL, options);
+ 
+            client1.on('connect', function(data){
+                client1.emit('updateColour',player1);
+ 
+                 var client2 = io.connect(socketURL, options);
+ 
+                 client2.on('connect', function(data){
+                     client2.emit('updateColour',player2);
+                 });
+
+                 client2.disconnect();
+            });
+            client1.disconnect();
+            
+ 
+         });
+
+         it('should allow player to set mine', ()=>{
+            assert.equal(servTraps.length,0);
+            var client1 = io.connect(socketURL, options);
+ 
+            client1.on('connect', function(data){
+                client1.emit('trapSet', { x: 100, y: 100});
+ 
+            });
+            client1.disconnect();
+ 
+         });
+
+         it('should only set player to invisible after killed, scroll map', ()=>{
+            var client1 = io.connect(socketURL, options);
+            var client2 = io.connect(socketURL, options);
+            
+            client1.on('connect', function(data){
+                playerCount++;
+ 
+            });
+            client2.on('connect', function(data){
+                playerCount++;
+ 
+            });
+            assert.isAtLeast(playerCount,0);
+            client1.on('playerDied', function(id){
+                assert.isEqual(players[id].health,0);
+            });
+            client1.disconnect();
+ 
+         });
 
     });
     

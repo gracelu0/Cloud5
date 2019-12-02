@@ -17,7 +17,6 @@ var pool = new Pool({
 });
 
 
-
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -253,6 +252,7 @@ app.post('/forgotPwdConfirmationAction', async (req,res) => {
 
 
 app.get('/removeUser/:userID', (req,res) => {
+  console.log(req.params.userID);
   var deleteUserQuery=`DELETE FROM logindb WHERE userid = ${req.params.userID}`;
   pool.query(deleteUserQuery, (error, result) => {
 
@@ -526,4 +526,7 @@ module.exports = {
   players: players,
   playerCount: playerCount,
   app: app,
+  servTraps: servTraps,
+  servHealthpacks: servHealthpacks,
+  servBullets: servBullets
 }
