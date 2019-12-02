@@ -26,9 +26,9 @@
       <script src="https://unpkg.com/socket.io-client@2/dist/socket.io.slim.js"></script>
 
       <h1 align="center">BATTLE BLOBS</h1>
-      <!-- <p id = "usernameGame"></p> -->
 
       <div align="center" id="gameTimer"></div>
+      <h2 id="gameOverText" align="center" hidden>GAME OVER</h2>
       <div class= "btn-group" id="toggles">
           <label class="switch">
               <input type="checkbox" checked>
@@ -103,10 +103,13 @@
             <button type="submit" id="chatButton">Send</button>
       </form>
 
-
-
-      <form class="" id="postGame" action="/postgame" method="post">
-        <button type="submit" name="button" hidden>Go to postgame screen</button>
+      <form class="" action="/home" method="post">
+        <button align="center" type="submit" name="button" id="playAgainButton" hidden>Play Again!</button>
       </form>
+
+      <!-- <form class="" id="postGame" action="/postgame" method="post">
+        <button type="submit" name="button" hidden>Go to postgame screen</button>
+      </form> -->
+
     </body>
 </html>

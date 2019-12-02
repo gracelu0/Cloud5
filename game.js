@@ -421,6 +421,7 @@ io.on('connection', function (socket) {
     delete players[deadPlayer.id];
 
     if ((playerAlive==1 || !playerAlive) && gameFlag){
+      totalGameTime = 0;
       for(var i = 0; i < 3; i ++){
         const removed = ranking[i];
         aliveIds.splice(aliveIds.indexOf(removed), 1);
@@ -446,6 +447,7 @@ io.on('connection', function (socket) {
     io.emit('disconnect', socket.id);
 
     if ((playerCount==1 && gameFlag) || (playerCount==0 && !gameFlag)){
+      totalGameTime = 0;
       io.emit('rankings', ranking);
     }
   });
