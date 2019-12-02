@@ -286,7 +286,7 @@ var servBullets = [];
 var servTraps = [];
 var servHealthpacks = [];
 var trapSecs = 30; var battleSecs = 120;
-var totalGameTime;
+var totalGameTime; timerFlag = false;
 var ranking = [];
 var rankingFlag = true;
 var isDraw = 0;
@@ -303,8 +303,9 @@ io.on('connection', function (socket) {
 
   if (playerCount == 4){
     blockPlayersFlag = true;
-    if (gameFlag){
+    if (gameFlag && !timerFlag){
       totalGameTime = battleSecs + trapSecs;
+      timerFlag = true;
       var trapTimer = setInterval(function() {
         io.sockets.emit('trapTimer', { countdown: totalGameTime-battleSecs });
 
@@ -336,7 +337,7 @@ io.on('connection', function (socket) {
 
             if (totalGameTime < 1 && rankingFlag == false){
               clearInterval(battleTimer);
-              gameFlag = false;
+              gameFlag = false; timerFlag = false;
               blockPlayersFlag = false;
             }
             totalGameTime--;
