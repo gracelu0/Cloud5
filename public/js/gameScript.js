@@ -594,6 +594,7 @@ var config = {
 
     this.socket.on('battleTimer', function (data) {
       $('#gameTimer').html('<h2>Game Time Remaining: <b>' + formatTime(data.countdown) + '</b></h2>');
+      document.getElementById('invisibleMinesText').removeAttribute('hidden');
       if (data.countdown == 0)
         document.getElementById('postGame').submit();
     });
