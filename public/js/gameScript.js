@@ -593,7 +593,7 @@ var config = {
     });
 
     this.socket.on('battleTimer', function (data) {
-      $('#gameTimer').html('<h2>Battle! Time Remaining: <b>' + formatTime(data.countdown) + '</b></h2>');
+      $('#gameTimer').html('<h2>Game Time Remaining: <b>' + formatTime(data.countdown) + '</b></h2>');
       if (data.countdown == 0)
         document.getElementById('postGame').submit();
     });
