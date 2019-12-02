@@ -296,7 +296,7 @@ var config = {
 
     this.socket.on('numPlayers', (playerCount) =>{
         playerCountText.setText([
-          playerCount+' players joined',
+          playerCount+' players left',
         ]);
       });
 

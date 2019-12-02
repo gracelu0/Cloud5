@@ -11,7 +11,6 @@ base_url = "http://localhost:5000";
 
 var app = require('../game.js').app;
 var Browser = require('zombie');
-var agent = chai.request.agent(app);
 
 describe('user tests', () =>{
     it("returns status code 200", (done)=>{
@@ -317,6 +316,28 @@ describe("Socket-Server", function () {
                 assert.isEqual(players[id].health,0);
             });
             client1.disconnect();
+ 
+         });
+
+         it('should send chat message to all players', ()=>{
+            var client1 = io.connect(socketURL, options);
+ 
+            client1.on('connect', function(data){
+                client1.emit('message', {
+                    user: 'mojo123',
+                    message: 'hello'
+                  });
+ 
+                 var client2 = io.connect(socketURL, options);
+ 
+                 client2.on('message', function(data){
+                     assert.equal(data.user, 'mojo123');
+                     assert.equal(data.message,'hello');
+                 });
+                 client2.disconnect();
+            });
+            client1.disconnect();
+            
  
          });
 
