@@ -565,5 +565,8 @@ module.exports = {
   servTraps: servTraps,
   servHealthpacks: servHealthpacks,
   servBullets: servBullets,
-  weatherTest: weatherTest
+  weatherTest: weatherTest,
+  trapSecs: trapSecs,
+  battleSecs: battleSecs,
+  gameFlag: gameFlag
 }
