@@ -437,7 +437,7 @@ io.on('connection', function (socket) {
 
     io.sockets.emit('numPlayers', playerAlive);
     //emit dead player username to client for rankings
-    // io.emit('rankings', username);
+    //io.emit('rankings', username);
     //console.log("dead player is emitted to client for rankings")
     io.emit('died', deadPlayer);
     delete players[deadPlayer.id];
@@ -561,5 +561,8 @@ module.exports = {
   servTraps: servTraps,
   servHealthpacks: servHealthpacks,
   servBullets: servBullets,
-  weatherTest: weatherTest
+  weatherTest: weatherTest,
+  trapSecs: trapSecs,
+  battleSecs: battleSecs,
+  gameFlag: gameFlag
 }

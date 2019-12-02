@@ -79,6 +79,18 @@ describe('user tests', () =>{
         });
     })
 
+    var gameFlag = require('../game.js').gameFlag;
+    it('should show postgame screen after game over', (done)=>{
+        assert.equal(gameFlag,false);
+        chai.request(app)
+                .post('/postgame')
+                .end(function(err, res){
+                    res.body.should.be.a('object');
+                    res.should.have.status(200);
+                    done();
+                });
+    })
+
     describe('logout', ()=>{
         it('should log user out when logout button clicked and user confirms', (done)=>{
             chai.request(app)
@@ -159,6 +171,8 @@ var playerCount = require('../game.js').playerCount;
 var servTraps =  require('../game.js').servTraps;
 var servBullets =  require('../game.js').servBullets;
 var servHealthpacks =  require('../game.js').servHealthpacks;
+var trapSecs = require('../game.js').trapSecs;
+var battleSecs = require('../game.js').battleSecs;
 
 describe('players', ()=>{
     it('object', ()=>{
@@ -233,6 +247,20 @@ describe("Socket-Server", function () {
 
         });
 
+        it('should check timer is set at start of game', ()=>{
+            var timerFlag = false;
+            var gameFlag = true;
+
+            if (gameFlag && !timerFlag){
+                totalGameTime = battleSecs + trapSecs;
+                timerFlag = true;
+                assert.isAtLeast(totalGameTime,0);
+            }
+ 
+         });
+
+
+
         var player1 = {'username': 'test1', 'colour': 'pink'}
         var player2 = {'username': 'test2', 'colour': 'blue'}
 
@@ -301,6 +329,25 @@ describe("Socket-Server", function () {
             client1.on('connect', function(data){
                 client1.emit('trapSet', { x: 100, y: 100});
  
+            });
+            client1.disconnect();
+ 
+         });
+
+
+         it('should check player health increases after player collects healthpack and is at most 100', ()=>{
+            assert.equal(servHealthpacks.length,0);
+            var client1 = io.connect(socketURL, options);
+ 
+            client1.on('connect', function(id){
+                players[id].health = 10;
+
+            });
+
+            client1.on('healthpackHit', function(id){
+                players[id].health += 10;
+                assert.equal(players[id].health,20);
+                assert.isAtMost(players[id].health,100);
             });
             client1.disconnect();
  
@@ -400,7 +447,6 @@ describe("Socket-Server", function () {
          });
 
     });
-    
 
   });
 
