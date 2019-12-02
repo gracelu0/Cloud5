@@ -472,7 +472,7 @@ io.on('connection', function (socket) {
     io.emit('disconnect', socket.id);
 
     if (playerCount==1 && gameFlag){
-      totalGameTime = 1;
+      totalGameTime = 2;
       io.emit('rankings', ranking);
     }
     else if(playerCount==0 && !gameFlag)
