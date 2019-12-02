@@ -317,7 +317,7 @@ io.on('connection', function (socket) {
 
             if(totalGameTime <= 1 && rankingFlag == true){
               rankingFlag = false;
-              totalGameTime = 10;
+              totalGameTime = rankingViewSecs+1;
               for(var i = 0; i < ranking.length; i ++){
                 const removed = ranking[i];
                 aliveIds.splice(aliveIds.indexOf(removed), 1);
