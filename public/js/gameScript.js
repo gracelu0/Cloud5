@@ -755,6 +755,24 @@ var config = {
       }
     }
 
+    this.otherPlayers.getChildren().forEach(child => {
+      child.body.immovable = true;
+      if(child.health <= 0){
+        //this.socket.emit('playerDied', {id:child.playerId, username: child.playerUsername});
+        child.health = -5;
+        console.log("player id" + child.playerId);
+        console.log("username" + child.playerUsername)
+        console.log("in update1");
+        playerDeath(child);
+        child.usernameText.destroy();
+        child.healthbar_green.destroy();
+        child.healthbar_red.destroy();
+      }
+      else{
+        child.healthbar_green.displayWidth = (child.health/100)*100;
+      }
+    })
+
 
 
 
