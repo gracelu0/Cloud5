@@ -50,7 +50,10 @@ app.post('/pregame', (req,res) => {
   }
   else{
     assert.deepStrictEqual(blockPlayersFlag, true);
-    res.render('pages/gip', {refreshTimeEst: totalGameTime + rankingViewSecs});
+    if(rankingFlag)
+      res.render('pages/gip', {refreshTimeEst: totalGameTime+rankingViewSecs});
+    else
+      res.render('pages/gip', {refreshTimeEst: totalGameTime})
   }
 });
 
