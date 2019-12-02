@@ -418,7 +418,18 @@ io.on('connection', function (socket) {
     delete players[deadPlayer.id];
 
     if ((playerAlive==1 || !playerAlive) && gameFlag){
-      totalGameTime = 0;
+      var username = socket.username;
+    if((!ranking.includes(username)) && (username != null)) {
+      for(var i = 0; i < 4; i++) {
+        if(ranking[i] == null) {
+          isDraw++;
+          ranking.push(username);
+          console.log(ranking);
+          break;
+        }
+      }
+    }
+      io.emit('rankings', ranking);
     }
   });
 
@@ -426,6 +437,7 @@ io.on('connection', function (socket) {
     playerCount--;
     if (playerAlive > playerCount)
       playerAlive--;
+
     var username = socket.username;
     if((!ranking.includes(username)) && (username != null)) {
       for(var i = 0; i < 4; i++) {
@@ -437,14 +449,8 @@ io.on('connection', function (socket) {
         }
       }
     }
-    if(ranking.length == 4) {
-      console.log("emitted for rankings");
-      console.log(ranking);
-      io.emit('rankings', ranking);
-    }
 
     for(var i = 0; i < servTraps.length; i++){
-
       if(servTraps[i].owner == socket.id){
         servTraps.splice(i,1);
         i--;
@@ -455,6 +461,7 @@ io.on('connection', function (socket) {
     io.emit('disconnect', socket.id);
 
     if ((playerCount==1 && gameFlag) || (playerCount==0 && !gameFlag)){
+      io.emit('rankings', ranking);
       totalGameTime = 0;
     }
   });
