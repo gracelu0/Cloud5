@@ -320,10 +320,8 @@ io.on('connection', function (socket) {
             clearInterval(trapTimer);
             var battleTimer = setInterval(function(){
               io.sockets.emit('battleTimer', { countdown: totalGameTime });
-              console.log(rankingFlag)
-              if(totalGameTime <= 1 && rankingFlag == true){
+              if((playerCount == 1 || playerAlive == 1 || totalGameTime <= 1) && rankingFlag == true){
                 rankingFlag = false;
-                console.log(rankingFlag)
                 totalGameTime = rankingViewSecs+1;
                 for(var i = 0; i < ranking.length; i ++){
                   const removed = ranking[i];
