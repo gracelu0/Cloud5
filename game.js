@@ -287,6 +287,7 @@ var servHealthpacks = [];
 var trapSecs = 30; var battleSecs = 120;
 var totalGameTime;
 var ranking = [];
+var rankingFlag = true;
 var isDraw = 0;
 
 io.on('connection', function (socket) {
@@ -312,7 +313,27 @@ io.on('connection', function (socket) {
           var battleTimer = setInterval(function(){
             io.sockets.emit('battleTimer', { countdown: totalGameTime });
 
-            if (totalGameTime < 1){
+            if(totalGameTime <= 1 && rankingFlag == true){
+              rankingFlag = false;
+              totalGameTime = 10;
+              for(var i = 0; i < ranking.length; i ++){
+                const removed = ranking[i];
+                aliveIds.splice(aliveIds.indexOf(removed), 1);
+              }
+              var tie = '';
+              for(var j = 0; j < aliveIds.length; j ++){
+                console.log(tie);
+                tie += aliveIds[j];
+                if(j !== (aliveIds.length - 1)){
+                  tie += ', ';
+                  ranking.push(' ');
+                }
+              }
+              ranking.push(tie);
+              io.emit('rankings', ranking);
+            }
+
+            if (totalGameTime < 1 && rankingFlag == false){
               clearInterval(battleTimer);
               gameFlag = false;
               blockPlayersFlag = false;
@@ -418,6 +439,7 @@ io.on('connection', function (socket) {
     //console.log("dead player is emitted to client for rankings")
     io.emit('died', deadPlayer);
     delete players[deadPlayer.id];
+    console.log(totalGameTime);
 
     if ((playerAlive==1 || !playerAlive) && gameFlag){
       totalGameTime = rankingViewSecs;
@@ -428,6 +450,7 @@ io.on('connection', function (socket) {
       ranking.push(aliveIds[0]);
       io.emit('rankings', ranking);
     }
+    
   });
 
   socket.on('disconnect', function (){
