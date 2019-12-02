@@ -278,6 +278,7 @@ app.get('/removeUser/:userID', (req,res) => {
   });
 });
 
+var weatherTest = "Rain"
 var playerCount = 0;
 var playerAlive = 0;
 var players = {};
@@ -521,6 +522,7 @@ function gameLoop(){
 
 setInterval(gameLoop, 16);
 
+
 if(!module.parent){
   server.listen(PORT, () => console.log(`Listening on ${ PORT }`));
 }
@@ -532,5 +534,6 @@ module.exports = {
   app: app,
   servTraps: servTraps,
   servHealthpacks: servHealthpacks,
-  servBullets: servBullets
+  servBullets: servBullets,
+  weatherTest: weatherTest
 }

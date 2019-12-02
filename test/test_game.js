@@ -122,6 +122,13 @@ describe('user tests', () =>{
 
 });
 
+var weather = require('../game.js').weatherTest;
+describe('weather test', function(){
+    it('should be one of 6 weather conditions with implemented effects', ()=>{
+        expect(weather).to.be.oneOf(['Rain','Snow', 'Drizzle', 'Mist', 'Fog', 'Haze' ]);
+    });
+});
+
 
 describe('login page', function() {
     const browser = new Browser();
@@ -338,6 +345,57 @@ describe("Socket-Server", function () {
             });
             client1.disconnect();
             
+ 
+         });
+
+         it('should broadcast death to all players', ()=>{
+            var client1 = io.connect(socketURL, options);
+ 
+            client1.on('connect', function(data){
+                client1.emit('died',player1);
+ 
+                 var client2 = io.connect(socketURL, options);
+ 
+                 client2.on('died', function(deadPlayer){
+                     assert.equal(deadPlayer.username, 'test1');
+                 });
+                 client2.disconnect();
+            });
+            client1.disconnect();
+ 
+         });
+
+         it('should initialize game once 4 players joined', ()=>{
+            playerCount = 0;
+            var gameFlag = false;
+
+            var playersArray = [];
+            var client1 = io.connect(socketURL, options);
+            var client2 = io.connect(socketURL, options);
+            var client3 = io.connect(socketURL, options);
+            var client4 = io.connect(socketURL, options);
+            playersArray.push(client1);
+            playersArray.push(client2);
+            playersArray.push(client3);
+            playersArray.push(client4);
+
+            function add_Player(client){
+                playerCount++;
+                if (playerCount==4){
+                    gameFlag=true;
+                }
+            }
+
+            for (var i = 0; i < 4; i++){
+                add_Player(playersArray[i]);
+            }
+            assert.equal(playerCount,4);
+            assert.equal(gameFlag,true);
+
+            client1.disconnect();
+            client2.disconnect();
+            client3.disconnect();
+            client4.disconnect();
  
          });
 

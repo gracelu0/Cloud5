@@ -1021,3 +1021,5 @@ function changeAtmos(gameObj, fog, atmosMode){
         yoyo: true
     });
 }
+
+
