@@ -11,17 +11,11 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://unpkg.com/cookie_js@1.2.2/cookie.min.js"></script>
     <script src="https://unpkg.com/socket.io-client@2/dist/socket.io.slim.js"></script>
-    <script src="js/rankings.js" defer></script>
   </head>
   <body>
     <% include ../partials/logout.ejs %>
     <h1 align="center">POSTGAME SCREEN</h1>
     <h2 align="center">GAME OVER</h2>
-    <div id="rankings">
-      <ol>
-      </ol>
-
-    </div>
 
     <form class="" action="/home" method="post">
       <button type="submit" name="button">Play Again!</button>
