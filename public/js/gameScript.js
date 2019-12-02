@@ -43,6 +43,7 @@ var config = {
   var bgmusic;
   var shootSound;
   var pop;
+  var mine;
   var musicFlag = true;
   var soundFlag = true;
 
@@ -170,6 +171,7 @@ var config = {
     this.load.audio('bgmusic', 'assets/audio/bgmusic.mp3');
     this.load.audio('shootSound', 'assets/audio/shoot.mp3');
     this.load.audio('pop', 'assets/audio/pop.mp3');
+    this.load.audio('mine', 'assets/audio/mine.mp3');
   }
 
   class Bullet extends Phaser.Physics.Arcade.Sprite{
@@ -229,6 +231,7 @@ var config = {
     shootSound = this.sound.add('shootSound');
     bgmusic = this.sound.add('bgmusic');
     pop = this.sound.add('pop');
+    mine = this.sound.add('mine');
 
     if(game.sound.context.state === 'suspended')
       game.sound.context.resume();
@@ -367,6 +370,9 @@ var config = {
     });
 
     this.socket.on('trapHit', function(id, trapX, trapY){
+      if(soundFlag == true) {
+        mine.play();
+      }
       if(id === sessionId){
         self.player.health -= 10;
       }
@@ -587,7 +593,7 @@ var config = {
     });
 
     this.socket.on('battleTimer', function (data) {
-      $('#gameTimer').html('<h2>Battle! Time Remaining: <b>' + formatTime(data.countdown) + '</b></h2>');
+      $('#gameTimer').html('<h2>Game Time Remaining: <b>' + formatTime(data.countdown) + '</b></h2>');
       if (data.countdown == 0)
         document.getElementById('postGame').submit();
     });
