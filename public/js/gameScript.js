@@ -285,6 +285,12 @@ var config = {
     ammoCount.setScrollFactor(0);
     trapCount = this.add.text(10, 60,"Mines left:" + ' ' + trapAmmo + "/10",{ fontFamily: 'Neucha', fontSize:'20px' });
     trapCount.setScrollFactor(0);
+    gameover = this.add.text(300, 300,"",{ fontFamily: 'Neucha', fontSize:'20px' });
+    rank1 = this.add.text(300, 400,"",{ fontFamily: 'Neucha', fontSize:'20px' });
+    rank2 = this.add.text(300, 430,"",{ fontFamily: 'Neucha', fontSize:'20px' });
+    rank3 = this.add.text(300, 460,"",{ fontFamily: 'Neucha', fontSize:'20px' });
+    rank4 = this.add.text(300, 490,"",{ fontFamily: 'Neucha', fontSize:'20px' });
+    
 
     var self = this;
     var sessionId;
@@ -538,13 +544,21 @@ var config = {
       // rankings = rankings + ' ' + username;
       // var insertRank1 = localStorage.setItem( "rank1", rankings);
       console.log("client side: " + rankings);
-      if(!rankings.includes(null) && !rankings.includes(undefined) && storeRankings) {
-        var insertRank1 = localStorage.setItem( "rank1", rankings[3] );
-        var insertRank2 = localStorage.setItem( "rank2", rankings[2] );
-        var insertRank3 = localStorage.setItem( "rank3", rankings[1] );
-        var insertRank4 = localStorage.setItem( "rank4", rankings[0] );
-        storeRankings = false;
-      }
+      gameover.setText([
+        'Game is Over!',
+      ]);
+      rank1.setText([
+        'First place:' + rankings[3],
+      ])
+      rank2.setText([
+        'Second place:' + rankings[2],
+      ])
+      rank3.setText([
+        'Third place:' + rankings[1],
+      ])
+      rank4.setText([
+        'Fourth place:' + rankings[0],
+      ])
     });
 
     this.socket.emit('username',username);
@@ -755,7 +769,7 @@ var config = {
       this.socket.emit('healthpackSet', { x: healthpackX, y: healthpackY });
     }
 
-    if (time/1000 >= 150){
+    if (time/1000 >= 140){
       this.socket.emit('healthpackDespawn');
     }
 
