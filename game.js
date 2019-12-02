@@ -290,6 +290,7 @@ var totalGameTime; timerFlag = false;
 var ranking = [];
 var rankingFlag = true;
 var isDraw = 0;
+var trapTimer;
 
 io.on('connection', function (socket) {
   playerCount++;
@@ -306,43 +307,50 @@ io.on('connection', function (socket) {
     if (gameFlag && !timerFlag){
       totalGameTime = battleSecs + trapSecs;
       timerFlag = true;
-      var trapTimer = setInterval(function() {
+      trapTimer = setInterval(function() {
         io.sockets.emit('trapTimer', { countdown: totalGameTime-battleSecs });
 
-        if (totalGameTime-battleSecs < 1){
-          totalGameTime++;
-          clearInterval(trapTimer);
-          var battleTimer = setInterval(function(){
-            io.sockets.emit('battleTimer', { countdown: totalGameTime });
-
-            if(totalGameTime <= 1 && rankingFlag == true){
-              rankingFlag = false;
-              totalGameTime = rankingViewSecs+1;
-              for(var i = 0; i < ranking.length; i ++){
-                const removed = ranking[i];
-                aliveIds.splice(aliveIds.indexOf(removed), 1);
-              }
-              var tie = '';
-              for(var j = 0; j < aliveIds.length; j ++){
-                console.log(tie);
-                tie += aliveIds[j];
-                if(j !== (aliveIds.length - 1)){
-                  tie += ', ';
-                  ranking.push(' ');
+        if (totalGameTime-battleSecs < 1 || 
+          playerCount == 1 ||
+          playerAlive == 1){
+            if (playerCount == 1 || playerAlive == 1)
+              totalGameTime = 2;
+            else
+              totalGameTime = battleSecs+1;
+            clearInterval(trapTimer);
+            var battleTimer = setInterval(function(){
+              io.sockets.emit('battleTimer', { countdown: totalGameTime });
+              console.log(rankingFlag)
+              if(totalGameTime <= 1 && rankingFlag == true){
+                rankingFlag = false;
+                console.log(rankingFlag)
+                totalGameTime = rankingViewSecs+1;
+                for(var i = 0; i < ranking.length; i ++){
+                  const removed = ranking[i];
+                  aliveIds.splice(aliveIds.indexOf(removed), 1);
                 }
+                var tie = '';
+                for(var j = 0; j < aliveIds.length; j ++){
+                  console.log(tie);
+                  tie += aliveIds[j];
+                  if(j !== (aliveIds.length - 1)){
+                    tie += ', ';
+                    ranking.push(' ');
+                  }
+                }
+                ranking.push(tie);
+                io.emit('rankings', ranking);
               }
-              ranking.push(tie);
-              io.emit('rankings', ranking);
-            }
 
-            if (totalGameTime < 1 && rankingFlag == false){
-              clearInterval(battleTimer);
-              gameFlag = false; timerFlag = false;
-              blockPlayersFlag = false;
-            }
-            totalGameTime--;
-          }, 1000)
-        }
+              if (totalGameTime < 1 && rankingFlag == false){
+                clearInterval(battleTimer);
+                gameFlag = false; timerFlag = false;
+                blockPlayersFlag = false;
+                rankingFlag = true;
+              }
+              totalGameTime--;
+            }, 1000)
+          }
         totalGameTime--;
       }, 1000);
     }
@@ -437,14 +445,11 @@ io.on('connection', function (socket) {
 
     io.sockets.emit('numPlayers', playerAlive);
     //emit dead player username to client for rankings
-    // io.emit('rankings', username);
-    //console.log("dead player is emitted to client for rankings")
     io.emit('died', deadPlayer);
     delete players[deadPlayer.id];
     console.log(totalGameTime);
 
     if ((playerAlive==1 || !playerAlive) && gameFlag){
-      totalGameTime = rankingViewSecs;
       for(var i = 0; i < 3; i ++){
         const removed = ranking[i];
         aliveIds.splice(aliveIds.indexOf(removed), 1);
@@ -472,7 +477,6 @@ io.on('connection', function (socket) {
     io.emit('disconnect', socket.id);
 
     if (playerCount==1 && gameFlag){
-      totalGameTime = 2;
       io.emit('rankings', ranking);
     }
     else if(playerCount==0 && !gameFlag)
