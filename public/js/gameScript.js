@@ -689,7 +689,7 @@ var config = {
             trap.body.setImmovable();
             lastBomb = 30;
             trapAmmo --;
-            trapCount.setText("Trap Count:" + ' ' + trapAmmo + "/10");
+            trapCount.setText("Mine Count:" + ' ' + trapAmmo + "/10");
             this.socket.emit('trapSet', { x: this.player.body.position.x, y: this.player.body.position.y });
           }
         }
