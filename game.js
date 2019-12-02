@@ -456,6 +456,7 @@ io.on('connection', function (socket) {
 
   socket.on('disconnect', function (){
     playerCount--;
+    console.log('user disconnected. Num of players: ' + playerCount);
     if (playerAlive > playerCount)
       playerAlive--;
 
