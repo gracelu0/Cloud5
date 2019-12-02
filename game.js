@@ -280,6 +280,7 @@ app.get('/removeUser/:userID', (req,res) => {
 var playerCount = 0;
 var playerAlive = 0;
 var players = {};
+var aliveIds = [];
 var servBullets = [];
 var servTraps = [];
 var servHealthpacks = [];
@@ -351,6 +352,7 @@ io.on('connection', function (socket) {
   socket.on('username', function(username){
     socket.username = username;
     players[socket.id].playerUsername = username;
+    aliveIds.push(username);
   });
 
   socket.on('playerMovement', function (movementData) {
@@ -418,17 +420,11 @@ io.on('connection', function (socket) {
     delete players[deadPlayer.id];
 
     if ((playerAlive==1 || !playerAlive) && gameFlag){
-      var username = socket.username;
-    if((!ranking.includes(username)) && (username != null)) {
-      for(var i = 0; i < 4; i++) {
-        if(ranking[i] == null) {
-          isDraw++;
-          ranking.push(username);
-          console.log(ranking);
-          break;
-        }
+      for(var i = 0; i < 3; i ++){
+        const removed = ranking[i];
+        aliveIds.splice(aliveIds.indexOf(removed), 1);
       }
-    }
+      ranking.push(aliveIds[0]);
       io.emit('rankings', ranking);
     }
   });
@@ -437,18 +433,6 @@ io.on('connection', function (socket) {
     playerCount--;
     if (playerAlive > playerCount)
       playerAlive--;
-
-    var username = socket.username;
-    if((!ranking.includes(username)) && (username != null)) {
-      for(var i = 0; i < 4; i++) {
-        if(ranking[i] == null) {
-          isDraw++;
-          ranking.push(username);
-          console.log(ranking);
-          break;
-        }
-      }
-    }
 
     for(var i = 0; i < servTraps.length; i++){
       if(servTraps[i].owner == socket.id){
@@ -462,7 +446,6 @@ io.on('connection', function (socket) {
 
     if ((playerCount==1 && gameFlag) || (playerCount==0 && !gameFlag)){
       io.emit('rankings', ranking);
-      totalGameTime = 0;
     }
   });
 });
