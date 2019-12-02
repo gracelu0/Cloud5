@@ -297,11 +297,11 @@ var config = {
     this.socket = io();
     this.otherPlayers = this.physics.add.group();
     this.redBars = this.physics.add.group(); 
-    this.invisiblePlayer = this.physics.add.sprite(500, 500,'invisiblePlayer').setOrigin(0.5, 0.5);
+    this.invisiblePlayer = this.physics.add.sprite(1200, 1200,'invisiblePlayer').setOrigin(0.5, 0.5);
 
     this.socket.on('numPlayers', (playerCount) =>{
         playerCountText.setText([
-          playerCount+' players joined',
+          playerCount+' players left',
         ]);
       });
 
