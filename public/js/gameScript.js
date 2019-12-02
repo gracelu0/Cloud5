@@ -580,18 +580,8 @@ var config = {
 
     this.socket.on('battleTimer', function (data) {
       $('#gameTimer').html('<h2>Battle! Time Remaining: <b>' + formatTime(data.countdown) + '</b></h2>');
-      if (data.countdown == 0){
-          // var delaySecs = 5;
-          // var delayTimer = setInterval(function(){
-          //     if (delaySecs < 1){
-          //         clearInterval(delayTimer);
-          //         document.getElementById('postGame').submit();
-          //     }
-          //     delaySecs--;
-          // }, 1000);
-          document.getElementById('gameOverText').removeAttribute('hidden');
-          document.getElementById('playAgainButton').removeAttribute('hidden');
-      }
+      if (data.countdown == 0)
+        document.getElementById('postGame').submit();
     });
 
     bullets = this.physics.add.group({

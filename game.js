@@ -42,16 +42,15 @@ app.post('/signUp', (req,res) => {
 
 var gameFlag = false;
 var blockPlayersFlag = false;
+var rankingViewSecs = 10;
 
 app.post('/pregame', (req,res) => {
   if (!gameFlag && !blockPlayersFlag){
-    console.log(blockPlayersFlag)
     res.render('pages/pregame');
   }
   else{
     assert.deepStrictEqual(blockPlayersFlag, true);
-    console.log(blockPlayersFlag)
-    res.render('pages/gip', {refreshTimeEst: totalGameTime});
+    res.render('pages/gip', {refreshTimeEst: totalGameTime + rankingViewSecs});
   }
 });
 
@@ -421,7 +420,7 @@ io.on('connection', function (socket) {
     delete players[deadPlayer.id];
 
     if ((playerAlive==1 || !playerAlive) && gameFlag){
-      totalGameTime = 0;
+      totalGameTime = rankingViewSecs;
       for(var i = 0; i < 3; i ++){
         const removed = ranking[i];
         aliveIds.splice(aliveIds.indexOf(removed), 1);
@@ -446,10 +445,12 @@ io.on('connection', function (socket) {
     io.sockets.emit('numPlayers', playerCount);
     io.emit('disconnect', socket.id);
 
-    if ((playerCount==1 && gameFlag) || (playerCount==0 && !gameFlag)){
-      totalGameTime = 0;
+    if (playerCount==1 && gameFlag){
+      totalGameTime = rankingViewSecs;
       io.emit('rankings', ranking);
     }
+    else if(playerCount==0 && !gameFlag)
+      totalGameTime = 0;
   });
 });
 
