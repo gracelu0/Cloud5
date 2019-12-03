@@ -323,7 +323,7 @@ io.on('connection', function (socket) {
             clearInterval(trapTimer);
             var battleTimer = setInterval(function(){
               io.sockets.emit('battleTimer', { countdown: totalGameTime });
-              if((playerCount == 1 || playerAlive == 1 || totalGameTime <= 1) && rankingFlag == true){
+              if((totalGameTime <= 1) && rankingFlag == true){
                 rankingFlag = false;
                 totalGameTime = rankingViewSecs+1;
                 for(var i = 0; i < ranking.length; i ++){
@@ -473,11 +473,17 @@ io.on('connection', function (socket) {
         i--;
       }
     }
+    ranking.push(players[socket.id].playerUsername);
     delete players[socket.id];
     io.sockets.emit('numPlayers', playerCount);
     io.emit('disconnect', socket.id);
 
     if (playerCount==1 && gameFlag){
+      for(var i = 0; i < 3; i ++){
+        const removed = ranking[i];
+        aliveIds.splice(aliveIds.indexOf(removed), 1);
+      }
+      ranking.push(aliveIds[0]);
       io.emit('rankings', ranking);
     }
     else if(playerCount==0 && !gameFlag)
