@@ -136,7 +136,7 @@ app.post('/signUpForm', async (req,res) => {
             secure: true,
             auth: {
               user: 'cloud5sfu@gmail.com',
-              pass: 'cmpt276cloud5'
+              pass: 'battleblobs5'
             }
           });
           let mailOptions = {
@@ -211,7 +211,7 @@ app.post('/forgotPwdAction', (req,res) => {
           secure: true,
           auth: {
             user: 'cloud5sfu@gmail.com',
-            pass: 'cmpt276cloud5'
+            pass: 'battleblobs5'
           }
         });
 
